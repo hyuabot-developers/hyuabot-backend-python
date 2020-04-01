@@ -455,6 +455,21 @@ def circle(request):
                     "blockId" : "5e70be9a2d3cd0000121a234"
                 }              
         ]
+    elif category == "경상대학":
+        quickReplies = [
+                {
+                    "action" : "block",
+                    "label" : "경제학부",
+                    "messageText" : "경제학부",
+                    "blockId" : "5e70be9a2d3cd0000121a234"
+                },
+                {
+                    "action" : "block",
+                    "label" : "경영학부",
+                    "messageText" : "경영학부",
+                    "blockId" : "5e70be9a2d3cd0000121a234"
+                }           
+        ]        
     else:
         quickReplies = []
     responseBody = {

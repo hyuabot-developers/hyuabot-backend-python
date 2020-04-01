@@ -1,0 +1,12 @@
+django
+dj-database-url
+whitenoise
+gunicorn
+requests
+lxml
+bs4
+tox
+workalendar
+selenium
+psycopg2
+django-heroku

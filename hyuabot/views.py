@@ -377,7 +377,9 @@ def circle(request):
         "공학대학":"engineering",
         "국제문화대학":"gukmun",
         "디자인대학":"design",
-        "경상대학":"economy"
+        "경상대학":"economy_college",
+        "경영학부":"biz",
+        "경제학부":"economy"
     }
     link = "https://raw.githubusercontent.com/jil8885/ERICA_api/master/circles.json"
     response = requests.get(link)

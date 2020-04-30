@@ -77,7 +77,7 @@ def shuttle(request):
     busstop_list = {"셔틀콕":"shuttle","한대앞역":"station","예술인A":"terminal","기숙사":"dormitory"}
     if "도착정보입니다" in response:
         response = response.split("의")[0]
-    busstop = busstop_list[response]
+    busstop = busstop_list[response.split(" ")[1]]
     now = datetime.datetime.now() + datetime.timedelta(hours=9)
     rest_date = [(12,25), (1,1)]
     if (now.month, now.day) in rest_date:
@@ -155,7 +155,7 @@ def food(request):
     store = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
     sql = "select * from userinfowhere id="+ user
-    cursor.execute('create table userinfo(id text, campus text) if not exists')
+    cursor.execute('create table if not exists userinfo(id text, campus text)')
     cursor.execute(sql)
     userinfo = cursor.fetchall()
     if userinfo == []:
@@ -413,7 +413,7 @@ def library(request):
     location = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
     sql = "select * from userinfo where id="+ user
-    cursor.execute('create table userinfo(id text, campus text) if not exists')
+    cursor.execute('create table if not exists userinfo(id text, campus text)')
     cursor.execute(sql)
     userinfo = cursor.fetchall()
     if userinfo == []:

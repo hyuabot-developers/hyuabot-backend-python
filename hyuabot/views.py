@@ -163,7 +163,7 @@ def food(request):
         if "서울" in store or "ERICA" in store:
             sql = "INSERT INTO userinfo(id, campus) values (%s, %s)"
             if "서울" in store:
-                cursor.execute(sql, (id, 1))
+                cursor.execute(sql, (user, 1))
                 conn.commit()
                 responseBody = {
                     "version": "2.0",
@@ -227,7 +227,7 @@ def food(request):
                 }
                 return JsonResponse(responseBody, json_dumps_params = {'ensure_ascii': False})
             else:
-                cursor.execute(sql, (id, 0))
+                cursor.execute(sql, (user, 0))
                 conn.commit()
                 responseBody = {
                     "version": "2.0",
@@ -424,7 +424,7 @@ def library(request):
         if "서울" in location or "ERICA" in location:
             sql = "INSERT INTO userinfo(id, campus) values (%s, %s)"
             if "서울" in location:
-                cursor.execute(sql, (id, 1))
+                cursor.execute(sql, (user, 1))
                 responseBody = {
                     "version": "2.0",
                     "template": {
@@ -486,7 +486,7 @@ def library(request):
                     }
                 }
             else:
-                cursor.execute(sql, (id, 0))
+                cursor.execute(sql, (user, 0))
                 conn.commit()
                 responseBody = {
                     "version": "2.0",
@@ -729,7 +729,7 @@ def update_campus(request):
         if "서울" in location or "ERICA" in location:
             sql = "INSERT INTO userinfo (id, campus) values (%s, %s)"
             if "서울" in location:
-                cursor.execute(sql, (id, 1))
+                cursor.execute(sql, (user, 1))
                 conn.commit()
                 responseBody = {"version": "2.0",
                 "template": {
@@ -740,7 +740,7 @@ def update_campus(request):
                     }
                 }
             else:
-                cursor.execute(sql, (id, 0))
+                cursor.execute(sql, (user, 0))
                 conn.commit()
                 responseBody = {"version": "2.0",
                 "template": {

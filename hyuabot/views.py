@@ -164,6 +164,7 @@ def food(request):
             sql = "INSERT INTO userinfo(id, campus) values (%s, %s)"
             if store == "서울":
                 cursor.execute(sql, (id, 1))
+                conn.commit()
                 responseBody = {
                     "version": "2.0",
                     "template": {
@@ -227,6 +228,7 @@ def food(request):
                 return JsonResponse(responseBody, json_dumps_params = {'ensure_ascii': False})
             else:
                 cursor.execute(sql, (id, 0))
+                conn.commit()
                 responseBody = {
                     "version": "2.0",
                     "template": {
@@ -416,11 +418,12 @@ def library(request):
     sql = "select * from userinfo where id=%s"
     cursor.execute('create table if not exists userinfo(id text, campus text)')
     cursor.execute(sql,(user,))
+    conn.commit()
     userinfo = cursor.fetchall()
     if userinfo == []:
-        if location in ["서울", "ERICA"]:
+        if "서울" in location or "ERICA" in location:
             sql = "INSERT INTO userinfo(id, campus) values (%s, %s)"
-            if location == "서울":
+            if "서울" in location:
                 cursor.execute(sql, (id, 1))
                 responseBody = {
                     "version": "2.0",
@@ -484,6 +487,7 @@ def library(request):
                 }
             else:
                 cursor.execute(sql, (id, 0))
+                conn.commit()
                 responseBody = {
                     "version": "2.0",
                     "template": {
@@ -718,14 +722,15 @@ def update_campus(request):
     conn = psycopg2.connect(conn_sql)
     cursor = conn.cursor()
     sql = "select * from userinfo where id=%s"
-    cursor.execute('create table userinfo (id text, campus text) if not exists')
+    cursor.execute('create table if not exists userinfo (id text, campus text)')
     cursor.execute(sql,(user,))
     userinfo = cursor.fetchall()
     if userinfo == []:
-        if location in ["서울", "ERICA"]:
+        if "서울" in location or "ERICA" in location:
             sql = "INSERT INTO userinfo (id, campus) values (%s, %s)"
-            if location == "서울":
+            if "서울" in location:
                 cursor.execute(sql, (id, 1))
+                conn.commit()
                 responseBody = {"version": "2.0",
                 "template": {
                     "outputs": [
@@ -736,6 +741,7 @@ def update_campus(request):
                 }
             else:
                 cursor.execute(sql, (id, 0))
+                conn.commit()
                 responseBody = {"version": "2.0",
                 "template": {
                     "outputs": [
@@ -772,6 +778,7 @@ def update_campus(request):
     elif userinfo[0][1] == '0':
         sql = "update userinfo set='1' where id=%s"
         cursor.execute(sql, (user,))
+        conn.commit()
         responseBody = {
             "version": "2.0",
             "template": {
@@ -785,6 +792,7 @@ def update_campus(request):
     elif userinfo[0][1] == '1':
         sql = "update userinfo set='0' where id=%s"
         cursor.execute(sql, (user,))
+        conn.commit()
         responseBody = {
             "version": "2.0",
             "template": {

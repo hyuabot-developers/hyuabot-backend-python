@@ -439,7 +439,7 @@ def library(request):
                         "label" : "📖 제4열람실",
                         "messageText" : "제4열람실의 좌석정보입니다.",
                         "blockId" : "5e0df82cffa74800014bc838"
-                    }
+                    },
                     {
                         "action" : "block",
                         "label" : "📖 법학 대학원열람실",
@@ -549,7 +549,7 @@ def update_campus(request):
                 ]
             }
         }
-    elif userinfo[0][1] = '0':
+    elif userinfo[0][1] == '0':
         sql = "update user set='1' where id=" + id
         cursor.execute()
         responseBody = {
@@ -561,7 +561,8 @@ def update_campus(request):
                     }
                 ]
             }
-    elif userinfo[0][1] = '1':
+        }
+    elif userinfo[0][1] == '1':
         sql = "update user set='0' where id=" + id
         cursor.execute()
         responseBody = {
@@ -573,4 +574,5 @@ def update_campus(request):
                     }
                 ]
             }
+        }
     return JsonResponse(responseBody, json_dumps_params = {'ensure_ascii': False})

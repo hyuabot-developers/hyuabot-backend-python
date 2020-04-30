@@ -776,7 +776,7 @@ def update_campus(request):
             }
         }
     elif userinfo[0][1] == '0':
-        sql = "update userinfo set='1' where id=%s"
+        sql = "update userinfo set campus='1' where id=%s"
         cursor.execute(sql, (user,))
         conn.commit()
         responseBody = {
@@ -790,7 +790,7 @@ def update_campus(request):
             }
         }
     elif userinfo[0][1] == '1':
-        sql = "update userinfo set='0' where id=%s"
+        sql = "update userinfo set campus='0' where id=%s"
         cursor.execute(sql, (user,))
         conn.commit()
         responseBody = {

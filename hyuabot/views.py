@@ -155,9 +155,9 @@ def food(request):
     string = ""
     store = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
-    sql = "select * from userinfo where id="+ user
+    sql = "select * from userinfo where id=%s"
     cursor.execute('create table if not exists userinfo(id text, campus text)')
-    cursor.execute(sql)
+    cursor.execute(sql, (user,))
     userinfo = cursor.fetchall()
     if userinfo == []:
         if store in ["서울", "ERICA"]:
@@ -413,9 +413,9 @@ def library(request):
     string = ""
     location = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
-    sql = "select * from userinfo where id="+ user
+    sql = "select * from userinfo where id=%s"
     cursor.execute('create table if not exists userinfo(id text, campus text)')
-    cursor.execute(sql)
+    cursor.execute(sql,(user,))
     userinfo = cursor.fetchall()
     if userinfo == []:
         if location in ["서울", "ERICA"]:
@@ -717,9 +717,9 @@ def update_campus(request):
     conn_sql = "host='" + os.getenv("dbhost") + "' dbname=" + os.getenv("dbname") + " user='" + os.getenv("dbuser") + "' password='" + os.getenv("dbpassword") + "'"
     conn = psycopg2.connect(conn_sql)
     cursor = conn.cursor()
-    sql = "select * from userinfo where id="+ user
+    sql = "select * from userinfo where id=%s"
     cursor.execute('create table userinfo (id text, campus text) if not exists')
-    cursor.execute(sql)
+    cursor.execute(sql,(user,))
     userinfo = cursor.fetchall()
     if userinfo == []:
         if location in ["서울", "ERICA"]:
@@ -770,8 +770,8 @@ def update_campus(request):
             }
         }
     elif userinfo[0][1] == '0':
-        sql = "update userinfo set='1' where id=" + id
-        cursor.execute()
+        sql = "update userinfo set='1' where id=%s"
+        cursor.execute(sql, (user,))
         responseBody = {
             "version": "2.0",
             "template": {
@@ -783,8 +783,8 @@ def update_campus(request):
             }
         }
     elif userinfo[0][1] == '1':
-        sql = "update userinfo set='0' where id=" + id
-        cursor.execute()
+        sql = "update userinfo set='0' where id=%s"
+        cursor.execute(sql, (user,))
         responseBody = {
             "version": "2.0",
             "template": {

@@ -119,25 +119,25 @@ def shuttle(request):
             "quickReplies":[
                 {
                     "action" : "block",
-                    "label" : "셔틀콕",
+                    "label" : "🏫 셔틀콕",
                     "messageText" : "셔틀콕의 셔틀버스 도착정보입니다.",
                     "blockId" : "5cc3dc8ee82127558b7e6eba"
                 },
                 {
                     "action" : "block",
-                    "label" : "한대앞역",
+                    "label" : "🚆 한대앞역",
                     "messageText" : "한대앞역의 셔틀버스 도착정보입니다.",
                     "blockId" : "5cc3dc97e82127558b7e6ebc"
                 },
                 {
                     "action" : "block",
-                    "label" : "예술인A",
+                    "label" : "🚍 예술인A",
                     "messageText" : "예술인A의 셔틀버스 도착정보입니다.",
                     "blockId" : "5cc3dc9f5f38dd4c34bad81b"
                 },
                 {
                     "action" : "block",
-                    "label" : "기숙사",
+                    "label" : "🏘️ 기숙사",
                     "messageText" : "기숙사의 셔틀버스 도착정보입니다.",
                     "blockId" : "5cc3dc865f38dd4c34bad819"
                 }

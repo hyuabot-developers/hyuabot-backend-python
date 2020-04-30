@@ -154,7 +154,7 @@ def food(request):
     string = ""
     store = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
-    sql = "select * from userinfowhere id="+ user
+    sql = "select * from userinfo where id="+ user
     cursor.execute('create table if not exists userinfo(id text, campus text)')
     cursor.execute(sql)
     userinfo = cursor.fetchall()

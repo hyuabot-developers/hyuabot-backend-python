@@ -160,9 +160,9 @@ def food(request):
     cursor.execute(sql, (user,))
     userinfo = cursor.fetchall()
     if userinfo == []:
-        if store in ["서울", "ERICA"]:
+        if "서울" in store or "ERICA" in store:
             sql = "INSERT INTO userinfo(id, campus) values (%s, %s)"
-            if store == "서울":
+            if "서울" in store:
                 cursor.execute(sql, (id, 1))
                 conn.commit()
                 responseBody = {

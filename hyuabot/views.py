@@ -153,14 +153,14 @@ def food(request):
     cursor = conn.cursor()
     string = ""
     store = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
-    user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
-    sql = "select * from user where id="+ user
-    cursor.execute('create table if not exists user (id text, campus text)')
+    userinfo= json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
+    sql = "select * from userinfowhere id="+ user
+    cursor.execute('create table userinfo(id text, campus text) if not exists')
     cursor.execute(sql)
     userinfo = cursor.fetchall()
     if userinfo == []:
         if location in ["서울", "ERICA"]:
-            sql = "INSERT INTO user (id, campus) values (%s, %s)"
+            sql = "INSERT INTO userinfo(id, campus) values (%s, %s)"
             if location == "서울":
                 cursor.execute(sql, (id, 1))
             else:
@@ -307,13 +307,13 @@ def library(request):
     string = ""
     location = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
-    sql = "select * from user where id="+ user
-    cursor.execute('create table if not exists user (id text, campus text)')
+    sql = "select * from userinfo where id="+ user
+    cursor.execute('create table userinfo(id text, campus text) if not exists')
     cursor.execute(sql)
     userinfo = cursor.fetchall()
     if userinfo == []:
         if location in ["서울", "ERICA"]:
-            sql = "INSERT INTO user (id, campus) values (%s, %s)"
+            sql = "INSERT INTO userinfo(id, campus) values (%s, %s)"
             if location == "서울":
                 cursor.execute(sql, (id, 1))
             else:
@@ -515,13 +515,13 @@ def update_campus(request):
     conn_sql = "host='" + os.getenv("dbhost") + "' dbname=" + os.getenv("dbname") + " user='" + os.getenv("dbuser") + "' password='" + os.getenv("dbpassword") + "'"
     conn = psycopg2.connect(conn_sql)
     cursor = conn.cursor()
-    sql = "select * from user where id="+ user
-    cursor.execute('create table if not exists user (id text, campus text)')
+    sql = "select * from userinfo where id="+ user
+    cursor.execute('create table userinfo (id text, campus text) if not exists')
     cursor.execute(sql)
     userinfo = cursor.fetchall()
     if userinfo == []:
         if location in ["서울", "ERICA"]:
-            sql = "INSERT INTO user (id, campus) values (%s, %s)"
+            sql = "INSERT INTO userinfo (id, campus) values (%s, %s)"
             if location == "서울":
                 cursor.execute(sql, (id, 1))
             else:
@@ -551,7 +551,7 @@ def update_campus(request):
             }
         }
     elif userinfo[0][1] == '0':
-        sql = "update user set='1' where id=" + id
+        sql = "update userinfo set='1' where id=" + id
         cursor.execute()
         responseBody = {
             "version": "2.0",
@@ -564,7 +564,7 @@ def update_campus(request):
             }
         }
     elif userinfo[0][1] == '1':
-        sql = "update user set='0' where id=" + id
+        sql = "update userinfo set='0' where id=" + id
         cursor.execute()
         responseBody = {
             "version": "2.0",

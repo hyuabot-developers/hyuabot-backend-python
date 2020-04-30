@@ -76,8 +76,9 @@ def shuttle(request):
     response = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     busstop_list = {"셔틀콕":"shuttle","한대앞역":"station","예술인A":"terminal","기숙사":"dormitory"}
     if "도착정보입니다" in response:
-        response = response.split("의")[0]
-    busstop = busstop_list[response.split(" ")[1]]
+        busstop = busstop_list[response.split("의")[0]]
+    else:
+        busstop = busstop_list[response.split(" ")[1]]
     now = datetime.datetime.now() + datetime.timedelta(hours=9)
     rest_date = [(12,25), (1,1)]
     if (now.month, now.day) in rest_date:

@@ -8,8 +8,8 @@ urlpatterns = [
     path('food', views.food),
     path('lib', views.library),
     path('restphoto', views.restphoto),
-    path('phone', views.phone_search),
-    path('club', views.club),
-    path('circle', views.circle),
-    path('clubinfo', views.info)
+    path('phone', views.phone_search)
+    # path('club', views.club),
+    # path('circle', views.circle),
+    # path('clubinfo', views.info)
 ]

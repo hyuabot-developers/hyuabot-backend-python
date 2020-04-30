@@ -10,6 +10,8 @@ def crawling(cafeteria, date=None):
     string=""
     campus = "BVRPhfbjvn"
     cafeterias = {"학생식당" : "LTI0MTE0NTE5", "창의인재원식당" : "LTI0MTEyNjM2", "교직원식당": "LTI0MTE2NDAw", "창업보육센터": "LTI0MTA4ODY0", "푸드코트" : "LTI0MTEwNzUx"}
+    if "학식메뉴" in cafeteria:
+        return "ERICA캠퍼스의 식당 목록입니다"
     request_url = "https://bablabs.com/openapi/v1/campuses/" + campus + "/stores/" + cafeterias[cafeteria]
     today = datetime.datetime.now() + datetime.timedelta(hours=9)
     if not date:
@@ -94,6 +96,8 @@ def crawling2(cafeteria, date=None):
         "사랑방" : "LTI0MTAxMjk2",
         "행원파크" : "LTI0MDkzNjk2"
         }
+    if "학식메뉴" in cafeteria:
+        return "서울캠퍼스의 식당 목록입니다"
     request_url = "https://bablabs.com/openapi/v1/campuses/" + campus + "/stores/" + cafeterias[cafeteria]
     today = datetime.datetime.now() + datetime.timedelta(hours=9)
     if not date:

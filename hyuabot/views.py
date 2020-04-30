@@ -153,18 +153,122 @@ def food(request):
     cursor = conn.cursor()
     string = ""
     store = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
-    userinfo= json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
+    user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
     sql = "select * from userinfowhere id="+ user
     cursor.execute('create table userinfo(id text, campus text) if not exists')
     cursor.execute(sql)
     userinfo = cursor.fetchall()
     if userinfo == []:
-        if location in ["서울", "ERICA"]:
+        if store in ["서울", "ERICA"]:
             sql = "INSERT INTO userinfo(id, campus) values (%s, %s)"
-            if location == "서울":
+            if store == "서울":
                 cursor.execute(sql, (id, 1))
+                responseBody = {
+                    "version": "2.0",
+                    "template": {
+                        "outputs": [
+                            {"simpleText":
+                                {"text": '서울캠퍼스로 전환되었습니다.'}
+                            }
+                        ],
+                        "quickReplies":[
+                            {
+                                "action" : "block",
+                                "label" : "교직원식당",
+                                "messageText" : "교직원식당의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "학생식당",
+                                "messageText" : "학생식당의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "사랑방",
+                                "messageText" : "사랑방의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "행원파크",
+                                "messageText" : "행원파크의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "신교직원식당",
+                                "messageText" : "신교직원식당의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "신학생식당",
+                                "messageText" : "신학생식당의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "제1생활관식당",
+                                "messageText" : "제1생활관의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "제2생활관식당",
+                                "messageText" : "제2생활관식당의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                        ]
+                    }
+                }
+                return JsonResponse(responseBody, json_dumps_params = {'ensure_ascii': False})
             else:
                 cursor.execute(sql, (id, 0))
+                responseBody = {
+                    "version": "2.0",
+                    "template": {
+                        "outputs": [
+                            {"simpleText":
+                                {"text": 'ERICA 캠퍼스로 전환되었습니다.'}
+                            }
+                        ],
+                        "quickReplies":[
+                            {
+                                "action" : "block",
+                                "label" : "학생식당",
+                                "messageText" : "학생식당의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "교직원식당",
+                                "messageText" : "교직원식당의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "창업보육센터",
+                                "messageText" : "창업보육센터의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "푸드코트",
+                                "messageText" : "푸드코트의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "창의인재원식당",
+                                "messageText" : "창의인재원식당의 식단입니다.",
+                                "blockId" : "5eaa9b11cdbc3a00015a23fb"
+                            }
+                        ]
+                    }
+                }
+            return JsonResponse(responseBody, json_dumps_params = {'ensure_ascii': False})
         else:
             responseBody = {"version": "2.0",
             "template": {
@@ -189,6 +293,7 @@ def food(request):
                 ]
             }
         }
+        return JsonResponse(responseBody, json_dumps_params = {'ensure_ascii': False})
     if "의 식단입니다" in store:
         store = store.split("의 식단")[0]
     if userinfo[0][1] == '0':
@@ -316,8 +421,104 @@ def library(request):
             sql = "INSERT INTO userinfo(id, campus) values (%s, %s)"
             if location == "서울":
                 cursor.execute(sql, (id, 1))
+                responseBody = {
+                    "version": "2.0",
+                    "template": {
+                        "outputs": [
+                            {"simpleText":
+                                {"text": '서울캠퍼스로 전환되었습니다.'}
+                            }
+                        ],
+                        "quickReplies":[
+                            {
+                                "action" : "block",
+                                "label" : "📖 제1열람실",
+                                "messageText" : "제1열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 제2열람실",
+                                "messageText" : "제2열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 제3열람실",
+                                "messageText" : "제3열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 제4열람실",
+                                "messageText" : "제4열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 법학 대학원열람실",
+                                "messageText" : "법학 대학원열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 법학 제1열람실",
+                                "messageText" : "법학 제1열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 법학 제2열람실A",
+                                "messageText" : "법학 제2열람실A의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 법학 제2열람실B",
+                                "messageText" : "법학 제2열람실B의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                        ]
+                    }
+                }
             else:
                 cursor.execute(sql, (id, 0))
+                responseBody = {
+                    "version": "2.0",
+                    "template": {
+                        "outputs": [
+                            {"simpleText":
+                                {"text": string}
+                            }
+                        ],
+                        "quickReplies":[
+                            {
+                                "action" : "block",
+                                "label" : "📖 제1열람실",
+                                "messageText" : "제1열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 제3열람실",
+                                "messageText" : "제3열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 제4열람실",
+                                "messageText" : "제4열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            },
+                            {
+                                "action" : "block",
+                                "label" : "📖 제5열람실",
+                                "messageText" : "제5열람실의 좌석정보입니다.",
+                                "blockId" : "5e0df82cffa74800014bc838"
+                            }
+                        ]
+                    }
+                }
         else:
             responseBody = {"version": "2.0",
             "template": {
@@ -342,7 +543,7 @@ def library(request):
                 ]
             }
         }
-    
+        return JsonResponse(responseBody, json_dumps_params = {'ensure_ascii': False})
     elif userinfo[0][1] == '0':
         if "열람실 정보" in location:
             location = 0
@@ -524,8 +725,25 @@ def update_campus(request):
             sql = "INSERT INTO userinfo (id, campus) values (%s, %s)"
             if location == "서울":
                 cursor.execute(sql, (id, 1))
+                responseBody = {"version": "2.0",
+                "template": {
+                    "outputs": [
+                        {"simpleText":
+                            {"text": '서울캠퍼스로 전환되었습니다.'}
+                            }]
+                    }
+                }
             else:
                 cursor.execute(sql, (id, 0))
+                responseBody = {"version": "2.0",
+                "template": {
+                    "outputs": [
+                        {"simpleText":
+                            {"text": 'ERICA캠퍼스로 전환되었습니다.'}
+                            }]
+                    }
+                }
+            return JsonResponse(responseBody, json_dumps_params = {'ensure_ascii': False})
         else:
             responseBody = {"version": "2.0",
             "template": {

@@ -155,7 +155,7 @@ def food(request):
     store = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
     sql = "select * from user where id="+ user
-    cursor.execute('create table if not exists user(id text, campus text)')
+    cursor.execute('create table if not exists user (id text, campus text)')
     cursor.execute(sql)
     userinfo = cursor.fetchall()
     if userinfo == []:
@@ -308,7 +308,7 @@ def library(request):
     location = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
     sql = "select * from user where id="+ user
-    cursor.execute('create table if not exists user(id text, campus text)')
+    cursor.execute('create table if not exists user (id text, campus text)')
     cursor.execute(sql)
     userinfo = cursor.fetchall()
     if userinfo == []:
@@ -344,7 +344,7 @@ def library(request):
         }
     
     elif userinfo[0][1] == '0':
-        if location == "열람실 정보":
+        if "열람실 정보" in location:
             location = 0
         elif "좌석정보입니다." in location:
             location = location[1]
@@ -386,7 +386,7 @@ def library(request):
             }
         }
     elif userinfo[0][1] == '1':
-        if location == "열람실 정보":
+        if "열람실 정보" in location:
             location = 0
         elif "법학" in location:
             if "대학원" in location:
@@ -511,11 +511,12 @@ def phone_search(request):
 @csrf_exempt
 def update_campus(request):
     user = json.loads(request.body.decode("utf-8"))["userRequest"]["user"]['id']
+    location = json.loads(request.body.decode("utf-8"))["userRequest"]["utterance"]
     conn_sql = "host='" + os.getenv("dbhost") + "' dbname=" + os.getenv("dbname") + " user='" + os.getenv("dbuser") + "' password='" + os.getenv("dbpassword") + "'"
     conn = psycopg2.connect(conn_sql)
     cursor = conn.cursor()
     sql = "select * from user where id="+ user
-    cursor.execute('create table if not exists user(id text, campus text)')
+    cursor.execute('create table if not exists user (id text, campus text)')
     cursor.execute(sql)
     userinfo = cursor.fetchall()
     if userinfo == []:

@@ -2,15 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='chatbot'),
-    path('shuttlephoto', views.shuttlephoto),
+    path('shuttlephoto', views.shuttle_photo),
     path('shuttle', views.shuttle),
     path('food', views.food),
     path('lib', views.library),
-    path('restphoto', views.restphoto),
-    path('phone', views.phone_search),
     path('campus', views.update_campus)
-    # path('club', views.club),
-    # path('circle', views.circle),
-    # path('clubinfo', views.info)
 ]

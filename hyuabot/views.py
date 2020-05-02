@@ -289,7 +289,7 @@ def update_campus(request):
     answer, user = json_parser(request)
     user_info = get_user(user)
     block_id = '5eaa9bf741559f000197775d'
-    print(is_seoul(user_info))
+    print(user)
     if not user_info:
         if '서울' in answer:
             create_user(user, 1)

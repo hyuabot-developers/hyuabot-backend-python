@@ -60,8 +60,8 @@ def create_user(user_key, campus):
 def update_user(user_key, campus):
     conn = psycopg2.connect(connection)
     cursor = conn.cursor()
-    sql = f"update userinfo set campus={campus} where id=%s"
-    cursor.execute(sql, (user_key))
+    sql = f"update userinfo set campus={campus} where id={user_key}"
+    cursor.execute(sql)
     conn.commit()
     cursor.close()
     conn.close()

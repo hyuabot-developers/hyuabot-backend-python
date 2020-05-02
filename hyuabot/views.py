@@ -35,9 +35,9 @@ def json_parser(request):
 def get_user(user_key):
     conn = psycopg2.connect(connection)
     cursor = conn.cursor()
-    sql = 'select * from userinfo where id=%s'
+    sql = f'select * from userinfo where id={user_key}'
     cursor.execute('create table if not exists userinfo(id text, campus text)')
-    cursor.execute(sql, (user_key,))
+    cursor.execute(sql)
     user_info = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -156,7 +156,7 @@ def shuttle(request):
     for stop in stop_list.keys():
         message = f"{stop}의 셔틀버스 도착 정보입니다"
 
-        reply = make_reply(stop, emoji[stop] + message, block_id)
+        reply = make_reply(emoji[stop] + stop, message, block_id)
         response = insert_replies(response, reply)
     return JsonResponse(response, json_dumps_params={'ensure_ascii': False})
 

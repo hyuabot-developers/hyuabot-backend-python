@@ -60,8 +60,8 @@ def create_user(user_key, campus):
 def update_user(user_key, campus):
     conn = psycopg2.connect(connection)
     cursor = conn.cursor()
-    sql = f"update userinfo set campus={campus} where id={user_key}"
-    cursor.execute(sql)
+    sql = "update userinfo set campus=%s where id=%s"
+    cursor.execute(sql, (campus, user_key))
     conn.commit()
     cursor.close()
     conn.close()
@@ -289,7 +289,6 @@ def update_campus(request):
     answer, user = json_parser(request)
     user_info = get_user(user)
     block_id = '5eaa9bf741559f000197775d'
-    print(user)
     if not user_info:
         if '서울' in answer:
             create_user(user, 1)

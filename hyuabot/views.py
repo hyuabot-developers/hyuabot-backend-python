@@ -35,7 +35,7 @@ def json_parser(request):
 def get_user(user_key):
     conn = psycopg2.connect(connection)
     cursor = conn.cursor()
-    sql = f'select * from userinfo where id={user_key}'
+    sql = f"select * from userinfo where id='{user_key}'"
     cursor.execute('create table if not exists userinfo(id text, campus text)')
     cursor.execute(sql)
     user_info = cursor.fetchall()

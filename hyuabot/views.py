@@ -60,8 +60,8 @@ def create_user(user_key, campus):
 def update_user(user_key, campus):
     conn = psycopg2.connect(connection)
     cursor = conn.cursor()
-    sql = f"update userinfo set campus={campus} where id='{user_key}'"
-    cursor.execute(sql)
+    sql = f"update userinfo set campus={campus} where id=%s"
+    cursor.execute(sql, (user_key))
     conn.commit()
     cursor.close()
     conn.close()
@@ -94,7 +94,7 @@ def make_reply(label, message, block_id):
 
 # Get CampusInfo
 def is_seoul(user_list):
-    return user_list[0][1]
+    return int(user_list[0][1])
 
 
 @csrf_exempt
@@ -289,6 +289,7 @@ def update_campus(request):
     answer, user = json_parser(request)
     user_info = get_user(user)
     block_id = '5eaa9bf741559f000197775d'
+    print(is_seoul(user_info))
     if not user_info:
         if '서울' in answer:
             create_user(user, 1)
@@ -303,10 +304,10 @@ def update_campus(request):
             for campus in campuses:
                 reply = make_reply(campus, f"{campus}로 지정되었습니다.", block_id)
                 response = insert_replies(response, reply)
-    elif not is_seoul(user_info):
-        update_user(user, 1)
-        response = insert_text('서울캠퍼스로 전환되었습니다.')
-    else:
+    elif is_seoul(user_info):
         update_user(user, 0)
         response = insert_text('ERICA 캠퍼스로 전환되었습니다.')
+    else:
+        update_user(user, 1)
+        response = insert_text('서울 캠퍼스로 전환되었습니다.')
     return JsonResponse(response, json_dumps_params={'ensure_ascii': False})

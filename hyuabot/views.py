@@ -59,8 +59,8 @@ def create_user(user_key, campus):
 def update_user(user_key, campus):
     conn = psycopg2.connect(connection)
     cursor = conn.cursor()
-    sql = f'update userinfo set campus={campus} where id=%s'
-    cursor.execute(sql, user_key)
+    sql = f'update userinfo set campus={campus} where id={user_key}'
+    cursor.execute(sql)
     cursor.close()
     conn.close()
 
@@ -116,6 +116,7 @@ def shuttle_photo(request):
 def shuttle(request):
     answer, user = json_parser(request)
     stop_list = {"셔틀콕": "shuttle", "한대앞역": "station", "예술인A": "terminal", "기숙사": "dormitory"}
+    emoji = {"셔틀콕": '🏫 ', "한대앞역": '🚆 ', "예술인A": '🚍 ', "기숙사": '🏘️ '}
     if "도착정보입니다" in answer:
         stop = stop_list[answer.split("의")[0]]
     else:
@@ -154,7 +155,8 @@ def shuttle(request):
     response = insert_text(string)
     for stop in stop_list.keys():
         message = f"{stop}의 셔틀버스 도착 정보입니다"
-        reply = make_reply(stop, message, block_id)
+
+        reply = make_reply(stop, emoji[stop] + message, block_id)
         response = insert_replies(response, reply)
     return JsonResponse(response, json_dumps_params={'ensure_ascii': False})
 
@@ -200,6 +202,18 @@ def food(request):
             for restaurant in seoul_restaurant:
                 reply = make_reply(restaurant, f"{restaurant}의 식단입니다", block_id)
                 response = insert_replies(response, reply)
+    elif "메뉴" in answer:
+        string = '원하시는 식당을 선택해주세요'
+        if not is_seoul(user_info):
+            response = insert_text(string)
+            for restaurant in erica_restaurant:
+                reply = make_reply(restaurant, f"{restaurant}의 식단입니다", block_id)
+                response = insert_replies(response, reply)
+        else:
+            response = insert_text(string)
+            for restaurant in seoul_restaurant:
+                reply = make_reply(restaurant, f"{restaurant}의 식단입니다", block_id)
+                response = insert_replies(response, reply)
     return JsonResponse(response, json_dumps_params={'ensure_ascii': False})
 
 
@@ -215,13 +229,13 @@ def library(request):
             create_user(user, 1)
             response = insert_text('서울캠퍼스로 지정되었습니다.')
             for lib in seoul_lib:
-                reply = make_reply(lib, f"{lib}의 좌석정보입니다.", block_id)
+                reply = make_reply('📖 ' + lib, f"{lib}의 좌석정보입니다.", block_id)
                 response = insert_replies(response, reply)
         elif 'ERICA' in answer:
             create_user(user, 0)
             response = insert_text('ERICA 캠퍼스로 지정되었습니다.')
             for lib in erica_lib:
-                reply = make_reply(lib, f"{lib}의 좌석정보입니다.", block_id)
+                reply = make_reply('📖 ' + lib, f"{lib}의 좌석정보입니다.", block_id)
                 response = insert_replies(response, reply)
         else:
             campuses = ['서울', 'ERICA']
@@ -253,7 +267,7 @@ def library(request):
         string = crawling_lib2(int(location))
         response = insert_text(string)
         for lib in seoul_lib:
-            reply = make_reply(lib, f"{lib}의 좌석정보입니다.", block_id)
+            reply = make_reply('📖 ' + lib, f"{lib}의 좌석정보입니다.", block_id)
             response = insert_replies(response, reply)
     else:
         if "열람실 정보" in answer:
@@ -263,7 +277,7 @@ def library(request):
         string = crawling_lib(int(location))
         response = insert_text(string)
         for lib in erica_lib:
-            reply = make_reply(lib, f"{lib}의 좌석정보입니다.", block_id)
+            reply = make_reply('📖 ' + lib, f"{lib}의 좌석정보입니다.", block_id)
             response = insert_replies(response, reply)
     return JsonResponse(response, json_dumps_params={'ensure_ascii': False})
 

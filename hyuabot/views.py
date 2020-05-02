@@ -302,9 +302,9 @@ def update_campus(request):
                 reply = make_reply(campus, f"{campus}로 지정되었습니다.", block_id)
                 response = insert_replies(response, reply)
     elif not is_seoul(user_info):
-        update_user(get_user(user_info), 1)
+        update_user(user, 1)
         response = insert_text('서울캠퍼스로 전환되었습니다.')
     else:
-        update_user(get_user(user_info), 0)
+        update_user(user, 0)
         response = insert_text('ERICA 캠퍼스로 전환되었습니다.')
     return JsonResponse(response, json_dumps_params={'ensure_ascii': False})

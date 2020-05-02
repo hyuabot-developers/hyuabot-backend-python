@@ -51,6 +51,7 @@ def create_user(user_key, campus):
     sql = 'INSERT INTO userinfo(id, campus) values (%s, %s)'
     cursor.execute('create table if not exists userinfo(id text, campus text)')
     cursor.execute(sql, (user_key, campus))
+    conn.commit()
     cursor.close()
     conn.close()
 
@@ -59,8 +60,9 @@ def create_user(user_key, campus):
 def update_user(user_key, campus):
     conn = psycopg2.connect(connection)
     cursor = conn.cursor()
-    sql = f'update userinfo set campus={campus} where id={user_key}'
+    sql = f"update userinfo set campus={campus} where id='{user_key}'"
     cursor.execute(sql)
+    conn.commit()
     cursor.close()
     conn.close()
 

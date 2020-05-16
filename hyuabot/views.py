@@ -202,7 +202,7 @@ def stop_detail(request):
     stop_list = {"셔틀콕": "shuttle", "한대앞역": "station", "예술인A": "terminal", "기숙사": "dormitory"}
     stop_map = {"shuttle" : "http://kko.to/ZTIvvsBYo", "station" : "http://kko.to/AoVdvsoYj", "dormitory" : "http://kko.to/eB4vvbBDB", "terminal": "http://kko.to/Vx7UXsoDT"}
     stop_view = {"shuttle" : "http://kko.to/Kf-ZqboYH", "station" : "http://kko.to/h9ROqsoDM", "dormitory" : "http://kko.to/vClEubBDj", "terminal": "http://kko.to/guG2uboYB"}
-    stop_name = answer.split('의 정류장 정보입니다')[0]
+    stop_name = answer.split('정류장 정보입니다')[0].strip()
     stop_key = stop_list[stop_name]
     response = insert_card('정류장 정보', stop_name, 'https://gist.githubusercontent.com/jil8885/f7dcff129d1e80c4dc232168f68dc293/raw/30971dbda1c910f18e24b0d35f9defaf4a858765/hanyang-bus.png', 1083, 958)
     response = insert_button(response, '🗺️ 카카오맵에서 보기', stop_map[stop_key])

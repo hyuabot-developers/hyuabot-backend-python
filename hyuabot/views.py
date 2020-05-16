@@ -81,6 +81,34 @@ def insert_text(text):
     return new_response
 
 
+# Make Card Answer
+def insert_card(title, description, image_url, width=None, height=None):
+    new_response = deepcopy(base_response)
+    if width != None and height != None:
+        new_response['template']['outputs'] = [{'basicCard':{
+            'title' : title,
+            'description' : description,
+            'thumbnail': {"imageUrl" : image_url, 'fixedRatio': True, 'width': width, 'height': height},
+            'buttons' : []
+        }}]
+    else:
+        new_response['template']['outputs'] = [{'basicCard':{
+            'title' : title,
+            'description' : description,
+            'thumbnail': {"imageUrl" : image_url},
+            'buttons' : []
+        }}]
+    return new_response
+
+
+def insert_button(new_response, label, webUrl):
+    new_response['template']['outputs'][0]['basicCard']['buttons'].append({
+        "action":  "webLink",
+        "label": label,
+        "webLinkUrl": webUrl
+    })
+    return new_response
+
 # Insert Quick Replies
 def insert_replies(new_response, reply):
     new_response['template']['quickReplies'].append(reply)
@@ -120,9 +148,10 @@ def shuttle(request):
     stop_list = {"셔틀콕": "shuttle", "한대앞역": "station", "예술인A": "terminal", "기숙사": "dormitory"}
     emoji = {"셔틀콕": '🏫 ', "한대앞역": '🚆 ', "예술인A": '🚍 ', "기숙사": '🏘️ '}
     if "도착정보입니다" in answer:
-        stop = stop_list[answer.split("의")[0]]
+        stop_korean = answer.split("의")[0]
     else:
-        stop = stop_list[answer.split(" ")[1]]
+        stop_korean = answer.split(" ")[1]
+    stop = stop_list[stop_korean]
     now = datetime.datetime.now() + datetime.timedelta(hours=9)
     rest_date = [(12, 25), (1, 1)]
     if (now.month, now.day) in rest_date:
@@ -155,12 +184,31 @@ def shuttle(request):
             string += shuttle_main('dorm')
     block_id = '5cc3dc8ee82127558b7e6eba'
     response = insert_text(string)
-    for stop in stop_list.keys():
-        message = f"{stop}의 셔틀버스 도착 정보입니다"
+    reply = make_reply('🔍 정류장', f'{stop_korean} 정류장 정보입니다.', '5ebf702e7a9c4b000105fb25')
+    response = insert_replies(response, reply)
+    for stop_name in stop_list.keys():
+        if stop_name != stop_korean:
+            message = f"{stop_name}의 셔틀버스 도착 정보입니다"
 
-        reply = make_reply(emoji[stop] + stop, message, block_id)
-        response = insert_replies(response, reply)
+            reply = make_reply(emoji[stop_name] + stop_name, message, block_id)
+            response = insert_replies(response, reply)
+
     return JsonResponse(response, json_dumps_params={'ensure_ascii': False})
+
+
+@csrf_exempt
+def stop_detail(request):
+    answer, user = json_parser(request)
+    stop_list = {"셔틀콕": "shuttle", "한대앞역": "station", "예술인A": "terminal", "기숙사": "dormitory"}
+    stop_map = {"shuttle" : "http://kko.to/ZTIvvsBYo", "station" : "http://kko.to/AoVdvsoYj", "dormitory" : "http://kko.to/eB4vvbBDB", "terminal": "http://kko.to/Vx7UXsoDT"}
+    stop_view = {"shuttle" : "http://kko.to/Kf-ZqboYH", "station" : "http://kko.to/h9ROqsoDM", "dormitory" : "http://kko.to/vClEubBDj", "terminal": "http://kko.to/guG2uboYB"}
+    stop_name = answer.split('의 셔틀버스 도착 정보입니다')[0]
+    stop_key = stop_list[stop_name]
+    response = insert_card('정류장 정보', stop_name, 'https://gist.githubusercontent.com/jil8885/f7dcff129d1e80c4dc232168f68dc293/raw/30971dbda1c910f18e24b0d35f9defaf4a858765/hanyang-bus.png', 1083, 958)
+    response = insert_button(response, '🗺️ 카카오맵에서 보기', stop_map[stop_key])
+    response = insert_button(response, '👀 로드뷰로 보기', stop_view[stop_key])
+    return JsonResponse(response, json_dumps_params={'ensure_ascii': False})
+
 
 
 @csrf_exempt

@@ -82,20 +82,27 @@ def insert_text(text):
 
 
 # Make Card Answer
-def insert_card(title, description, image_url, width=None, height=None):
+def insert_card(title, description, image_url=None, width=None, height=None):
     new_response = deepcopy(base_response)
-    if width != None and height != None:
-        new_response['template']['outputs'] = [{'basicCard':{
-            'title' : title,
-            'description' : description,
-            'thumbnail': {"imageUrl" : image_url, 'fixedRatio': True, 'width': width, 'height': height},
-            'buttons' : []
-        }}]
+    if image_url != None:
+        if width != None and height != None:
+            new_response['template']['outputs'] = [{'basicCard':{
+                'title' : title,
+                'description' : description,
+                'thumbnail': {"imageUrl" : image_url, 'fixedRatio': True, 'width': width, 'height': height},
+                'buttons' : []
+            }}]
+        else:
+            new_response['template']['outputs'] = [{'basicCard':{
+                'title' : title,
+                'description' : description,
+                'thumbnail': {"imageUrl" : image_url},
+                'buttons' : []
+            }}]
     else:
         new_response['template']['outputs'] = [{'basicCard':{
             'title' : title,
             'description' : description,
-            'thumbnail': {"imageUrl" : image_url},
             'buttons' : []
         }}]
     return new_response
@@ -200,12 +207,12 @@ def shuttle(request):
 def stop_detail(request):
     answer, user = json_parser(request)
     stop_list = {"셔틀콕": "shuttle", "한대앞역": "station", "예술인A": "terminal", "기숙사": "dormitory"}
-    stop_map = {"shuttle" : "http://kko.to/ZTIvvsBYo", "station" : "http://kko.to/AoVdvsoYj", "dormitory" : "http://kko.to/eB4vvbBDB", "terminal": "http://kko.to/Vx7UXsoDT"}
+    # stop_map = {"shuttle" : "http://kko.to/ZTIvvsBYo", "station" : "http://kko.to/AoVdvsoYj", "dormitory" : "http://kko.to/eB4vvbBDB", "terminal": "http://kko.to/Vx7UXsoDT"}
     stop_view = {"shuttle" : "http://kko.to/Kf-ZqboYH", "station" : "http://kko.to/h9ROqsoDM", "dormitory" : "http://kko.to/vClEubBDj", "terminal": "http://kko.to/guG2uboYB"}
     stop_name = answer.split('정류장 정보입니다')[0].strip()
     stop_key = stop_list[stop_name]
-    response = insert_card('정류장 정보', stop_name, 'https://gist.githubusercontent.com/jil8885/f7dcff129d1e80c4dc232168f68dc293/raw/30971dbda1c910f18e24b0d35f9defaf4a858765/hanyang-bus.png', 1083, 958)
-    response = insert_button(response, '🗺️ 카카오맵에서 보기', stop_map[stop_key])
+    response = insert_card('정류장 정보', stop_name)
+    # response = insert_button(response, '🗺️ 카카오맵에서 보기', stop_map[stop_key])
     response = insert_button(response, '👀 로드뷰로 보기', stop_view[stop_key])
     return JsonResponse(response, json_dumps_params={'ensure_ascii': False})
 

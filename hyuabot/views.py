@@ -173,13 +173,13 @@ def shuttle(request):
         # 셔틀콕 도착 정보
         if stop == "shuttle":
             string += '셔틀콕 → 한대앞\n'
-            string += shuttle_main('shuttleA', 'toSubway') + '\n\n'
+            string += shuttle_main('shuttleOut', 'toSubway') + '\n\n'
             string += '셔틀콕 → 예술인A\n'
-            string += shuttle_main('shuttleB', 'toTerminal') + '\n\n'
+            string += shuttle_main('shuttleOut', 'toTerminal') + '\n\n'
             string += '셔틀콕 → 한대앞 → 예술인A\n'
-            string += shuttle_main('shuttleA', 'cycle') + '\n\n'
+            string += shuttle_main('shuttleOut', 'cycle') + '\n\n'
             string += '셔틀콕 건너편 → 기숙사\n'
-            string += shuttle_main('shuttleC')
+            string += shuttle_main('shuttleIn')
         # 한대앞역 도착 정보
         elif stop == "station":
             string += shuttle_main('subway')

@@ -11,26 +11,28 @@ def make_string(where, destination):
     timetable = received_json[where]
     arrival_list = []
     string = ""
-    busstoplist = ['shuttleA', 'shuttleB', 'shuttleC', 'subway', 'terminal', 'dorm']
-    if where == "shuttleA" or where == "shuttleB":
-        type_list = {'cycle': '순환버스', 'toSubway': '한대앞행', 'toTerminal': '예술인행'}
-    elif where == "shuttleC":
-        type_list = {'cycle': '기숙사행', 'toSubway': '기숙사행', 'toTerminal': '기숙사행', "null" : "셔틀콕 종착"}
-    else:
-        type_list = {'cycle': '순환버스', 'toSubway': '셔틀콕행', 'toTerminal': '셔틀콕행'}
-    pos = 0
     if destination is not None:
         for x in timetable:
-            if x['type'] == destination and (int(x['time'].split(':')[0]) > now.hour or (int(x['time'].split(':')[0]) == now.hour and int(x['time'].split(':')[1]) > now.minute)):
+            hour, minute = x['time'].split(":")
+            hour = int(hour)
+            minute = int(minute)
+            if x['type'] == destination and (hour > now.hour or (hour == now.hour and minute > now.minute)):
                 arrival_list.append(x)
+            if len(arrival_list) == 2:
+                break
     else:
         for x in timetable:
-            if int(x['time'].split(':')[0]) > now.hour or (int(x['time'].split(':')[0]) == now.hour and int(x['time'].split(':')[1]) > now.minute):
+            hour, minute = x['time'].split(":")
+            hour = int(hour)
+            minute = int(minute)
+            if hour > now.hour or (hour == now.hour and minute > now.minute):
                 arrival_list.append(x)
+            if len(arrival_list) == 2:
+                break
     for x in arrival_list:
-        if pos < 2:
-            string += type_list[x['type']] + ' ' + x['time'] + ' 도착예정\n'
-            pos += 1
+        hour, minute = x['time'].split(":")
+        time = (int(hour) - now.hour) * 60 + int(minute) - now.minute
+        string += f"{hour}시 {minute}분 도착 예정({time}분 후)"
     if string == '':
         string += '도착 예정인 버스가 없습니다.'
     if string[-1] == '\n':

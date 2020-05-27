@@ -193,6 +193,8 @@ def shuttle(request):
     response = insert_text(string)
     reply = make_reply('🔍 정류장', f'{stop_korean} 정류장 정보입니다.', '5ebf702e7a9c4b000105fb25')
     response = insert_replies(response, reply)
+    reply = make_reply('🚫 오류제보', '셔틀 오류 제보하기','5cc3fced384c5508fceec5bb')
+    response = insert_replies(response, reply)
     for stop_name in stop_list.keys():
         if stop_name != stop_korean:
             message = f"{stop_name}의 셔틀버스 도착 정보입니다"

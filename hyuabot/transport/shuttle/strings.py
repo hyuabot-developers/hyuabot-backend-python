@@ -32,7 +32,7 @@ def make_string(where, destination):
     for x in arrival_list:
         hour, minute = x['time'].split(":")
         time = (int(hour) - now.hour) * 60 + int(minute) - now.minute
-        string += f"{hour}시 {minute}분 도착 예정({time}분 후)"
+        string += f"{hour}시 {minute}분 도착예정 ({time}분 후)\n"
     if string == '':
         string += '도착 예정인 버스가 없습니다.'
     if string[-1] == '\n':

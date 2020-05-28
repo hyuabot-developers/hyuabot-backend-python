@@ -54,8 +54,6 @@ def first_last(where):
     hour, minute = first['time'].split(":")
     string += f"첫차: {hour.zfill(2)}:{minute.zfill(2)}({stop_list[first['type']]})\n"
     hour, minute = last['time'].split(":")
-    hour = int(hour)
-    minute = int(minute)
     string += f"막차: {hour.zfill(2)}:{minute.zfill(2)}({stop_list[last['type']]})"
     return string
 

@@ -35,9 +35,14 @@ def request():
         else:
             dir2 = "/week.json"
     # 셔틀콕 api 로 요청보냄
-    link = 'https://raw.githubusercontent.com/jil8885/ShuttlecockAPI/master' + dir1 + dir2
-    response = requests.get(link)
-    return response.json()
+    try:
+        with open(os.path.dirname(os.path.realpath(__file__)) + '/timetable' + dir1 + dir2) as json_file:
+            json_data = json.load(json_file)
+            return json_data
+    except:
+        link = 'https://raw.githubusercontent.com/jil8885/ShuttlecockAPI/master' + dir1 + dir2
+        response = requests.get(link)
+        return response.json()
 
 def request2():
     now = datetime.datetime.now() + datetime.timedelta(hours=9)

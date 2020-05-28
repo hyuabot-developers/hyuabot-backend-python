@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .food.food_main import make_string_food, make_string_food2
 from .library.lib_main import crawling_lib, crawling_lib2
-from .transport.shuttle_main import shuttle_main
+from .transport.shuttle_main import shuttle_main, first_last
 from .transport.shuttle.date import is_seasonal, is_semester
 
 
@@ -179,16 +179,23 @@ def shuttle(request):
             string += '셔틀콕 → 한대앞 → 예술인A\n'
             string += shuttle_main('shuttleOut', 'cycle') + '\n\n'
             string += '셔틀콕 건너편 → 기숙사\n'
-            string += shuttle_main('shuttleIn')
+            string += shuttle_main('shuttleIn') + '\n\n'
+            string += '한대앞, 예술인 방면' + '\n'
+            string += first_last('shuttleIn')
+            string += '기숙사 방면' + '\n'
+            string += first_last('shuttleOut')
         # 한대앞역 도착 정보
         elif stop == "station":
-            string += shuttle_main('subway')
+            string += shuttle_main('subway') + '\n\n'
+            string += first_last('subway')
         # 예술인A 도착 정보
         elif stop == "terminal":
-            string += shuttle_main('terminal')
+            string += shuttle_main('terminal') + '\n\n'
+            string += first_last('terminal')
         # 창의인재원 도착 정보
         elif stop == "dormitory":
-            string += shuttle_main('dorm')
+            string += shuttle_main('dorm') + '\n\n'
+            string += first_last('dorm')
     block_id = '5cc3dc8ee82127558b7e6eba'
     response = insert_text(string)
     reply = make_reply('🔍 정류장', f'{stop_korean} 정류장 정보입니다.', '5ebf702e7a9c4b000105fb25')

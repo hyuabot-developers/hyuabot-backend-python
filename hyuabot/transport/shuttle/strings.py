@@ -40,6 +40,26 @@ def make_string(where, destination):
     return string
 
 
+def first_last(where):
+    received_json = shuttle.request()
+    if where == "shuttleOut":
+        stop_list = {"toSubway" : "한대앞 직행", "toTerminal" : "예술인 직행", "cycle" : "순환버스"}
+    elif where == "shuttleIn":
+        stop_list = {"toSubway" : "기숙사행", "toTerminal" : "기숙사행", "cycle" : "기숙사행", "null" : "셔틀콕 종착"}
+    else:
+        stop_list = {"toSubway" : "셔틀콕 직행", "toTerminal" : "셔틀콕 직행", "cycle" : "순환버스"}
+    timetable = received_json[where]
+    first, last = timetable[0], timetable[-1]
+    string = ""
+    hour, minute = first['time'].split(":")
+    hour = int(hour)
+    minute = int(minute)
+    string += f"첫차: {hour}:{minute}({stop_list[first['type']]})\n"
+    hour, minute = last['time'].split(":")
+    hour = int(hour)
+    minute = int(minute)
+    string += f"막차: {hour}:{minute}({stop_list[last['type']]})"
+    return string
 
 def make2_string(route):
     received_json = shuttle.request2()

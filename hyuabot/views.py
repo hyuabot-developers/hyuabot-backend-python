@@ -9,7 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .food.food_main import make_string_food, make_string_food2
 from .library.lib_main import crawling_lib, crawling_lib2
-from .transport.shuttle_main import shuttle_main, first_last
+from .transport.shuttle_main import shuttle_main
+from .transport.shuttle.strings import first_last
 from .transport.shuttle.date import is_seasonal, is_semester
 
 

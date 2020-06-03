@@ -195,7 +195,12 @@ def shuttle(request):
             string += first_last('terminal')
         # 창의인재원 도착 정보
         elif stop == "dormitory":
-            string += shuttle_main('dorm') + '\n\n'
+            string += '기숙사 → 셔틀콕, 한대앞\n'
+            string += shuttle_main('dorm', 'toSubway') + '\n\n'
+            string += '기숙사 → 셔틀콕, 예술인A\n'
+            string += shuttle_main('dorm', 'toTerminal') + '\n\n'
+            string += '기숙사 → 순환버스\n'
+            string += shuttle_main('dorm', 'cycle') + '\n\n'
             string += first_last('dorm')
     block_id = '5cc3dc8ee82127558b7e6eba'
     response = insert_text(string)

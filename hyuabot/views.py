@@ -173,21 +173,24 @@ def shuttle(request):
             string = "방학중 시간표입니다.\n"
         # 셔틀콕 도착 정보
         if stop == "shuttle":
-            string += '셔틀콕 → 한대앞\n'
+            string += '셔틀콕 → 한대앞(직행)\n'
             string += shuttle_main('shuttleOut', 'toSubway') + '\n\n'
-            string += '셔틀콕 → 예술인A\n'
+            string += '셔틀콕 → 예술인A(직행)\n'
             string += shuttle_main('shuttleOut', 'toTerminal') + '\n\n'
-            string += '셔틀콕 → 한대앞 → 예술인A\n'
+            string += '셔틀콕 → 한대앞 → 예술인A(순환)\n'
             string += shuttle_main('shuttleOut', 'cycle') + '\n\n'
             string += '셔틀콕 건너편 → 기숙사\n'
             string += shuttle_main('shuttleIn') + '\n\n'
             string += '한대앞, 예술인 방면' + '\n'
-            string += first_last('shuttleOut') + '\n'
+            string += first_last('shuttleOut') + '\n\n'
             string += '기숙사 방면' + '\n'
             string += first_last('shuttleIn')
         # 한대앞역 도착 정보
         elif stop == "station":
-            string += shuttle_main('subway') + '\n\n'
+            string += '한대앞 → 셔틀콕(직행)\n'
+            string += shuttle_main('subway', 'toSubway') + '\n\n'
+            string += '한대앞 → 예술인A → 셔틀콕(순환)\n'
+            string += shuttle_main('subway', 'cycle') + '\n\n'
             string += first_last('subway')
         # 예술인A 도착 정보
         elif stop == "terminal":
@@ -199,7 +202,7 @@ def shuttle(request):
             string += shuttle_main('dorm', 'toSubway') + '\n\n'
             string += '기숙사 → 셔틀콕, 예술인A\n'
             string += shuttle_main('dorm', 'toTerminal') + '\n\n'
-            string += '기숙사 → 순환버스\n'
+            string += '기숙사 → 셔틀콕, 한대앞, 예술인A(순환)\n'
             string += shuttle_main('dorm', 'cycle') + '\n\n'
             string += first_last('dorm')
     block_id = '5cc3dc8ee82127558b7e6eba'

@@ -6,6 +6,7 @@ except:
 import datetime, json, os
 from workalendar.asia import SouthKorea
 
+holiday = [(5, 15)]
 def request():
     now = datetime.datetime.now() + datetime.timedelta(hours=9)
     cal = SouthKorea()
@@ -13,7 +14,7 @@ def request():
     if is_semester(now.month, now.day):
         dir1 = "/semester"
         # 주말
-        if now.weekday() in [5, 6] or not cal.is_working_day(now):
+        if now.weekday() in [5, 6] or not cal.is_working_day(now) or (now.month, now.day) in holiday:
             dir2 = "/weekend.json"
         # 평일
         else:

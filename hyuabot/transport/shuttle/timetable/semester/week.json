@@ -72,9 +72,7 @@
     {"time":"20:15", "type":"cycle"},
     {"time":"20:45", "type":"cycle"},
     {"time":"21:15", "type":"cycle"},
-    {"time":"21:45", "type":"cycle"},
-    {"time":"22:15", "type":"cycle"},
-    {"time":"22:45", "type":"cycle"}
+    {"time":"21:45", "type":"cycle"}
   ],
   "shuttleOut": [
     {"time":"07:50", "type":"cycle"},
@@ -149,9 +147,7 @@
     {"time":"20:20", "type":"cycle"},
     {"time":"20:50", "type":"cycle"},
     {"time":"21:20", "type":"cycle"},
-    {"time":"21:50", "type":"cycle"},
-    {"time":"22:20", "type":"cycle"},
-    {"time":"22:50", "type":"cycle"}
+    {"time":"21:50", "type":"cycle"}
   ],
   "subway": [
     {"time":"08:00", "type":"cycle"},
@@ -226,9 +222,7 @@
     {"time":"20:30", "type":"cycle"},
     {"time":"21:00", "type":"cycle"},
     {"time":"21:30", "type":"cycle"},
-    {"time":"22:00", "type":"cycle"},
-    {"time":"22:30", "type":"cycle"},
-    {"time":"23:00", "type":"cycle"}
+    {"time":"22:00", "type":"cycle"}
   ],
   "terminal": [
     {"time":"08:05", "type":"cycle"},
@@ -259,9 +253,7 @@
     {"time":"20:35", "type":"cycle"},
     {"time":"21:05", "type":"cycle"},
     {"time":"21:35", "type":"cycle"},
-    {"time":"22:05", "type":"cycle"},
-    {"time":"22:35", "type":"cycle"},
-    {"time":"23:05", "type":"cycle"}
+    {"time":"22:05", "type":"cycle"}
   ],
   "shuttleIn": [
     {"time":"08:15", "type":"cycle"},
@@ -335,7 +327,7 @@
     {"time":"20:15", "type":"cycle"},
     {"time":"20:45", "type":"cycle"},
     {"time":"21:15", "type":"cycle"},
-    {"time":"22:45", "type":"cycle"},
-    {"time":"23:15", "type":"cycle"}
+    {"time":"21:45", "type":"cycle"},
+    {"time":"22:15", "type":"cycle"}
   ]
 }

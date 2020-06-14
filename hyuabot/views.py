@@ -246,9 +246,8 @@ def shuttle(request):
 
 @csrf_exempt
 def stop_detail(request):
-    answer, user = json_parser(request)
-    stop_list = {"셔틀콕": "shuttle", "한대앞역": "station", "예술인A": "terminal", "기숙사": "dormitory"}
-    # stop_map = {"shuttle" : "http://kko.to/ZTIvvsBYo", "station" : "http://kko.to/AoVdvsoYj", "dormitory" : "http://kko.to/eB4vvbBDB", "terminal": "http://kko.to/Vx7UXsoDT"}
+    answer, _ = json_parser(request)
+    stop_list = {"셔틀콕": "shuttle", "셔틀콕 건너편": "shuttle", "한대앞역": "station", "예술인A": "terminal", "기숙사": "dormitory"}
     stop_view = {"shuttle" : "http://kko.to/Kf-ZqboYH", "station" : "http://kko.to/h9ROqsoDM", "dormitory" : "http://kko.to/vClEubBDj", "terminal": "http://kko.to/guG2uboYB"}
     stop_name = answer.split('정류장 정보입니다')[0].strip()
     stop_key = stop_list[stop_name]

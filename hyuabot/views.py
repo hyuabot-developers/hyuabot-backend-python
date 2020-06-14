@@ -152,9 +152,10 @@ def shuttle_photo(request):
 
 @csrf_exempt
 def shuttle(request):
-    answer, user = json_parser(request)
-    stop_list = {"셔틀콕": "shuttle", "한대앞역": "station", "예술인A": "terminal", "기숙사": "dormitory"}
-    emoji = {"셔틀콕": '🏫 ', "한대앞역": '🚆 ', "예술인A": '🚍 ', "기숙사": '🏘️ '}
+    answer, _ = json_parser(request)
+    stop_list = {"셔틀콕": "shuttle_o", "한대앞역": "station", "예술인A": "terminal", "기숙사": "dormitory", "셔틀콕 건너편": "shuttle_i"}
+    emoji = {"셔틀콕": '🏫 ', "한대앞역": '🚆 ', "예술인A": '🚍 ', "기숙사": '🏘️ ', "셔틀콕 건너편": '🏫 '}
+    block_id = '5cc3dc8ee82127558b7e6eba'
     if "도착 정보입니다" in answer:
         stop_korean = answer.split("의")[0]
     else:
@@ -166,8 +167,8 @@ def shuttle(request):
         string = "당일, %d월 %d일은 셔틀 미운행합니다." % (now.month, now.day)
     elif now.month == 6 and now.day in [15, 16, 17, 18, 19, 20, 21, 22, 23]:
         base_link = "https://raw.githubusercontent.com/jil8885/ShuttlecockAPI/master/images/Jun2020/"
-        file_dic = {"shuttle":"shuttle_o", "station":"subway", "terminal":"term", "dormitory":"dorm"}
-        string_dic = {"shuttle":"셔틀콕(한대앞, 예술인 방면)", "station":"한대앞역", "terminal":"예술인A", "dormitory":"기숙사"}
+        file_dic = {"shuttle_o":"shuttle_o", "shuttle_i":"shuttle_i", "station":"subway", "terminal":"term", "dormitory":"dorm"}
+        string_dic = {"shuttle_o":"셔틀콕", "shuttle_i":"셔틀콕 건너편", "station":"한대앞역", "terminal":"예술인A", "dormitory":"기숙사"}
         if now.day == 20:
             path = "sat/"
         elif now.day == 21:
@@ -194,19 +195,20 @@ def shuttle(request):
         else:
             string = "방학중 시간표입니다.\n"
         # 셔틀콕 도착 정보
-        if stop == "shuttle":
+        if stop == "shuttle_o":
             string += '셔틀콕 → 한대앞(직행)\n'
             string += shuttle_main('shuttleOut', 'toSubway') + '\n\n'
             string += '셔틀콕 → 예술인A(직행)\n'
             string += shuttle_main('shuttleOut', 'toTerminal') + '\n\n'
             string += '셔틀콕 → 한대앞 → 예술인A(순환)\n'
             string += shuttle_main('shuttleOut', 'cycle') + '\n\n'
+            string += '한대앞, 예술인 방면' + '\n'
+            string += first_last('shuttleOut')
+        elif stop == "shuttle_i":
             string += '셔틀콕 건너편 → 기숙사\n'
             string += shuttle_main('shuttleIn') + '\n\n'
-            string += '한대앞, 예술인 방면' + '\n'
-            string += first_last('shuttleOut') + '\n\n'
             string += '기숙사 방면' + '\n'
-            string += first_last('shuttleIn')
+            string += first_last('shuttleIn')            
         # 한대앞역 도착 정보
         elif stop == "station":
             string += '한대앞 → 셔틀콕(직행)\n'
@@ -227,7 +229,6 @@ def shuttle(request):
             string += '기숙사 → 셔틀콕, 한대앞, 예술인A(순환)\n'
             string += shuttle_main('dorm', 'cycle') + '\n\n'
             string += first_last('dorm')
-    block_id = '5cc3dc8ee82127558b7e6eba'
     response = insert_text(string)
     reply = make_reply('🔍 정류장', f'{stop_korean} 정류장 정보입니다.', '5ebf702e7a9c4b000105fb25')
     response = insert_replies(response, reply)

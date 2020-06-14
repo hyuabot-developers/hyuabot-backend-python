@@ -164,6 +164,28 @@ def shuttle(request):
     rest_date = [(12, 25), (1, 1)]
     if (now.month, now.day) in rest_date:
         string = "당일, %d월 %d일은 셔틀 미운행합니다." % (now.month, now.day)
+    elif now.month == 6 and now.day in [15, 16, 17, 18, 19, 20, 21, 22, 23]:
+        base_link = "https://raw.githubusercontent.com/jil8885/ShuttlecockAPI/master/images/Jun2020/"
+        file_dic = {"shuttle":"shuttle_o", "station":"subway", "terminal":"term", "dormitory":"dorm"}
+        string_dic = {"shuttle":"셔틀콕(한대앞, 예술인 방면)", "station":"한대앞역", "terminal":"예술인A", "dormitory":"기숙사"}
+        if now.day == 20:
+            path = "sat/"
+        elif now.day == 21:
+            path = "sun/"
+        else:
+            path = "weekdays/"
+        response = insert_image(base_link + path + file_dic[stop] + ".png", string_dic[stop] + "입니다.")
+        reply = make_reply('🔍 정류장', f'{stop_korean} 정류장 정보입니다.', '5ebf702e7a9c4b000105fb25')
+        response = insert_replies(response, reply)
+        reply = make_reply('🚫 오류제보', '셔틀 오류 제보하기','5cc3fced384c5508fceec5bb')
+        response = insert_replies(response, reply)
+        for stop_name in stop_list.keys():
+            if stop_name != stop_korean:
+                message = f"{stop_name}의 셔틀버스 도착 정보입니다"
+
+                reply = make_reply(emoji[stop_name] + stop_name, message, block_id)
+                response = insert_replies(response, reply)
+        return JsonResponse(response, json_dumps_params={'ensure_ascii': False})        
     else:
         if is_semester(now.month, now.day):
             string = "학기중 시간표입니다.\n"

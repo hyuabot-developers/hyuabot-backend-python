@@ -6,9 +6,10 @@ except:
     from date import is_semester, is_seasonal
 
 def make_string(where, destination):
-    received_json = shuttle.request()
+    where_dic = {"shuttleOut":"Shuttlecock_O", "shuttleIn":"Shuttlecock_I", "subway":"Subway", "terminal":"YesulIn", "dorm":"Residence"}
+    received_json = shuttle.request(where_dic[where])
     now = datetime.datetime.now() + datetime.timedelta(hours=9)
-    timetable = received_json[where]
+    timetable = received_json[list(received_json.keys())[0]]
     arrival_list = []
     string = ""
     if destination is not None:
@@ -41,14 +42,15 @@ def make_string(where, destination):
 
 
 def first_last(where):
-    received_json = shuttle.request()
+    where_dic = {"shuttleOut":"Shuttlecock_O", "shuttleIn":"Shuttlecock_I", "subway":"Subway", "terminal":"YesulIn", "dorm":"Residence"}
+    received_json = shuttle.request(where_dic[where])
     if where == "shuttleOut":
-        stop_list = {"toSubway" : "한대앞 직행", "toTerminal" : "예술인 직행", "cycle" : "순환버스"}
+        stop_list = {"DH" : "한대앞 직행", "DY" : "예술인 직행", "C" : "순환버스"}
     elif where == "shuttleIn":
-        stop_list = {"toSubway" : "기숙사행", "toTerminal" : "기숙사행", "cycle" : "기숙사행", "null" : "셔틀콕 종착"}
+        stop_list = {"DH" : "기숙사행", "DY" : "기숙사행", "C" : "기숙사행", "null" : "셔틀콕 종착"}
     else:
-        stop_list = {"toSubway" : "셔틀콕 직행", "toTerminal" : "셔틀콕 직행", "cycle" : "순환버스"}
-    timetable = received_json[where]
+        stop_list = {"DH" : "셔틀콕 직행", "DY" : "셔틀콕 직행", "C" : "순환버스"}
+    timetable = received_json[list(received_json.keys())[0]]
     first, last = timetable[0], timetable[-1]
     string = ""
     hour, minute = first['time'].split(":")

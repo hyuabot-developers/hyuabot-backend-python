@@ -164,29 +164,7 @@ def shuttle(request):
     now = datetime.datetime.now() + datetime.timedelta(hours=9)
     rest_date = [(12, 25), (1, 1)]
     if (now.month, now.day) in rest_date:
-        string = "당일, %d월 %d일은 셔틀 미운행합니다." % (now.month, now.day)
-    elif now.month == 6 and now.day in [15, 16, 17, 18, 19, 20, 21, 22, 23]:
-        base_link = "https://raw.githubusercontent.com/jil8885/ShuttlecockAPI/master/images/Jun2020/"
-        file_dic = {"shuttle_o":"shuttle_o", "shuttle_i":"shuttle_i", "station":"subway", "terminal":"term", "dormitory":"dorm"}
-        string_dic = {"shuttle_o":"셔틀콕", "shuttle_i":"셔틀콕 건너편", "station":"한대앞역", "terminal":"예술인A", "dormitory":"기숙사"}
-        if now.day == 20:
-            path = "sat/"
-        elif now.day == 21:
-            path = "sun/"
-        else:
-            path = "weekdays/"
-        response = insert_image(base_link + path + file_dic[stop] + ".png", string_dic[stop] + "입니다.")
-        reply = make_reply('🔍 정류장', f'{stop_korean} 정류장 정보입니다.', '5ebf702e7a9c4b000105fb25')
-        response = insert_replies(response, reply)
-        reply = make_reply('🚫 오류제보', '셔틀 오류 제보하기','5cc3fced384c5508fceec5bb')
-        response = insert_replies(response, reply)
-        for stop_name in stop_list.keys():
-            if stop_name != stop_korean:
-                message = f"{stop_name}의 셔틀버스 도착 정보입니다"
-
-                reply = make_reply(emoji[stop_name] + stop_name, message, block_id)
-                response = insert_replies(response, reply)
-        return JsonResponse(response, json_dumps_params={'ensure_ascii': False})        
+        string = "당일, %d월 %d일은 셔틀 미운행합니다." % (now.month, now.day)       
     else:
         if is_semester(now.month, now.day):
             string = "학기중 시간표입니다.\n"
@@ -197,11 +175,11 @@ def shuttle(request):
         # 셔틀콕 도착 정보
         if stop == "shuttle_o":
             string += '셔틀콕 → 한대앞(직행)\n'
-            string += shuttle_main('shuttleOut', 'toSubway') + '\n\n'
+            string += shuttle_main('shuttleOut', 'DH') + '\n\n'
             string += '셔틀콕 → 예술인A(직행)\n'
-            string += shuttle_main('shuttleOut', 'toTerminal') + '\n\n'
+            string += shuttle_main('shuttleOut', 'DY') + '\n\n'
             string += '셔틀콕 → 한대앞 → 예술인A(순환)\n'
-            string += shuttle_main('shuttleOut', 'cycle') + '\n\n'
+            string += shuttle_main('shuttleOut', 'C') + '\n\n'
             string += '한대앞, 예술인 방면' + '\n'
             string += first_last('shuttleOut')
         elif stop == "shuttle_i":
@@ -212,9 +190,9 @@ def shuttle(request):
         # 한대앞역 도착 정보
         elif stop == "station":
             string += '한대앞 → 셔틀콕(직행)\n'
-            string += shuttle_main('subway', 'toSubway') + '\n\n'
+            string += shuttle_main('subway', 'DH') + '\n\n'
             string += '한대앞 → 예술인A → 셔틀콕(순환)\n'
-            string += shuttle_main('subway', 'cycle') + '\n\n'
+            string += shuttle_main('subway', 'C') + '\n\n'
             string += first_last('subway')
         # 예술인A 도착 정보
         elif stop == "terminal":
@@ -223,11 +201,11 @@ def shuttle(request):
         # 창의인재원 도착 정보
         elif stop == "dormitory":
             string += '기숙사 → 셔틀콕, 한대앞\n'
-            string += shuttle_main('dorm', 'toSubway') + '\n\n'
+            string += shuttle_main('dorm', 'DH') + '\n\n'
             string += '기숙사 → 셔틀콕, 예술인A\n'
-            string += shuttle_main('dorm', 'toTerminal') + '\n\n'
+            string += shuttle_main('dorm', 'DY') + '\n\n'
             string += '기숙사 → 셔틀콕, 한대앞, 예술인A(순환)\n'
-            string += shuttle_main('dorm', 'cycle') + '\n\n'
+            string += shuttle_main('dorm', 'C') + '\n\n'
             string += first_last('dorm')
     response = insert_text(string)
     reply = make_reply('🔍 정류장', f'{stop_korean} 정류장 정보입니다.', '5ebf702e7a9c4b000105fb25')

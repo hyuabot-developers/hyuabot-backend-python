@@ -1,3 +1,0 @@
-[submodule ".\\hyuabot\\transport\\shuttle\\API"]
-	path = .\\hyuabot\\transport\\shuttle\\API
-	url = https://github.com/jil8885/ERICA_shuttlecock_API

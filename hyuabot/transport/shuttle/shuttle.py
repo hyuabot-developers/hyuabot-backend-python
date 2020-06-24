@@ -47,9 +47,10 @@ def request(stopName):
             json_data = json.load(json_file)
             return json_data
     except:
-        link = 'https://github.com/jil8885/ERICA_shuttlecock_API/blob/master' + dir1 + dir2 + "/" + stopName + file_ext
+        link = 'https://raw.githubusercontent.com/jil8885/ERICA_shuttlecock_API/master/timetable' + dir1 + dir2 + "/" + stopName + file_ext
+        print(link)
         response = requests.get(link)
-        return response.json()
+    return response.json()
 
 def request2():
     now = datetime.datetime.now() + datetime.timedelta(hours=9)

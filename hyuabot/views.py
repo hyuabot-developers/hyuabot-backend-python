@@ -184,13 +184,15 @@ def shuttle(request):
             string += first_last('shuttleOut')
         elif stop == "shuttle_i":
             string += '셔틀콕 건너편 → 기숙사\n'
-            string += shuttle_main('shuttleIn') + '\n\n'
+            string += shuttle_main('shuttleIn', 'R') + '\n\n'
+            string += '셔틀콕 건너편 종착\n'
+            string += shuttle_main('shuttleIn', 'NA') + '\n\n'
             string += '기숙사 방면' + '\n'
             string += first_last('shuttleIn')            
         # 한대앞역 도착 정보
         elif stop == "station":
             string += '한대앞 → 셔틀콕(직행)\n'
-            string += shuttle_main('subway', 'DH') + '\n\n'
+            string += shuttle_main('subway', '') + '\n\n'
             string += '한대앞 → 예술인A → 셔틀콕(순환)\n'
             string += shuttle_main('subway', 'C') + '\n\n'
             string += first_last('subway')

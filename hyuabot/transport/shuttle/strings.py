@@ -47,9 +47,11 @@ def first_last(where):
     if where == "shuttleOut":
         stop_list = {"DH" : "한대앞 직행", "DY" : "예술인 직행", "C" : "순환버스"}
     elif where == "shuttleIn":
-        stop_list = {"DH" : "기숙사행", "DY" : "기숙사행", "C" : "기숙사행", "null" : "셔틀콕 종착"}
-    else:
-        stop_list = {"DH" : "셔틀콕 직행", "DY" : "셔틀콕 직행", "C" : "순환버스"}
+        stop_list = {"DH" : "기숙사행", "DY" : "기숙사행", "R" : "기숙사행", "NA" : "셔틀콕 종착"}
+    elif where == "subway":
+        stop_list = {"" : "셔틀콕 직행", "C" : "순환버스"}
+    elif where == "terminal":
+        stop_list = {"" : "셔틀콕 직행", "C" : "순환버스"}
     timetable = received_json[list(received_json.keys())[0]]
     first, last = timetable[0], timetable[-1]
     string = ""

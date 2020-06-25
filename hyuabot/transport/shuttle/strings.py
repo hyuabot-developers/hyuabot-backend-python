@@ -52,6 +52,8 @@ def first_last(where):
         stop_list = {"" : "셔틀콕 직행", "C" : "순환버스"}
     elif where == "terminal":
         stop_list = {"" : "셔틀콕 직행", "C" : "순환버스"}
+    elif where == "dorm":
+        stop_list = {"DH" : "한대앞 직행", "DY" : "예술인 직행", "C" : "순환버스"}
     timetable = received_json[list(received_json.keys())[0]]
     first, last = timetable[0], timetable[-1]
     string = ""

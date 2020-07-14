@@ -21,7 +21,7 @@ def is_semester(month, day):
 
 def is_seasonal(month, day):
     # 2020 plan
-    if ((month == 6 and day > 21) or (month == 7 and day < 11)) or (
+    if ((month == 6 and day > 21) or (month == 7 and day < 15)) or (
             (month == 12 and day > 23) or (month == 1 and day < 16)):
         return True
     else:

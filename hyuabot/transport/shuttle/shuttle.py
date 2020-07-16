@@ -43,12 +43,11 @@ def request(stopName):
             file_ext = "_week.json"
     # 셔틀콕 api 로 요청보냄
     try:
-        with open(os.path.dirname(os.path.realpath(__file__)) + '/API/timetable' + dir1 + dir2 + "/" + stopName + file_ext) as json_file:
+        with open(os.path.dirname(os.path.realpath(__file__)) + '/timetable' + dir1 + dir2 + "/" + stopName + file_ext) as json_file:
             json_data = json.load(json_file)
             return json_data
     except:
-        link = 'https://raw.githubusercontent.com/jil8885/ERICA_shuttlecock_API/master/timetable' + dir1 + dir2 + "/" + stopName + file_ext
-        print(link)
+        link = 'https://raw.githubusercontent.com/jil8885/hyuabot-mainline/master/hyuabot/transport/shuttle/API/timetable/' + dir1 + dir2 + "/" + stopName + file_ext
         response = requests.get(link)
     return response.json()
 

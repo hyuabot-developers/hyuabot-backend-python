@@ -16,10 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 import hyuabot.url as chatbot
-import web.url as web
+# import web.url as web
 # import restapi.url as api
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('chatbot/', include(chatbot)),
-    path('web/', include(web))
+    # path('web/', include(web))
 ]

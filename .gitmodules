@@ -1,0 +1,3 @@
+[submodule "hyuabot"]
+	path = hyuabot
+	url = https://github.com/jil8885/django_app_hyuabot

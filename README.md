@@ -1,6 +1,4 @@
-# HYUABOT ![](https://img.shields.io/static/v1?label=release&message=v1.0&color=blue) ![](https://img.shields.io/static/v1?label=Framework&message=python3-django&color=skyblue) ![](https://img.shields.io/static/v1?label=author&message=Jeongin-Lee&color=green) ![](https://github.com/jil8885/hyuabot-mainline/workflows/Deploy/badge.svg)
-
-Chatbot that provides several information for Hanyang Univ. ERICA Campus
+Personal django project to operate several projects
 
 ## Getting Started
 
@@ -17,10 +15,10 @@ $ sudo apt install python3 python3-pip
 ```
 
 ### How to Run
-```
-$ python3 manage.py runserver <port>
-```
-And, you must connect server with chat bot on [Kakao-i Open Builder](https://i.kakao.com/openbuilder)
+Check each submodule to know how to operate project
+
+### Included Projects
+* Hyuabot : Chatbot that provides several information for Hanyang Univ. ERICA Campus
 
 ## Contributing
 

@@ -3,5 +3,5 @@
 .DS_Store
 .vscode/
 hyuabot/__pycache__/
-app.yaml
 staticfiles/
+app.yaml

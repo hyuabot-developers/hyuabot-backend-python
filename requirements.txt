@@ -8,5 +8,4 @@ bs4
 tox
 workalendar
 selenium
-psycopg2
 django-heroku

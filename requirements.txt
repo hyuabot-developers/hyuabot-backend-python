@@ -9,3 +9,5 @@ tox
 workalendar
 selenium
 django-heroku
+django-dashing
+firebase_admin

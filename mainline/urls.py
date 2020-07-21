@@ -16,12 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 import hyuabot.url as chatbot
-import dashboard.url as dashboard
+from dashing.utils import router
 # import web.url as web
 # import restapi.url as api
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('chatbot/', include(chatbot)),
-    path('dashboard/', include(dashboard))
+    path('dashboard/', include(router.urls), name="Dashboard")
     # path('web/', include(web))
 ]

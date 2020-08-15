@@ -11,3 +11,4 @@ selenium
 django-heroku
 django-dashing
 firebase_admin
+cssselect

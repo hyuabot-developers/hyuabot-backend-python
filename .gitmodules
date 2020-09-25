@@ -1,0 +1,6 @@
+[submodule "kakao"]
+	path = kakao
+	url = https://github.com/jil8885/flask-kakao-i-hanyang
+[submodule "transport/shuttle/timetable"]
+	path = transport/shuttle/timetable
+	url = https://github.com/jil8885/hanyang-shuttle-timetable

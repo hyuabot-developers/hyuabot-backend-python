@@ -1,0 +1,14 @@
+# flask
+flask
+flask-caching
+flask-restx
+
+# firebase
+firebase-admin
+
+# requests
+requests
+requests-cache
+
+# date
+workalendar

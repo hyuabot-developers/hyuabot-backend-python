@@ -29,6 +29,7 @@ api.add_namespace(kakao_url, '/kakao')
 
 # Execute Server
 app.config.from_mapping(config)
+app.config['JSON_AS_ASCII'] = False
 cache = Cache(app)
 
 if __name__ == '__main__':

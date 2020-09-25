@@ -9,6 +9,7 @@ firebase-admin
 # requests
 requests
 requests-cache
+lxml
 
 # date
 workalendar

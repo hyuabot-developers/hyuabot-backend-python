@@ -1,5 +1,6 @@
 # External Module
 from flask import Flask
+from flask_restx import Namespace, Api
 from flask_caching import Cache
 
 # Internal Module
@@ -8,6 +9,14 @@ from kakao.url import kakao_url
 
 # Server Object
 app = Flask(__name__)
+api = Api(
+    app=app,
+    version='0.1',
+    title='API server working on GAE',
+    terms_url='/',
+    contact='jil8885@hanyang.ac.kr',
+    license='MIT'
+)
 
 # Flask Config
 config = {
@@ -15,8 +24,8 @@ config = {
     'CACHE_TYPE':'simple',
     'CACHE_DEFAULT_TIMEOUT':300
 }
-# Blueprint
-app.register_blueprint(kakao_url, url_prefix='/kakao')
+# NameSpace
+api.add_namespace(kakao_url, '/kakao')
 
 # Execute Server
 app.config.from_mapping(config)

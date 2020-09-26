@@ -1,34 +1,40 @@
-import requests, requests_cache
+import os
+import platform
+from datetime import datetime
+
+import requests
+import requests_cache
 from workalendar.asia import SouthKorea
 
-from datetime import datetime
-import calendar
+from common.config import korea_timezone
 
 cal = SouthKorea()
-now = datetime.now()
+now = datetime.now(tz=korea_timezone)
+
 
 def is_semester(modified=False, date_to_know=now):
-
     # 학기중, 계절학기, 방학 중인지 구별 코드
-    requests_cache.install_cache('timetable_cache')
-    req = requests.get(url="https://raw.githubusercontent.com/jil8885/hanyang-shuttle-timetable/main/date.json")
+    if platform.system() != 'Windows':
+        requests_cache.install_cache(f'/tmp/timetable_cache', expire_after=3600)
+    else:
+        requests_cache.install_cache(f'{os.path.dirname(os.path.abspath(__file__))}timetable_cache', expire_after=3600)
+    date_url = "https://raw.githubusercontent.com/jil8885/hanyang-shuttle-timetable/main/date.json"
+    req = requests.get(url=date_url)
     result = req.json()
 
     for key in [x for x in list(result.keys()) if x not in ['holiday', 'halt']]:
         for term in result[key]:
-            startTime = datetime.strptime(term['start'], "%m-%d")
-            endTime = datetime.strptime(term['end'], "%m-%d")
-            if endTime <= startTime:
-                startTime = startTime.replace(year=date_to_know.year)
-                endTime = endTime.replace(year=date_to_know.year)
+            start_time = datetime.strptime(term['start'], "%m-%d").replace(tzinfo=korea_timezone)
+            end_time = datetime.strptime(term['end'], "%m-%d").replace(tzinfo=korea_timezone)
+            if end_time > start_time:
+                start_time = start_time.replace(year=date_to_know.year)
+                end_time = end_time.replace(year=date_to_know.year)
             else:
-                startTime = startTime.replace(year=date_to_know.year)
-                endTime = endTime.replace(year=date_to_know.year + 1)
-            
-            if date_to_know >= startTime and date_to_know < endTime:
-                term = key
-
-
+                start_time = start_time.replace(year=date_to_know.year)
+                end_time = end_time.replace(year=date_to_know.year + 1)
+            if start_time <= date_to_know < end_time:
+                term_result = key
+                break
     # 운행 중지 일자
     for stop_date in result['halt']:
         halt_date = datetime.strptime(stop_date, "%m-%d")
@@ -47,4 +53,4 @@ def is_semester(modified=False, date_to_know=now):
         if (date_to_know.month, date_to_know.day) == (holiday_date.month, holiday_date.day):
             day = 'weekend'
 
-    return term, day
+    return term_result, day

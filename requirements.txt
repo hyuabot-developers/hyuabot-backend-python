@@ -1,15 +1,9 @@
-django==2.2.14
-dj-database-url
-whitenoise
-gunicorn
+django
 requests
 lxml
 bs4
 tox
 workalendar
-selenium
-django-heroku
-django-dashing
 firebase_admin
 cssselect
 utils

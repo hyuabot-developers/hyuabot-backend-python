@@ -1,0 +1,6 @@
+[submodule "transport/shuttle/timetable"]
+	path = transport/shuttle/timetable
+	url = https://github.com/jil8885/hanyang-shuttle-timetable
+[submodule "kakao_i_hanyang"]
+	path = kakao_i_hanyang
+	url = https://github.com/jil8885/django-kakao-i-hanyang

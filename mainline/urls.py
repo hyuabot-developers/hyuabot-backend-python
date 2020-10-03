@@ -1,27 +1,10 @@
-"""mainline URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
-import hyuabot.url as chatbot
-from dashing.utils import router
-# import web.url as web
-# import restapi.url as api
+
+from kakao_i_hanyang import url as kakao_i_router
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('chatbot/', include(chatbot)),
-    path('dashboard/', include(router.urls), name="Dashboard")
+    path('kakao/', include(kakao_i_router)),
     # path('web/', include(web))
 ]

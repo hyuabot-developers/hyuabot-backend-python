@@ -1,9 +1,18 @@
+# django library
 django
+djangorestframework
+
+# crawling library
 requests
 lxml
 bs4
+cssselect
+
+# calendar library
 tox
 workalendar
+
+# firebase library
 firebase_admin
-cssselect
+
 utils

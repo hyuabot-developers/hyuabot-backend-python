@@ -3,7 +3,6 @@ import platform
 from datetime import datetime
 
 import requests
-import requests_cache
 from workalendar.asia import SouthKorea
 
 from common.config import korea_timezone
@@ -14,10 +13,6 @@ now = datetime.now(tz=korea_timezone)
 
 def is_semester(modified=False, date_to_know=now):
     # 학기중, 계절학기, 방학 중인지 구별 코드
-    if platform.system() != 'Windows':
-        requests_cache.install_cache(f'/tmp/timetable_cache', expire_after=3600)
-    else:
-        requests_cache.install_cache(f'{os.path.dirname(os.path.abspath(__file__))}timetable_cache', expire_after=3600)
     date_url = "https://raw.githubusercontent.com/jil8885/hanyang-shuttle-timetable/main/date.json"
     req = requests.get(url=date_url)
     result = req.json()

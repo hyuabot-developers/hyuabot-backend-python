@@ -1,14 +1,12 @@
 # flask
-flask
-flask-caching
-flask-restx
+sanic
+sanic-openapi
 
 # firebase
 firebase-admin
 
 # requests
 requests
-requests-cache
 lxml
 cssselect
 

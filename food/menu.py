@@ -65,6 +65,7 @@ def get_cafeteria_menu(cafeteria, url="https://www.hanyang.ac.kr/web/www/re", ca
 
 
 def get_recipe(cafeteria, url="https://www.hanyang.ac.kr/web/www/re", campus=0):
+    now = datetime.now(tz=korea_timezone)
     if not _apps:
         cred = get_cred()
         initialize_app(cred)

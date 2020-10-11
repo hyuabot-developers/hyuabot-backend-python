@@ -20,14 +20,16 @@ def get_reading_room_seat(campus, room_id=''):
         if campus:
             doc = db.collection('reading_room').document('seoul').collection('rooms').document(room_id)
             total_room = doc.get().to_dict()
-            doc = db.collection('reading_room').document('seoul').get()
+            doc = db.collection('reading_room').document('seoul')
             active_room = doc.get().to_dict()['active_room']
+            active_room = [x for x in active_room if '미개방' not in active_room]
             return total_room, active_room
         else:
             doc = db.collection('reading_room').document('erica').collection('rooms').document(room_id)
             total_room = doc.get().to_dict()
             doc = db.collection('reading_room').document('erica')
             active_room = doc.get().to_dict()['active_room']
+            active_room = [x for x in active_room if '미개방' not in active_room]
             return total_room, active_room
     else:
         if campus:

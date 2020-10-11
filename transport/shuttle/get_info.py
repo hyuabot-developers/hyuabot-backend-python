@@ -89,6 +89,7 @@ def get_departure_info(dest_stop):
 def get_first_last_departure(dest_stop):
     # 학기 여부, 주말 여부 연산
     bool_semester, bool_weekend = is_semester()
+    now = datetime.now(tz=korea_timezone)
 
     # 학기 여부에 따라 json 경로 수정
     term = {

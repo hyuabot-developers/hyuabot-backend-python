@@ -2,6 +2,11 @@ from enum import Enum
 import requests
 from lxml.cssselect import CSSSelector
 from lxml.html import fromstring
+from firebase_admin import _apps, initialize_app, get_app, firestore
+from datetime import datetime
+
+from common.config import korea_timezone
+from firebase.firebase_init import get_cred
 
 
 class CafeteriaSeoul(Enum):
@@ -23,15 +28,11 @@ class CafeteriaERICA(Enum):
     changbo_erica = "15"
 
 
-def get_recipe(cafeteria, url="https://www.hanyang.ac.kr/web/www/re"):
+def get_cafeteria_menu(cafeteria, url="https://www.hanyang.ac.kr/web/www/re", campus=0):
+    now = datetime.now(tz=korea_timezone)
     cafeteria_info = {"restaurant": cafeteria.name}
-
     # get
-    try:
-        res = requests.get(f"{url}{cafeteria.value}")
-    except requests.exceptions.RequestException as _:
-        cafeteria_info["restaurant"] = "-1"
-        return cafeteria_info
+    res = requests.get(f"{url}{cafeteria.value}")
 
     tree = fromstring(res.text)
     inboxes = CSSSelector("div.tab-pane")
@@ -61,3 +62,35 @@ def get_recipe(cafeteria, url="https://www.hanyang.ac.kr/web/www/re"):
             cafeteria_info[title].append({"menu": menu, "price": p})
 
     return cafeteria_info
+
+
+def get_recipe(cafeteria, url="https://www.hanyang.ac.kr/web/www/re", campus=0):
+    if not _apps:
+        cred = get_cred()
+        initialize_app(cred)
+    else:
+        get_app()
+    db = firestore.client()
+
+    found = False
+    menu_query = db.collection('cafeteria').where('name', '==', cafeteria.name)
+
+    for cafeteria in menu_query.stream():
+        found = True
+        doc = cafeteria.to_dict()
+
+    if found:
+        last_used = doc['last_used']
+        if (now.year, now.month, now.day) != (last_used.year, last_used.month, last_used.day):
+            crawl = get_cafeteria_menu(cafeteria, campus=campus)
+            crawl['last_used'] = now
+            doc.update(crawl)
+        else:
+            return doc
+    else:
+        crawl = get_cafeteria_menu(cafeteria, campus=campus)
+        crawl['last_used'] = now
+        doc = db.collection('cafeteria').document(cafeteria.name)
+        doc.set(crawl)
+
+    return crawl

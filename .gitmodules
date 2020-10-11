@@ -4,3 +4,7 @@
 [submodule "transport/shuttle/timetable"]
 	path = transport/shuttle/timetable
 	url = https://github.com/jil8885/hanyang-shuttle-timetable
+[submodule "api"]
+	path = api
+	url = https://github.com/jil8885/API-for-ERICA
+	branch = light

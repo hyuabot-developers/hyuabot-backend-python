@@ -13,4 +13,4 @@ app = FastAPI()
 app.include_router(kakao_url, prefix="/kakao")
 
 if __name__ == '__main__':
-    uvicorn.run(app=app, host='0.0.0.0', port=8080, debug=True)
+    uvicorn.run(app=app, host='0.0.0.0', port=8080)

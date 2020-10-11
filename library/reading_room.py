@@ -7,10 +7,9 @@ from datetime import datetime
 from common.config import korea_timezone
 from firebase.firebase_init import get_cred
 
-now = datetime.now(tz=korea_timezone)
-
 
 def get_reading_room_seat(campus, room_id=''):
+    now = datetime.now(tz=korea_timezone)
     if not _apps:
         cred = get_cred()
         initialize_app(cred)

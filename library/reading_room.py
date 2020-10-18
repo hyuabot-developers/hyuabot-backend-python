@@ -36,7 +36,7 @@ def get_reading_room_seat(campus, room_id=''):
             doc = db.collection('reading_room').document('seoul')
             seat_query = doc.get().to_dict()
             last_used = seat_query['last_used']
-            if (now - last_used).seconds // 60 >= 2 and (now - last_used).days > 0:
+            if (now - last_used).seconds // 60 >= 2 and (now - last_used).days >= 0:
                 try:
                     url = 'https://lib.hanyang.ac.kr/smufu-api/pc/1/rooms-at-seat'
                     res = requests.get(url)
@@ -72,7 +72,7 @@ def get_reading_room_seat(campus, room_id=''):
             doc = db.collection('reading_room').document('erica')
             seat_query = doc.get().to_dict()
             last_used = seat_query['last_used']
-            if (now - last_used).seconds // 60 >= 2 and (now - last_used).days > 0:
+            if (now - last_used).seconds // 60 >= 2 and (now - last_used).days >= 0:
                 try:
                     url = 'https://lib.hanyang.ac.kr/smufu-api/pc/2/rooms-at-seat'
                     res = requests.get(url)

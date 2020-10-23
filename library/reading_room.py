@@ -54,9 +54,10 @@ def get_reading_room_seat(campus, room_id=''):
                         found = True
                         doc = room_info.to_dict()
                     if found:
+                        doc = db.collection('reading_room').document('seoul').collection('rooms').document(reading_room['name'])
                         doc.update({'name': reading_room['name'], 'total': reading_room['total'], 'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'], 'occupied': reading_room['occupied'], 'available': reading_room['available'], 'last_used': now})
                     else:
-                        doc = db.collection('reading_room').document('erica').collection('rooms').document(reading_room['name'])
+                        doc = db.collection('reading_room').document('seoul').collection('rooms').document(reading_room['name'])
                         doc.set({'name': reading_room['name'], 'total': reading_room['total'], 'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'], 'occupied': reading_room['occupied'], 'available': reading_room['available'], 'last_used': now})
                 return total_room, active_room
             else:
@@ -90,6 +91,7 @@ def get_reading_room_seat(campus, room_id=''):
                         found = True
                         doc = room_info.to_dict()
                     if found:
+                        doc = db.collection('reading_room').document('erica').collection('rooms').document(reading_room['name'])
                         doc.update({'name': reading_room['name'], 'total': reading_room['total'], 'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'], 'occupied': reading_room['occupied'], 'available': reading_room['available'], 'last_used': now})
                     else:
                         doc = db.collection('reading_room').document('erica').collection('rooms').document(reading_room['name'])

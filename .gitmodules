@@ -8,3 +8,6 @@
 	path = api
 	url = https://github.com/jil8885/API-for-ERICA
 	branch = light
+[submodule "app"]
+	path = app
+	url = https://github.com/jil8885/fastapi-hanyang-app

@@ -106,6 +106,11 @@ def get_first_last_departure(dest_stop):
         '한대앞역': 'Subway',
         '예술인A': 'YesulIn',
         '셔틀콕 건너편': 'Shuttlecock_I',
+        'Dormitory': 'Residence',
+        'Shuttlecock': 'Shuttlecock_O',
+        'Station': 'Subway',
+        'Terminal': 'YesulIn',
+        'Shuttlecock(Oppo)': 'Shuttlecock_I',
     }
 
     # 운행 중지 일자라면 중지한다고 반환

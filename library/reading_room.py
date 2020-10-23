@@ -8,7 +8,7 @@ from common.config import korea_timezone
 from firebase.firebase_init import get_cred
 
 
-def get_reading_room_seat(campus, room_id=''):
+def get_reading_room_seat(campus, room_id='', as_json=False):
     now = datetime.now(tz=korea_timezone)
     if not _apps:
         cred = get_cred()
@@ -48,17 +48,20 @@ def get_reading_room_seat(campus, room_id=''):
                 active_room = [x['name'] for x in total_room if x['isActive']]
                 doc.update({'last_used': now, 'active_room': active_room})
                 for reading_room in total_room:
-                    room_query = db.collection('reading_room').document('seoul').collection('rooms').where('name', '==', reading_room['name'])
-                    found = False
-                    for room_info in room_query.stream():
-                        found = True
-                        doc = room_info.to_dict()
-                    if found:
-                        doc = db.collection('reading_room').document('seoul').collection('rooms').document(reading_room['name'])
-                        doc.update({'name': reading_room['name'], 'total': reading_room['total'], 'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'], 'occupied': reading_room['occupied'], 'available': reading_room['available'], 'last_used': now})
-                    else:
-                        doc = db.collection('reading_room').document('seoul').collection('rooms').document(reading_room['name'])
-                        doc.set({'name': reading_room['name'], 'total': reading_room['total'], 'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'], 'occupied': reading_room['occupied'], 'available': reading_room['available'], 'last_used': now})
+                    try:
+                        doc = db.collection('reading_room').document('seoul').collection('rooms').document(
+                            reading_room['name'])
+                        doc.update({'name': reading_room['name'], 'total': reading_room['total'],
+                                    'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'],
+                                    'occupied': reading_room['occupied'], 'available': reading_room['available'],
+                                    'last_used': now})
+                    except:
+                        doc = db.collection('reading_room').document('seoul').collection('rooms').document(
+                            reading_room['name'])
+                        doc.set({'name': reading_room['name'], 'total': reading_room['total'],
+                                 'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'],
+                                 'occupied': reading_room['occupied'], 'available': reading_room['available'],
+                                 'last_used': now})
                 return total_room, active_room
             else:
                 docs = db.collection('reading_room').document('seoul').collection('rooms').where('isActive', '==', True)
@@ -85,17 +88,20 @@ def get_reading_room_seat(campus, room_id=''):
                 active_room = [x['name'] for x in total_room if x['isActive']]
                 doc.update({'last_used': now, 'active_room': active_room})
                 for reading_room in total_room:
-                    room_query = db.collection('reading_room').document('erica').collection('rooms').where('name', '==', reading_room['name'])
-                    found = False
-                    for room_info in room_query.stream():
-                        found = True
-                        doc = room_info.to_dict()
-                    if found:
-                        doc = db.collection('reading_room').document('erica').collection('rooms').document(reading_room['name'])
-                        doc.update({'name': reading_room['name'], 'total': reading_room['total'], 'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'], 'occupied': reading_room['occupied'], 'available': reading_room['available'], 'last_used': now})
-                    else:
-                        doc = db.collection('reading_room').document('erica').collection('rooms').document(reading_room['name'])
-                        doc.set({'name': reading_room['name'], 'total': reading_room['total'], 'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'], 'occupied': reading_room['occupied'], 'available': reading_room['available'], 'last_used': now})
+                    try:
+                        doc = db.collection('reading_room').document('erica').collection('rooms').document(
+                            reading_room['name'])
+                        doc.update({'name': reading_room['name'], 'total': reading_room['total'],
+                                    'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'],
+                                    'occupied': reading_room['occupied'], 'available': reading_room['available'],
+                                    'last_used': now})
+                    except:
+                        doc = db.collection('reading_room').document('erica').collection('rooms').document(
+                            reading_room['name'])
+                        doc.set({'name': reading_room['name'], 'total': reading_room['total'],
+                                 'isActive': reading_room['isActive'], 'activeTotal': reading_room['activeTotal'],
+                                 'occupied': reading_room['occupied'], 'available': reading_room['available'],
+                                 'last_used': now})
                 return total_room, active_room
             else:
                 docs = db.collection('reading_room').document('erica').collection('rooms').where('isActive', '==', True)

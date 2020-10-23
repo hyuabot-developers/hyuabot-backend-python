@@ -34,9 +34,9 @@ def get_subway_info(campus=0):
                     remained_time = 30.5
 
                 if updn == '상행' or updn == '내선':
-                    arrival_up.append((end_station, pos, remained_time, status_code[status]))
+                    arrival_up.append({"terminalStn": end_station, "pos": pos, "time": remained_time, "status": status_code[status]})
                 else:
-                    arrival_down.append((end_station, pos, remained_time, status_code[status]))
+                    arrival_down.append({"terminalStn": end_station, "pos": pos, "time": remained_time, "status": status_code[status]})
             return {'up': arrival_up, 'down': arrival_down}
         else:
             return None

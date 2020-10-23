@@ -57,8 +57,9 @@ def get_cafeteria_menu(cafeteria, url="https://www.hanyang.ac.kr/web/www/re", ca
         title = h4(inbox)[0].text_content()
         cafeteria_info[title] = []
         for l in li(inbox):
-            menu = h3(l)[0].text_content().replace("\t", "").replace("\r\n", "")
-            p = price(l)[0].text_content()
+            if h3(l):
+                menu = h3(l)[0].text_content().replace("\t", "").replace("\r\n", "")
+                p = price(l)[0].text_content()
             cafeteria_info[title].append({"menu": menu, "price": p})
 
     return cafeteria_info

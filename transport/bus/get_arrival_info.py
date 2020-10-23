@@ -39,7 +39,7 @@ def get_bus_timetable(weekdays=0):
     now = datetime.datetime.now(tz=korea_timezone)
     root_folder = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     json_path = os.path.join(root_folder, 'api/bus/timetable.json')
-    result = {'10-1': [], '3102': []}
+    result = {'10-1': [], '3102': [], '707-1': []}
     with open(json_path, 'r', encoding='utf-8') as f:
         timetable = json.load(f)
 

@@ -12,8 +12,8 @@ from common.config import korea_timezone
 def get_realtime_departure(stop_id, bus_id):
     url = f'http://openapi.gbis.go.kr/ws/rest/busarrivalservice?serviceKey={os.getenv("bus_auth")}&stationId={stop_id}&routeId={bus_id}'
     result = []
-    req = requests.get(url)
     try:
+        req = requests.get(url, timeout=2)
         soup = BeautifulSoup(req.text, 'lxml')
         arrival_info_list = soup.find('response').find('msgbody')
         if arrival_info_list:
@@ -26,6 +26,8 @@ def get_realtime_departure(stop_id, bus_id):
 
         return result
     except AttributeError:
+        return []
+    except requests.exceptions.Timeout:
         return []
 
 

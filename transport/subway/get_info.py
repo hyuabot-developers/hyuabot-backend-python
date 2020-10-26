@@ -19,7 +19,10 @@ def get_subway_info(campus=0):
     key = os.getenv('metro_auth')
     station = '한양대' if campus else '한대앞'
     url = f'http://swopenapi.seoul.go.kr/api/subway/{key}/json/realtimeStationArrival/0/10/{station}'
-    req = requests.get(url)
+    try:
+        req = requests.get(url, timeout=3)
+    except requests.exceptions.Timeout:
+        return None
     arrival_up = []
     arrival_down = []
     if req.status_code == 200:

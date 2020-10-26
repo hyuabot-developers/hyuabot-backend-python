@@ -13,17 +13,20 @@ def get_realtime_departure(stop_id, bus_id):
     url = f'http://openapi.gbis.go.kr/ws/rest/busarrivalservice?serviceKey={os.getenv("bus_auth")}&stationId={stop_id}&routeId={bus_id}'
     result = []
     req = requests.get(url)
-    soup = BeautifulSoup(req.text, 'lxml')
-    arrival_info_list = soup.find('response').find('msgbody')
-    if arrival_info_list:
-        arrival_info_list = arrival_info_list.find('busarrivalitem')
-    else:
+    try:
+        soup = BeautifulSoup(req.text, 'lxml')
+        arrival_info_list = soup.find('response').find('msgbody')
+        if arrival_info_list:
+            arrival_info_list = arrival_info_list.find('busarrivalitem')
+        else:
+            return result
+
+        location, predict_time, remained_seat = arrival_info_list.find('locationno1').text, arrival_info_list.find('predicttime1').text, arrival_info_list.find('remainseatcnt1').text
+        result.append({'location': location, 'time': predict_time, 'seat': remained_seat})
+
         return result
-
-    location, predict_time, remained_seat = arrival_info_list.find('locationno1').text, arrival_info_list.find('predicttime1').text, arrival_info_list.find('remainseatcnt1').text
-    result.append({'location': location, 'time': predict_time, 'seat': remained_seat})
-
-    return result
+    except AttributeError:
+        return []
 
 
 def get_bus_info():

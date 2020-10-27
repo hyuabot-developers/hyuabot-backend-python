@@ -40,11 +40,11 @@ def get_bus_info():
     return {"10-1": get_realtime_departure(guest_house_stop, line_10_1), "707-1": get_realtime_departure(main_gate_stop, line_707_1), "3102": get_realtime_departure(guest_house_stop, line_3102)}
 
 
-def get_bus_timetable(weekdays=0):
+def get_bus_timetable(weekdays=0, routeNum=None):
     now = datetime.datetime.now(tz=korea_timezone)
     root_folder = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     json_path = os.path.join(root_folder, 'api/bus/timetable.json')
-    result = {'10-1': [], '3102': [], '707-1': []}
+
     with open(json_path, 'r', encoding='utf-8') as f:
         timetable = json.load(f)
 
@@ -55,11 +55,22 @@ def get_bus_timetable(weekdays=0):
     else:
         key = 'weekdays'
 
-    for route in ['10-1', '3102']:
-        for x in timetable[route][key]:
+    if routeNum:
+        result = []
+        for x in timetable[routeNum][key]:
             arrival_time = time.strptime(x['time'], "%H:%M")
             arrival_time = datetime.datetime(year=now.year, month=now.month, day=now.day,
-                                             hour=arrival_time.tm_hour, minute=arrival_time.tm_min, tzinfo=korea_timezone)
+                                             hour=arrival_time.tm_hour, minute=arrival_time.tm_min,
+                                             tzinfo=korea_timezone)
             if arrival_time > now:
-                result[route].append({'time': arrival_time})
+                result.append({'time': arrival_time})
+    else:
+        result = {'10-1': [], '3102': [], '707-1': []}
+        for route in ['10-1', '3102']:
+            for x in timetable[route][key]:
+                arrival_time = time.strptime(x['time'], "%H:%M")
+                arrival_time = datetime.datetime(year=now.year, month=now.month, day=now.day,
+                                                 hour=arrival_time.tm_hour, minute=arrival_time.tm_min, tzinfo=korea_timezone)
+                if arrival_time > now:
+                    result[route].append({'time': arrival_time})
     return result

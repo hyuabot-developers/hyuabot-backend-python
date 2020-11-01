@@ -4,6 +4,7 @@ uvicorn
 
 # firebase
 firebase-admin
+google
 
 # requests
 requests

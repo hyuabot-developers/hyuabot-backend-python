@@ -42,7 +42,38 @@ def get_subway_info(campus=0):
                     arrival_down.append({"terminalStn": end_station, "pos": pos, "time": remained_time, "status": status_code[status]})
             return {'up': arrival_up, 'down': arrival_down}
         else:
-            return None
+            url = f'http://swopenapi.seoul.go.kr/api/subway/sample/json/realtimeStationArrival/0/5/{station}'
+            try:
+                req = requests.get(url, timeout=3)
+            except requests.exceptions.Timeout:
+                return None
+            arrival_up = []
+            arrival_down = []
+            if req.status_code == 200:
+                if 'realtimeArrivalList' in req.json().keys():
+                    for arrival_info in req.json()['realtimeArrivalList']:
+                        updn, end_station, pos, status = arrival_info['updnLine'], arrival_info['bstatnNm'], \
+                                                         arrival_info['arvlMsg3'], int(arrival_info['arvlCd'])
+                        if campus:
+                            remained_time = int(arrival_info['barvlDt'])
+                        elif pos in minute_to_arrival.keys():
+                            remained_time = minute_to_arrival[pos]
+                        else:
+                            remained_time = 30.5
+
+                        if updn == '상행' or updn == '내선':
+                            arrival_up.append({"terminalStn": end_station, "pos": pos, "time": remained_time,
+                                               "status": status_code[status]})
+                        else:
+                            arrival_down.append({"terminalStn": end_station, "pos": pos, "time": remained_time,
+                                                 "status": status_code[status]})
+                    return {'up': arrival_up, 'down': arrival_down}
+                else:
+                    return None
+            else:
+                return None
+    else:
+        return None
 
 
 def get_subway_timetable(is_weekend=True):

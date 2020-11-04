@@ -99,7 +99,7 @@ def get_recipe(cafeteria, url="https://www.hanyang.ac.kr/web/www/re", campus=0):
             if (now.year, now.month, now.day) != (last_used.year, last_used.month, last_used.day):
                 crawl = get_cafeteria_menu(cafeteria)
                 crawl['last_used'] = now
-                doc.update(crawl)
+                menu_query.update(crawl)
             else:
                 return doc.to_dict()
 

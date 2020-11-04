@@ -150,8 +150,13 @@ def get_first_last_departure(dest_stop):
                 bus_to_come_dh.append(depart_time)
             elif depart_info['type'] == 'DY':
                 bus_to_come_dy.append(depart_time)
-            elif dest_stop == '셔틀콕 건너편' and depart_info['type'] == 'R':
-                bus_to_come_c.append(depart_time)
+            elif dest_stop == '셔틀콕 건너편':
+                if depart_info['type'] == 'C':
+                    bus_to_come_c.append(depart_time)
+                elif depart_info['type'] == "DH":
+                    bus_to_come_dh.append(depart_time)
+                elif depart_info['type'] == "DY":
+                    bus_to_come_dy.append(depart_time)
 
             if bus_to_come_dh:
                 bus_to_come_dh = [bus_to_come_dh[0], bus_to_come_dh[-1]]

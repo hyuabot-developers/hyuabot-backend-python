@@ -15,16 +15,11 @@ def is_semester(modified=False, date_to_know=None):
     if not date_to_know:
         date_to_know = datetime.now(tz=korea_timezone)
     # 학기중, 계절학기, 방학 중인지 구별 코드
-    try:
-        # json 파일 로드
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        date_url = f'{current_dir}/timetable/date.json'
-        with open(date_url, 'r') as raw_json:
-            result = json.load(raw_json)
-    except:
-        date_url = "https://raw.githubusercontent.com/jil8885/hanyang-shuttle-timetable/main/date.json"
-        req = requests.get(url=date_url)
-        result = req.json()
+    # json 파일 로드
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    date_url = f'{current_dir}/timetable/date.json'
+    with open(date_url, 'r') as raw_json:
+        result = json.load(raw_json)
 
     for key in [x for x in list(result.keys()) if x not in ['holiday', 'halt']]:
         for term in result[key]:

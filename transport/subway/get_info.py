@@ -49,7 +49,6 @@ def get_subway_info(campus=0):
                 return None
             arrival_up = []
             arrival_down = []
-            print(req.json())
             if req.status_code == 200:
                 if 'realtimeArrivalList' in req.json().keys():
                     for arrival_info in req.json()['realtimeArrivalList']:

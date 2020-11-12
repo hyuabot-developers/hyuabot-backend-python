@@ -95,7 +95,7 @@ def get_recipe(cafeteria, url="https://www.hanyang.ac.kr/web/www/re", campus=0):
             doc = db.collection('cafeteria').document(cafeteria.name)
             doc.set(crawl)
         else:
-            last_used = doc.to_dict()['last_used']
+            last_used = doc.to_dict()['last_used'].astimezone(korea_timezone)
             if (now.year, now.month, now.day) != (last_used.year, last_used.month, last_used.day):
                 crawl = get_cafeteria_menu(cafeteria)
                 crawl['last_used'] = now

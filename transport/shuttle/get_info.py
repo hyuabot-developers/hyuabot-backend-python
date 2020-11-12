@@ -92,7 +92,7 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None):
 
 
 # 첫막차 계산
-def get_first_last_departure(dest_stop):
+def get_first_last_departure(dest_stop=None, path=None):
     # 학기 여부, 주말 여부 연산
     bool_semester, bool_weekend = is_semester()
     now = datetime.now(tz=korea_timezone)
@@ -105,19 +105,21 @@ def get_first_last_departure(dest_stop):
         'vacation': '/vacation'
     }
 
-    # 발화 내용에 따라 json 경로 수정
-    stop = {
-        '기숙사': 'Residence',
-        '셔틀콕': 'Shuttlecock_O',
-        '한대앞역': 'Subway',
-        '예술인A': 'YesulIn',
-        '셔틀콕 건너편': 'Shuttlecock_I',
-        'Dormitory': 'Residence',
-        'Shuttlecock': 'Shuttlecock_O',
-        'Station': 'Subway',
-        'Terminal': 'YesulIn',
-        'Shuttlecock(Oppo)': 'Shuttlecock_I',
-    }
+    if not path:
+        # 발화 내용에 따라 json 경로 수정
+        stop = {
+            '기숙사': 'Residence',
+            '셔틀콕': 'Shuttlecock_O',
+            '한대앞역': 'Subway',
+            '예술인A': 'YesulIn',
+            '셔틀콕 건너편': 'Shuttlecock_I',
+            'Dormitory': 'Residence',
+            'Shuttlecock': 'Shuttlecock_O',
+            'Station': 'Subway',
+            'Terminal': 'YesulIn',
+            'Shuttlecock(Oppo)': 'Shuttlecock_I',
+        }
+        path = stop[dest_stop]
 
     # 운행 중지 일자라면 중지한다고 반환
     if bool_semester == 'halt':
@@ -126,7 +128,7 @@ def get_first_last_departure(dest_stop):
         # json 파일 로드
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{stop[dest_stop]}_{bool_weekend}.json'
+        dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{path}_{bool_weekend}.json'
 
         # Windows 라면, 경로명 수정
         if platform.system() == 'Windows':

@@ -49,6 +49,7 @@ def get_subway_info(campus=0):
                 return None
             arrival_up = []
             arrival_down = []
+            print(req.json())
             if req.status_code == 200:
                 if 'realtimeArrivalList' in req.json().keys():
                     for arrival_info in req.json()['realtimeArrivalList']:
@@ -62,11 +63,13 @@ def get_subway_info(campus=0):
                             remained_time = 30.5
 
                         if updn == '상행' or updn == '내선':
-                            arrival_up.append({"terminalStn": end_station, "pos": pos, "time": remained_time,
-                                               "status": status_code[status]})
+                            if "급행" not in end_station:
+                                arrival_up.append({"terminalStn": end_station, "pos": pos, "time": remained_time,
+                                                   "status": status_code[status]})
                         else:
-                            arrival_down.append({"terminalStn": end_station, "pos": pos, "time": remained_time,
-                                                 "status": status_code[status]})
+                            if "급행" not in end_station:
+                                arrival_down.append({"terminalStn": end_station, "pos": pos, "time": remained_time,
+                                                     "status": status_code[status]})
                     return {'up': arrival_up, 'down': arrival_down}
                 else:
                     return None

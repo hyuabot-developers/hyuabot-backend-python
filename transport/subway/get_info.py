@@ -94,5 +94,5 @@ def get_subway_timetable(is_weekend=True):
                                              hour=arrival_time.tm_hour, minute=arrival_time.tm_min, second=arrival_time.tm_sec,
                                              tzinfo=korea_timezone)
             if arrival_time > now:
-                result[key].append({'endStn': x['endStn'], 'time': arrival_time})
+                result[key].append({'endStn': x['endStn'].replace("신인천", "인천"), 'time': arrival_time})
     return result

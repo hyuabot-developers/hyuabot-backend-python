@@ -24,6 +24,9 @@ def get_realtime_departure(stop_id, bus_id):
         location, predict_time, remained_seat = arrival_info_list.find('locationno1').text, arrival_info_list.find('predicttime1').text, arrival_info_list.find('remainseatcnt1').text
         result.append({'location': location, 'time': predict_time, 'seat': remained_seat})
 
+        if arrival_info_list.find("locationno2") and arrival_info_list.find('locationno2').text and arrival_info_list.find('predicttime2').text:
+            location, predict_time, remained_seat = arrival_info_list.find('locationno2').text, arrival_info_list.find('predicttime2').text, arrival_info_list.find('remainseatcnt2').text
+            result.append({'location': location, 'time': predict_time, 'seat': remained_seat})
         return result
     except AttributeError:
         return []

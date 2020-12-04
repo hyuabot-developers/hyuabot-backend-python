@@ -25,7 +25,7 @@ class CafeteriaERICA(Enum):
     teacher_erica = "11"
     student_erica = "12"
     dorm_erica = "13"
-    foodcoart_erica = "14"
+    food_court_erica = "14"
     changbo_erica = "15"
 
 
@@ -149,7 +149,7 @@ def update_recipe():
 
     restaurant_list = {"student_seoul_1": "1", "teacher_seoul_1": "2", "sarang_seoul": "3", "teacher_seoul_2": "4",
                        "student_seoul_2": "5", "dorm_seoul_1": "6", "dorm_seoul_2": "7", "hangwon_seoul": "8",
-                       "teacher_erica": "11", "student_erica": "12", "dorm_erica": "13", "foodcoart_erica": "14",
+                       "teacher_erica": "11", "student_erica": "12", "dorm_erica": "13", "food_court_erica": "14",
                        "changbo_erica": "15"}
     for _, (key, value) in enumerate(restaurant_list.items()):
         restaurant_list = Restaurant(key, value)

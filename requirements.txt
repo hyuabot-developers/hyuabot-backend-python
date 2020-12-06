@@ -18,3 +18,4 @@ workalendar
 # etc
 utils
 pydantic
+numpy==1.19.3

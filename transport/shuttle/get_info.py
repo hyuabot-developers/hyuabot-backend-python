@@ -8,7 +8,7 @@ from common.config import korea_timezone
 
 
 # 현재 시간 기준 도착 예정 시간
-def get_departure_info(dest_stop=None, path=None, num_of_data=None):
+def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=False):
     now = datetime.now(tz=korea_timezone)
     # 학기 여부, 주말 여부 연산
     bool_semester, bool_weekend = is_semester()
@@ -67,7 +67,7 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None):
             # 항목별 시간
             depart_time = datetime.strptime(depart_info['time'], '%H:%M')
             depart_time = depart_time.replace(year=now.year, month=now.month, day=now.day, tzinfo=korea_timezone)
-            if depart_time >= now:
+            if depart_time >= now and not get_all:
                 # 순환버스 도착 정보 최대 2개
                 if (depart_info['type'] == 'C' or dest_stop == '예술인A' or dest_stop == 'Terminal' or path == 'YesulIn') and len(bus_to_come_c) < num_of_data:
                     bus_to_come_c.append(depart_time)
@@ -87,6 +87,28 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None):
                 elif (dest_stop == '예술인A' or dest_stop == 'Terminal' or path == 'YesulIn') and len(bus_to_come_dy) >= num_of_data and len(bus_to_come_c) >= num_of_data:
                     break
                 elif (dest_stop == '셔틀콕 건너편' or dest_stop == 'Shuttlecock(Oppo)' or path == 'Shuttlecock_O') and len(bus_to_come_c) >= num_of_data:
+                    break
+            else:
+                # 순환버스 도착 정보 최대 2개
+                if depart_info['type'] == 'C' or dest_stop == '예술인A' or dest_stop == 'Terminal' or path == 'YesulIn':
+                    bus_to_come_c.append(depart_time)
+                # 한대앞 직행 버스 도착 정보 최대 2개
+                elif depart_info['type'] == 'DH' or ((dest_stop == '한대앞역' or dest_stop == 'Station' or path == 'Subway')
+                                                     and not depart_info['type']):
+                    bus_to_come_dh.append(depart_time)
+                elif depart_info['type'] == 'DY':
+                    bus_to_come_dy.append(depart_time)
+                elif (dest_stop == '셔틀콕 건너편' or dest_stop == 'Shuttlecock(Oppo)' or path == 'Shuttlecock_I') and \
+                        depart_info['type'] == 'R':
+                    bus_to_come_c.append(depart_time)
+                elif dest_stop == '셔틀콕' or dest_stop == '기숙사' or dest_stop == 'Shuttlecock' or dest_stop == 'Dormitory'\
+                        or path == 'Shuttlecock_O' or path == 'Residence':
+                    break
+                elif dest_stop == '한대앞역' or dest_stop == 'Station' or path == 'Subway':
+                    break
+                elif dest_stop == '예술인A' or dest_stop == 'Terminal' or path == 'YesulIn':
+                    break
+                elif dest_stop == '셔틀콕 건너편' or dest_stop == 'Shuttlecock(Oppo)' or path == 'Shuttlecock_O':
                     break
         return bus_to_come_dh, bus_to_come_dy, bus_to_come_c, now
 

@@ -1,9 +1,7 @@
 import os
-import platform
 import json
 from datetime import datetime
 
-import requests
 from workalendar.asia import SouthKorea
 
 from common.config import korea_timezone
@@ -11,7 +9,7 @@ from common.config import korea_timezone
 cal = SouthKorea()
 
 
-def is_semester(modified=False, date_to_know=None):
+def is_semester(date_to_know=None):
     if not date_to_know:
         date_to_know = datetime.now(tz=korea_timezone)
     # 학기중, 계절학기, 방학 중인지 구별 코드

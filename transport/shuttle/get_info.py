@@ -88,7 +88,7 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=Fals
                     break
                 elif (dest_stop == '셔틀콕 건너편' or dest_stop == 'Shuttlecock(Oppo)' or path == 'Shuttlecock_O') and len(bus_to_come_c) >= num_of_data:
                     break
-            else:
+            elif get_all:
                 # 순환버스 도착 정보 최대 2개
                 if depart_info['type'] == 'C' or dest_stop == '예술인A' or dest_stop == 'Terminal' or path == 'YesulIn':
                     bus_to_come_c.append(depart_time)

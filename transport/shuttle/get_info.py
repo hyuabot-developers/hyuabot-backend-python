@@ -8,7 +8,7 @@ from common.config import korea_timezone
 
 
 # 현재 시간 기준 도착 예정 시간
-def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=False):
+def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=False, fixed_date=None):
     now = datetime.now(tz=korea_timezone)
     # 학기 여부, 주말 여부 연산
     bool_semester, bool_weekend = is_semester()
@@ -45,10 +45,16 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=Fals
         # json 파일 로드
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        if path:
-            dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{path}_{bool_weekend}.json'
+        if fixed_date is None:
+            if path:
+                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{path}_{bool_weekend}.json'
+            else:
+                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{stop[dest_stop]}_{bool_weekend}.json'
         else:
-            dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{stop[dest_stop]}_{bool_weekend}.json'
+            if path:
+                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{fixed_date}/{path}_{fixed_date}.json'
+            else:
+                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{fixed_date}/{stop[dest_stop]}_{fixed_date}.json'
 
         # Windows 라면, 경로명 수정
         if platform.system() == 'Windows':

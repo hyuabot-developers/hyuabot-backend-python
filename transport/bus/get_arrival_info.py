@@ -43,7 +43,7 @@ def get_bus_info():
     return {"10-1": get_realtime_departure(guest_house_stop, line_10_1), "707-1": get_realtime_departure(main_gate_stop, line_707_1), "3102": get_realtime_departure(guest_house_stop, line_3102)}
 
 
-def get_bus_timetable(weekdays=0, routeNum=None):
+def get_bus_timetable(weekdays=0, routeNum=None, get_all=False):
     now = datetime.datetime.now(tz=korea_timezone)
     root_folder = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     json_path = os.path.join(root_folder, 'api/bus/timetable.json')
@@ -59,14 +59,24 @@ def get_bus_timetable(weekdays=0, routeNum=None):
         key = 'weekdays'
 
     if routeNum:
-        result = []
-        for x in timetable[routeNum][key]:
-            arrival_time = time.strptime(x['time'], "%H:%M")
-            arrival_time = datetime.datetime(year=now.year, month=now.month, day=now.day,
-                                             hour=arrival_time.tm_hour, minute=arrival_time.tm_min,
-                                             tzinfo=korea_timezone)
-            if arrival_time > now:
-                result.append({'time': arrival_time})
+        if get_all:
+            result = {"weekdays": [], "sat": [], "sun": []}
+            for key in timetable[routeNum].keys():
+                for x in timetable[routeNum][key]:
+                    arrival_time = time.strptime(x['time'], "%H:%M")
+                    arrival_time = datetime.datetime(year=now.year, month=now.month, day=now.day,
+                                                     hour=arrival_time.tm_hour, minute=arrival_time.tm_min,
+                                                     tzinfo=korea_timezone)
+                    result[key].append({'time': arrival_time})
+        else:
+            result = []
+            for x in timetable[routeNum][key]:
+                arrival_time = time.strptime(x['time'], "%H:%M")
+                arrival_time = datetime.datetime(year=now.year, month=now.month, day=now.day,
+                                                 hour=arrival_time.tm_hour, minute=arrival_time.tm_min,
+                                                 tzinfo=korea_timezone)
+                if arrival_time > now:
+                    result.append({'time': arrival_time})
     else:
         result = {'10-1': [], '3102': [], '707-1': []}
         for route in ['10-1', '3102']:

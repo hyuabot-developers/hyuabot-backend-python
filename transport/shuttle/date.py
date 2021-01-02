@@ -23,20 +23,20 @@ def is_semester(date_to_know=None):
         for term in result[key]:
             start_time = datetime.strptime(term['start'], "%m-%d").replace(tzinfo=korea_timezone)
             end_time = datetime.strptime(term['end'], "%m-%d").replace(tzinfo=korea_timezone)
-            if end_time > start_time:
-                start_time = start_time.replace(year=date_to_know.year)
-                end_time = end_time.replace(year=date_to_know.year)
-            else:
-                start_time = start_time.replace(year=date_to_know.year)
-                end_time = end_time.replace(year=date_to_know.year + 1)
-            if start_time <= date_to_know < end_time:
+            start_time = start_time.replace(year=date_to_know.year)
+            end_time = end_time.replace(year=date_to_know.year)
+            if end_time > start_time and start_time <= date_to_know < end_time:
                 term_result = key
                 break
+            elif date_to_know >= start_time or date_to_know < end_time:
+                term_result = key
+                break
+
     # 운행 중지 일자
     for stop_date in result['halt']:
         halt_date = datetime.strptime(stop_date, "%m-%d")
         if (date_to_know.month, date_to_know.day) == (halt_date.month, halt_date.day):
-            term = 'halt'
+            term_result = 'halt'
 
     # 평일/주말 구분
     if date_to_know.weekday() in [5, 6] or not cal.is_working_day(date_to_know):

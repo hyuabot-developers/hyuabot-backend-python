@@ -51,3 +51,15 @@ def is_semester(date_to_know=None):
             day = 'weekend'
 
     return term_result, day
+
+
+def which_weekday():
+    date_to_know = datetime.now(tz=korea_timezone)
+    # 평일/주말 구분
+    if date_to_know.weekday() == 5:
+        day = 'sat'
+    elif date_to_know.weekday() == 6 or not cal.is_working_day(date_to_know):
+        day = 'sun'
+    else:
+        day = 'weekdays'
+    return day

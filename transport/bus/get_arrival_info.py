@@ -21,11 +21,14 @@ def get_realtime_departure(stop_id, bus_id):
         else:
             return result
 
-        location, predict_time, remained_seat = arrival_info_list.find('locationno1').text, arrival_info_list.find('predicttime1').text, arrival_info_list.find('remainseatcnt1').text
+        location, predict_time, remained_seat = arrival_info_list.find('locationno1').text, arrival_info_list.find(
+            'predicttime1').text, arrival_info_list.find('remainseatcnt1').text
         result.append({'location': location, 'time': predict_time, 'seat': remained_seat})
 
-        if arrival_info_list.find("locationno2") and arrival_info_list.find('locationno2').text and arrival_info_list.find('predicttime2').text:
-            location, predict_time, remained_seat = arrival_info_list.find('locationno2').text, arrival_info_list.find('predicttime2').text, arrival_info_list.find('remainseatcnt2').text
+        if arrival_info_list.find("locationno2") and arrival_info_list.find(
+                'locationno2').text and arrival_info_list.find('predicttime2').text:
+            location, predict_time, remained_seat = arrival_info_list.find('locationno2').text, arrival_info_list.find(
+                'predicttime2').text, arrival_info_list.find('remainseatcnt2').text
             result.append({'location': location, 'time': predict_time, 'seat': remained_seat})
         return result
     except AttributeError:
@@ -40,10 +43,12 @@ def get_bus_info():
     line_10_1 = '216000068'
     line_3102 = '216000061'
     line_707_1 = '216000070'
-    return {"10-1": get_realtime_departure(guest_house_stop, line_10_1), "707-1": get_realtime_departure(main_gate_stop, line_707_1), "3102": get_realtime_departure(guest_house_stop, line_3102)}
+    return {"10-1": get_realtime_departure(guest_house_stop, line_10_1),
+            "707-1": get_realtime_departure(main_gate_stop, line_707_1),
+            "3102": get_realtime_departure(guest_house_stop, line_3102)}
 
 
-def get_bus_timetable(weekdays=0, routeNum=None, get_all=False):
+def get_bus_timetable(weekdays='weekdays', routeNum=None, get_all=False):
     now = datetime.datetime.now(tz=korea_timezone)
     root_folder = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     json_path = os.path.join(root_folder, 'api/bus/timetable.json')
@@ -51,18 +56,11 @@ def get_bus_timetable(weekdays=0, routeNum=None, get_all=False):
     with open(json_path, 'r', encoding='utf-8') as f:
         timetable = json.load(f)
 
-    if weekdays == 5:
-        key = 'sat'
-    elif weekdays == 6:
-        key = 'sun'
-    else:
-        key = 'weekdays'
-
     if routeNum:
         if get_all:
             result = {"weekdays": [], "sat": [], "sun": []}
             for key in timetable[routeNum].keys():
-                for x in timetable[routeNum][key]:
+                for x in timetable[routeNum][weekdays]:
                     arrival_time = time.strptime(x['time'], "%H:%M")
                     arrival_time = datetime.datetime(year=now.year, month=now.month, day=now.day,
                                                      hour=arrival_time.tm_hour, minute=arrival_time.tm_min,
@@ -70,7 +68,7 @@ def get_bus_timetable(weekdays=0, routeNum=None, get_all=False):
                     result[key].append({'time': arrival_time})
         else:
             result = []
-            for x in timetable[routeNum][key]:
+            for x in timetable[routeNum][weekdays]:
                 arrival_time = time.strptime(x['time'], "%H:%M")
                 arrival_time = datetime.datetime(year=now.year, month=now.month, day=now.day,
                                                  hour=arrival_time.tm_hour, minute=arrival_time.tm_min,
@@ -80,10 +78,11 @@ def get_bus_timetable(weekdays=0, routeNum=None, get_all=False):
     else:
         result = {'10-1': [], '3102': [], '707-1': []}
         for route in ['10-1', '3102']:
-            for x in timetable[route][key]:
+            for x in timetable[route][weekdays]:
                 arrival_time = time.strptime(x['time'], "%H:%M")
                 arrival_time = datetime.datetime(year=now.year, month=now.month, day=now.day,
-                                                 hour=arrival_time.tm_hour, minute=arrival_time.tm_min, tzinfo=korea_timezone)
+                                                 hour=arrival_time.tm_hour, minute=arrival_time.tm_min,
+                                                 tzinfo=korea_timezone)
                 if arrival_time > now:
                     result[route].append({'time': arrival_time})
     return result

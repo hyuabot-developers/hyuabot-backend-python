@@ -1,6 +1,5 @@
 import requests
 import os
-import lxml
 from bs4 import BeautifulSoup
 import datetime
 import json

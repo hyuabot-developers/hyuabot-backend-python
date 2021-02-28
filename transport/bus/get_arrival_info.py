@@ -76,7 +76,7 @@ def get_bus_timetable(weekdays='weekdays', routeNum=None, get_all=False):
                     result.append({'time': arrival_time})
     else:
         result = {'10-1': [], '3102': [], '707-1': []}
-        for route in ['10-1', '3102']:
+        for route in ['10-1', '3102', '707-1']:
             for x in timetable[route][weekdays]:
                 arrival_time = time.strptime(x['time'], "%H:%M")
                 arrival_time = datetime.datetime(year=now.year, month=now.month, day=now.day,

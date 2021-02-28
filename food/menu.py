@@ -148,7 +148,8 @@ def update_recipe():
     else:
         get_app()
     db = firestore.client()
-    languages = ['ko', 'en', 'zh-CN']
+    # languages = ['ko', 'en', 'zh-CN']
+    languages = ['ko']
     restaurant_list = {"student_seoul_1": "1", "teacher_seoul_1": "2", "sarang_seoul": "3", "teacher_seoul_2": "4",
                        "student_seoul_2": "5", "dorm_seoul_1": "6", "dorm_seoul_2": "7", "hangwon_seoul": "8",
                        "teacher_erica": "11", "student_erica": "12", "dorm_erica": "13", "food_court_erica": "14",
@@ -168,8 +169,12 @@ def update_recipe():
                         menu['menu'] = get_translated_menu(menu['menu'], language)
             try:
                 snapshot = doc.get()
+                recipe_translated['last_used'] = now
+                menu_keys = ["조식", "중식", "석식"]
+                for key in menu_keys:
+                    if key not in recipe_translated.keys():
+                        recipe_translated[key] = []
                 if not snapshot.to_dict():
-                    recipe_translated['last_used'] = now
                     doc.set(recipe_translated)
                 else:
                     doc.update(recipe_translated)
@@ -182,7 +187,9 @@ def get_translated_menu(menu: str, lang: str):
     if not menu:
         return ''
     requests_url = "https://openapi.naver.com/v1/papago/n2mt"
-    req = requests.post(requests_url, headers={'X-Naver-Client-Id': os.getenv('papago_client_id'), 'X-Naver-Client-Secret': os.getenv('papago_client_secret')}, data={'source': 'ko', 'target': lang, 'text': menu})
+    req = requests.post(requests_url, headers={'X-Naver-Client-Id': os.getenv('papago_client_id'),
+                                               'X-Naver-Client-Secret': os.getenv('papago_client_secret')},
+                        data={'source': 'ko', 'target': lang, 'text': menu})
     try:
         return req.json()['message']['result']['translatedText']
     except KeyError:

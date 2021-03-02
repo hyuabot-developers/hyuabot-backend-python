@@ -28,10 +28,11 @@ def is_semester(date_to_know=None):
             if end_time > start_time and start_time <= date_to_know < end_time:
                 term_result = key
                 break
-            elif date_to_know >= start_time or date_to_know < end_time:
-                term_result = key
-                break
-
+            elif end_time < start_time:
+                end_time = end_time.replace(date_to_know.year + 1)
+                if start_time <= date_to_know < end_time:
+                    term_result = key
+                    break
     # 운행 중지 일자
     for stop_date in result['halt']:
         halt_date = datetime.strptime(stop_date, "%m-%d")

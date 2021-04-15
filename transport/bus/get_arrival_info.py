@@ -24,7 +24,6 @@ def get_realtime_departure(stop_id, bus_id):
                 req = requests.get(url, timeout=2)
                 soup = BeautifulSoup(req.text, 'lxml')
                 arrival_info_list = soup.find('response').find('msgbody')
-                print(soup)
                 if arrival_info_list:
                     arrival_info_list = arrival_info_list.find('busarrivalitem')
             except AttributeError:

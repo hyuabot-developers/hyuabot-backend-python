@@ -18,16 +18,24 @@ def get_realtime_departure(stop_id, bus_id):
         if arrival_info_list:
             arrival_info_list = arrival_info_list.find('busarrivalitem')
         else:
-            return result
-
-        location, predict_time, remained_seat = arrival_info_list.find('locationno1').text, arrival_info_list.find(
-            'predicttime1').text, arrival_info_list.find('remainseatcnt1').text
+            url = f'http://openapi.gbis.go.kr/ws/rest/busarrivalservice?serviceKey=1122334455&stationId={stop_id}&routeId={bus_id}'
+            result = []
+            try:
+                req = requests.get(url, timeout=2)
+                soup = BeautifulSoup(req.text, 'lxml')
+                arrival_info_list = soup.find('response').find('msgbody')
+                print(soup)
+                if arrival_info_list:
+                    arrival_info_list = arrival_info_list.find('busarrivalitem')
+            except AttributeError:
+                return []
+            except requests.exceptions.Timeout:
+                return []
+        location, predict_time, remained_seat = arrival_info_list.find('locationno1').text, arrival_info_list.find('predicttime1').text, arrival_info_list.find('remainseatcnt1').text
         result.append({'location': location, 'time': predict_time, 'seat': remained_seat})
 
-        if arrival_info_list.find("locationno2") and arrival_info_list.find(
-                'locationno2').text and arrival_info_list.find('predicttime2').text:
-            location, predict_time, remained_seat = arrival_info_list.find('locationno2').text, arrival_info_list.find(
-                'predicttime2').text, arrival_info_list.find('remainseatcnt2').text
+        if arrival_info_list.find("locationno2") and arrival_info_list.find('locationno2').text and arrival_info_list.find('predicttime2').text:
+            location, predict_time, remained_seat = arrival_info_list.find('locationno2').text, arrival_info_list.find('predicttime2').text, arrival_info_list.find('remainseatcnt2').text
             result.append({'location': location, 'time': predict_time, 'seat': remained_seat})
         return result
     except AttributeError:

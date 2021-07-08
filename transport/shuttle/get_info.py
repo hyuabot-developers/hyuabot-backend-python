@@ -29,12 +29,12 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=Fals
         '기숙사': 'Residence',
         '셔틀콕': 'Shuttlecock_O',
         '한대앞역': 'Subway',
-        '예술인A': 'Terminal',
+        '예술인A': 'YesulIn',
         '셔틀콕 건너편': 'Shuttlecock_I',
         'Dormitory': 'Residence',
         'Shuttlecock': 'Shuttlecock_O',
         'Station': 'Subway',
-        'Terminal': 'Terminal',
+        'Terminal': 'YesulIn',
         'Shuttlecock(Oppo)': 'Shuttlecock_I'
     }
 
@@ -47,14 +47,14 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=Fals
 
         if fixed_date is None:
             if path:
-                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{path}_{bool_weekend}.json'
+                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{path.replace("YesulIn", "Terminal")}_{bool_weekend}.json'
             else:
-                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{stop[dest_stop]}_{bool_weekend}.json'
+                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{bool_weekend}/{stop[dest_stop].replace("YesulIn", "Terminal")}_{bool_weekend}.json'
         else:
             if path:
-                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{fixed_date}/{path}_{fixed_date}.json'
+                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{fixed_date}/{path.replace("YesulIn", "Terminal")}_{fixed_date}.json'
             else:
-                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{fixed_date}/{stop[dest_stop]}_{fixed_date}.json'
+                dest_timetable = f'{current_dir}/timetable{term[bool_semester]}/{fixed_date}/{stop[dest_stop].replace("YesulIn", "Terminal")}_{fixed_date}.json'
 
         # Windows 라면, 경로명 수정
         if platform.system() == 'Windows':
@@ -67,7 +67,6 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=Fals
         bus_to_come_c = []
         bus_to_come_dh = []
         bus_to_come_dy = []
-        print(timetable)
         for depart_info in timetable:
             # 항목별 시간
             depart_time = datetime.strptime(depart_info['time'], '%H:%M')
@@ -169,8 +168,7 @@ def get_first_last_departure(dest_stop=None, path=None):
         bus_to_come_dh = []
         bus_to_come_dy = []
 
-        key = list(timetable.keys())[0]
-        for depart_info in timetable[key]:
+        for depart_info in timetable:
             # 항목별 시간
             depart_time = datetime.strptime(depart_info['time'], '%H:%M')
             depart_time = depart_time.replace(year=now.year, month=now.month, day=now.day, tzinfo=korea_timezone)

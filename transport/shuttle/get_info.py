@@ -29,12 +29,12 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=Fals
         '기숙사': 'Residence',
         '셔틀콕': 'Shuttlecock_O',
         '한대앞역': 'Subway',
-        '예술인A': 'YesulIn',
+        '예술인A': 'Terminal',
         '셔틀콕 건너편': 'Shuttlecock_I',
         'Dormitory': 'Residence',
         'Shuttlecock': 'Shuttlecock_O',
         'Station': 'Subway',
-        'Terminal': 'YesulIn',
+        'Terminal': 'Terminal',
         'Shuttlecock(Oppo)': 'Shuttlecock_I'
     }
 

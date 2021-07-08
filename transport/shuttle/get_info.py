@@ -67,9 +67,8 @@ def get_departure_info(dest_stop=None, path=None, num_of_data=None, get_all=Fals
         bus_to_come_c = []
         bus_to_come_dh = []
         bus_to_come_dy = []
-
-        key = list(timetable.keys())[0]
-        for depart_info in timetable[key]:
+        print(timetable)
+        for depart_info in timetable:
             # 항목별 시간
             depart_time = datetime.strptime(depart_info['time'], '%H:%M')
             depart_time = depart_time.replace(year=now.year, month=now.month, day=now.day, tzinfo=korea_timezone)

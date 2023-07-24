@@ -1,5 +1,6 @@
 FROM python:3.11-bullseye
 
+ENV TZ="Asia/Seoul"
 WORKDIR /code
 
 RUN apt-get update && apt-get -y install libpq-dev gcc && pip install psycopg2

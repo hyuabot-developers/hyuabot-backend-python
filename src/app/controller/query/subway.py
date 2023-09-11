@@ -57,7 +57,7 @@ class StationItem:
 async def query_subway(
     db_session: AsyncSession,
     station: Optional[list[str]] = None,
-    heading: Optional[str] = None,
+    heading_query: Optional[str] = None,
     weekday: Optional[str] = None,
     timetable_start: Optional[datetime.time] = None,
     timetable_end: Optional[datetime.time] = None,
@@ -88,7 +88,8 @@ async def query_subway(
         station_realtime_dict: dict[str, list[RealtimeItemResponse]] = \
             {'up': [], 'down': []}
         for timetable_item in station_item.timetable:
-            if heading is not None and timetable_item.heading != heading:
+            if (heading_query is not None
+                    and timetable_item.heading != heading_query):
                 continue
             if weekday is not None and timetable_item.weekday != weekday:
                 continue

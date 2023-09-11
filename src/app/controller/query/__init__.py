@@ -97,7 +97,7 @@ class Query:
         result = await query_subway(
             db_session,
             station=station,
-            heading=heading,
+            heading_query=heading,
             weekday=weekday,
             timetable_start=start,
             timetable_end=end,

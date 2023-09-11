@@ -80,7 +80,8 @@ async def query_subway(
 
     result: list[StationItem] = []
     if weekday is None:
-        weekday = "weekends" if is_weekends(datetime.datetime.now().date()) else "weekdays"
+        weekday = "weekends" if is_weekends(datetime.datetime.now().date()) \
+            else "weekdays"
     for station_item in stations:  # type: RouteStation
         station_timetable_dict: dict[str, list[TimetableItemResponse]] = \
             {'up': [], 'down': []}

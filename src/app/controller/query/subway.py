@@ -6,7 +6,8 @@ from sqlalchemy import select, true, and_, ColumnElement
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.model.subway import RouteStation
+from app.internal.date_utils import is_weekends
+from app.model.subway import RouteStation, TimetableItem
 
 
 @strawberry.type
@@ -70,12 +71,16 @@ async def query_subway(
         true(), *filters,
     )).options(
         selectinload(RouteStation.line),
-        selectinload(RouteStation.timetable),
+        selectinload(RouteStation.timetable).options(
+            selectinload(TimetableItem.destination),
+        ),
         selectinload(RouteStation.realtime),
     )
     stations = (await db_session.execute(station_statement)).scalars().all()
 
     result: list[StationItem] = []
+    if weekday is None:
+        weekday = "weekends" if is_weekends(datetime.datetime.now().date()) else "weekdays"
     for station_item in stations:  # type: RouteStation
         station_timetable_dict: dict[str, list[TimetableItemResponse]] = \
             {'up': [], 'down': []}

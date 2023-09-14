@@ -58,7 +58,7 @@ async def query_subway(
     db_session: AsyncSession,
     station: Optional[list[str]] = None,
     heading_query: Optional[str] = None,
-    weekday: Optional[str] = None,
+    weekday: Optional[list[str]] = None,
     timetable_start: Optional[datetime.time] = None,
     timetable_end: Optional[datetime.time] = None,
 ):
@@ -79,9 +79,9 @@ async def query_subway(
     stations = (await db_session.execute(station_statement)).scalars().all()
 
     result: list[StationItem] = []
-    if weekday is None:
-        weekday = "weekends" if is_weekends(datetime.datetime.now().date()) \
-            else "weekdays"
+    if weekday is None or len(weekday) == 0:
+        weekday = ["weekends"] if is_weekends(datetime.datetime.now().date()) \
+            else ["weekdays"]
     for station_item in stations:  # type: RouteStation
         station_timetable_dict: dict[str, list[TimetableItemResponse]] = \
             {'up': [], 'down': []}
@@ -91,7 +91,7 @@ async def query_subway(
             if (heading_query is not None
                     and timetable_item.heading != heading_query):
                 continue
-            if weekday is not None and timetable_item.weekday != weekday:
+            if weekday is not None and timetable_item.weekday not in weekday:
                 continue
             if timetable_start is not None and \
                     (timetable_start >

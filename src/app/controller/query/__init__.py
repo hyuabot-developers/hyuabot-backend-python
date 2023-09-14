@@ -89,7 +89,7 @@ class Query:
             info: Info,
             station: Optional[list[str]] = None,
             heading: Optional[str] = None,
-            weekday: Optional[str] = None,
+            weekday: Optional[list[str]] = None,
             start: Optional[datetime.time] = None,
             end: Optional[datetime.time] = None,
     ) -> list[StationItem]:

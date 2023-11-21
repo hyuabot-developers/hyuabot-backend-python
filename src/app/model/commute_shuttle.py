@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy import String, Time, PrimaryKeyConstraint, Integer, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from model import Base
+from app.model import Base
 
 
 class CommuteShuttleRoute(Base):

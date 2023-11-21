@@ -3,9 +3,9 @@ from typing import List
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from model import Base
-from model.cafeteria import Cafeteria
-from model.reading_room import ReadingRoom
+from app.model import Base
+from app.model.cafeteria import Cafeteria
+from app.model.reading_room import ReadingRoom
 
 
 class Campus(Base):

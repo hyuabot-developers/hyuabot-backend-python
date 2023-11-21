@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy import String, Integer, Interval, PrimaryKeyConstraint, Time, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from model import Base
+from app.model import Base
 
 
 class SubwayStation(Base):

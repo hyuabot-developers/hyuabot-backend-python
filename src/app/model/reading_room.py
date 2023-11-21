@@ -3,8 +3,8 @@ import datetime
 from sqlalchemy import String, DateTime, Integer, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from model import Base
-from model.campus import Campus
+from app.model import Base
+from app.model.campus import Campus
 
 
 class ReadingRoom(Base):

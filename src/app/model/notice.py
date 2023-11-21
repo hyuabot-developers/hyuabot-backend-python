@@ -4,8 +4,8 @@ from typing import List
 from sqlalchemy import String, DateTime, Integer
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from model import Base
-from model.user import User
+from app.model import Base
+from app.model.user import User
 
 
 class NoticeCategory(Base):

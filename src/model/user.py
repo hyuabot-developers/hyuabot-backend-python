@@ -3,8 +3,8 @@ from typing import List
 from sqlalchemy import String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import Base
-from models.notice import Notice
+from model import Base
+from model.notice import Notice
 
 
 class User(Base):

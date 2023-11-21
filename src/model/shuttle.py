@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy import String, DateTime, PrimaryKeyConstraint, Time, Boolean, Interval, Integer, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import Base
+from model import Base
 
 
 class ShuttlePeriodType(Base):

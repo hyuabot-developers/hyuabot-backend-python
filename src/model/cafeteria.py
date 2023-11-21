@@ -4,8 +4,8 @@ from typing import List
 from sqlalchemy import String, PrimaryKeyConstraint, Integer, Float, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import Base
-from models.campus import Campus
+from model import Base
+from model.campus import Campus
 
 
 class Cafeteria(Base):

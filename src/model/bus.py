@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy import PrimaryKeyConstraint, Integer, String, Time, Interval, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import Base
+from model import Base
 
 
 class BusTimetable(Base):

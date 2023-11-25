@@ -217,3 +217,132 @@ class CreateBusTimetableRequest(BaseModel):
                 "departureTime": "08:00:00",
             },
         }
+
+
+class BusRouteListResponse(BaseModel):
+    data: Annotated[list["BusRouteListItemResponse"], Field(alias="data")]
+
+
+class BusRouteListItemResponse(BaseModel):
+    route_id: Annotated[int, Field(alias="id", ge=1)]
+    route_name: Annotated[str, Field(max_length=30, alias="name")]
+    type_name: Annotated[str, Field(max_length=10, alias="type")]
+
+
+class BusRouteDetailResponse(BaseModel):
+    route_id: Annotated[int, Field(alias="id", ge=1)]
+    route_name: Annotated[str, Field(max_length=30, alias="name")]
+    type_name: Annotated[str, Field(max_length=10, alias="type")]
+    start: Annotated["BusRouteStartEndStopResponse", Field(alias="start")]
+    end: Annotated["BusRouteStartEndStopResponse", Field(alias="end")]
+    up: Annotated["BusRouteFirstLastTimeResponse", Field(alias="up")]
+    down: Annotated["BusRouteFirstLastTimeResponse", Field(alias="down")]
+    company: Annotated["BusRouteCompanyResponse", Field(alias="company")]
+
+
+class BusRouteStartEndStopResponse(BaseModel):
+    stop_id: Annotated[int, Field(alias="id", ge=1)]
+    stop_name: Annotated[str, Field(max_length=30, alias="name")]
+
+
+class BusRouteFirstLastTimeResponse(BaseModel):
+    first_time: Annotated[
+        datetime.time,
+        Field(alias="first", regex=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
+    ]
+    last_time: Annotated[
+        datetime.time,
+        Field(alias="last", regex=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
+    ]
+
+
+class BusRouteCompanyResponse(BaseModel):
+    company_id: Annotated[int, Field(alias="id", ge=1)]
+    company_name: Annotated[str, Field(max_length=30, alias="name")]
+    company_telephone: Annotated[str, Field(max_length=20, alias="telephone")]
+
+
+class BusStopListResponse(BaseModel):
+    data: Annotated[list["BusStopListItemResponse"], Field(alias="data")]
+
+
+class BusStopListItemResponse(BaseModel):
+    stop_id: Annotated[int, Field(alias="id", ge=1)]
+    stop_name: Annotated[str, Field(max_length=30, alias="name")]
+
+
+class BusStopDetailResponse(BaseModel):
+    stop_id: Annotated[int, Field(alias="id", ge=1)]
+    stop_name: Annotated[str, Field(max_length=30, alias="name")]
+    district_code: Annotated[int, Field(alias="district", ge=1)]
+    mobile_number: Annotated[str, Field(alias="mobileNumber", max_length=5)]
+    region_name: Annotated[str, Field(alias="regionName", max_length=30)]
+    latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]
+    longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
+    routes: Annotated[list["BusRouteListItemResponse"], Field(alias="routes")]
+
+
+class BusRouteStopListResponse(BaseModel):
+    data: Annotated[list["BusRouteStopListItemResponse"], Field(alias="data")]
+
+
+class BusRouteStopListItemResponse(BaseModel):
+    stop_id: Annotated[int, Field(alias="id", ge=1)]
+    stop_name: Annotated[str, Field(max_length=30, alias="name")]
+    sequence: Annotated[int, Field(alias="sequence", ge=1)]
+    start_stop_id: Annotated[int, Field(alias="start", ge=1)]
+
+
+class BusRouteStopDetailResponse(BaseModel):
+    stop_id: Annotated[int, Field(alias="id", ge=1)]
+    stop_name: Annotated[str, Field(max_length=30, alias="name")]
+    sequence: Annotated[int, Field(alias="sequence", ge=1)]
+    start_stop_id: Annotated[int, Field(alias="start", ge=1)]
+
+
+class BusTimetableListResponse(BaseModel):
+    data: Annotated[list["BusTimetableListItemResponse"], Field(alias="data")]
+
+
+class BusTimetableListItemResponse(BaseModel):
+    route_id: Annotated[int, Field(alias="routeID", ge=1)]
+    start_stop_id: Annotated[int, Field(alias="start", ge=1)]
+    weekdays: Annotated[str, Field(alias="weekdays")]
+    departure_time: Annotated[
+        datetime.time,
+        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
+    ]
+
+
+class BusTimetableDetailResponse(BaseModel):
+    route_id: Annotated[int, Field(alias="routeID", ge=1)]
+    start_stop_id: Annotated[int, Field(alias="start", ge=1)]
+    weekdays: Annotated[str, Field(alias="weekdays")]
+    departure_time: Annotated[
+        datetime.time,
+        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
+    ]
+
+
+class BusRealtimeListResponse(BaseModel):
+    data: Annotated[list["BusRealtimeListItemResponse"], Field(alias="data")]
+
+
+class BusRealtimeListItemResponse(BaseModel):
+    route_id: Annotated[int, Field(alias="routeID", ge=1)]
+    stop_id: Annotated[int, Field(alias="stopID", ge=1)]
+    sequence: Annotated[int, Field(alias="sequence", ge=1)]
+    remaining_stop: Annotated[int, Field(alias="stop", ge=0)]
+    remaining_time: Annotated[
+        datetime.timedelta,
+        Field(alias="time", regex=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
+    ]
+    remaining_seat: Annotated[int, Field(alias="seat", ge=-1)]
+    low_floor: Annotated[bool, Field(alias="lowFloor")]
+    updated_at: Annotated[
+        datetime.datetime,
+        Field(
+            alias="updatedAt",
+            regex=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}$",
+        ),
+    ]

@@ -49,3 +49,19 @@ class UpdateUserRequest(BaseModel):
                 "active": False,
             },
         }
+
+
+class UserListResponse(BaseModel):
+    data: Annotated[list["UserListItemResponse"], Field(alias="data")]
+
+
+class UserListItemResponse(BaseModel):
+    user_id: Annotated[str, Field(max_length=20, alias="id")]
+    email: Annotated[EmailStr, Field(alias="email")]
+
+
+class UserDetailResponse(BaseModel):
+    user_id: Annotated[str, Field(max_length=20, alias="id")]
+    email: Annotated[EmailStr, Field(alias="email")]
+    phone_number: Annotated[str, Field(max_length=20, alias="phone")]
+    active: Annotated[bool, Field(default=False)]

@@ -104,3 +104,64 @@ class UpdateCommuteShuttleTimetableRequest(BaseModel):
                 "departureTime": "08:00",
             },
         }
+
+
+class CommuteShuttleRouteListResponse(BaseModel):
+    data: Annotated[list["CommuteShuttleRouteListItemResponse"], Field(alias="data")]
+
+
+class CommuteShuttleRouteListItemResponse(BaseModel):
+    route_name: Annotated[str, Field(max_length=15, alias="route")]
+    route_description_korean: Annotated[str, Field(max_length=100, alias="korean")]
+    route_description_english: Annotated[str, Field(max_length=100, alias="english")]
+
+
+class CommuteShuttleRouteDetailResponse(BaseModel):
+    route_name: Annotated[str, Field(max_length=15, alias="route")]
+    route_description_korean: Annotated[str, Field(max_length=100, alias="korean")]
+    route_description_english: Annotated[str, Field(max_length=100, alias="english")]
+
+
+class CommuteShuttleStopListResponse(BaseModel):
+    data: Annotated[list["CommuteShuttleStopListItemResponse"], Field(alias="data")]
+
+
+class CommuteShuttleStopListItemResponse(BaseModel):
+    stop_name: Annotated[str, Field(max_length=50, alias="stop")]
+    stop_description: Annotated[str, Field(max_length=100, alias="description")]
+    latitude: Annotated[float, Field(alias="latitude")]
+    longitude: Annotated[float, Field(alias="longitude")]
+
+
+class CommuteShuttleStopDetailResponse(BaseModel):
+    stop_name: Annotated[str, Field(max_length=50, alias="stop")]
+    stop_description: Annotated[str, Field(max_length=100, alias="description")]
+    latitude: Annotated[float, Field(alias="latitude")]
+    longitude: Annotated[float, Field(alias="longitude")]
+
+
+class CommuteShuttleTimetableListResponse(BaseModel):
+    data: Annotated[
+        list["CommuteShuttleTimetableListItemResponse"],
+        Field(alias="data"),
+    ]
+
+
+class CommuteShuttleTimetableListItemResponse(BaseModel):
+    route_name: Annotated[str, Field(max_length=15, alias="route")]
+    stop_name: Annotated[str, Field(max_length=50, alias="stop")]
+    sequence: Annotated[int, Field(alias="sequence", ge=0)]
+    departure_time: Annotated[
+        datetime.time,
+        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
+    ]
+
+
+class CommuteShuttleTimetableDetailResponse(BaseModel):
+    route_name: Annotated[str, Field(max_length=15, alias="route")]
+    stop_name: Annotated[str, Field(max_length=50, alias="stop")]
+    sequence: Annotated[int, Field(alias="sequence", ge=0)]
+    departure_time: Annotated[
+        datetime.time,
+        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
+    ]

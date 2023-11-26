@@ -14,7 +14,7 @@ class CreateReadingRoomRequest(BaseModel):
     active_seats: Annotated[int, Field(alias="active", ge=0)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "campusID": 1,
                 "id": 1,
@@ -34,7 +34,7 @@ class UpdateReadingRoomRequest(BaseModel):
     active_seats: Annotated[Optional[int], Field(alias="active", ge=0)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "active": False,
                 "reservable": False,

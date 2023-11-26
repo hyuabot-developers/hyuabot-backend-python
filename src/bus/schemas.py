@@ -42,7 +42,7 @@ class CreateBusRouteRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 1,
                 "name": "1-1",
@@ -98,7 +98,7 @@ class UpdateBusRouteRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "1-1",
                 "typeCode": 11,
@@ -129,7 +129,7 @@ class CreateBusStopRequest(BaseModel):
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 1,
                 "name": "서울역",
@@ -154,7 +154,7 @@ class UpdateBusStopRequest(BaseModel):
     longitude: Annotated[Optional[float], Field(alias="longitude", ge=-180, le=180)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "서울역",
                 "district": 1,
@@ -173,7 +173,7 @@ class CreateBusRouteStopRequest(BaseModel):
     start_stop_id: Annotated[int, Field(alias="start", ge=1)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "routeID": 1,
                 "stopID": 1,
@@ -188,7 +188,7 @@ class UpdateBusRouteStopRequest(BaseModel):
     start_stop_id: Annotated[Optional[int], Field(alias="start", ge=1)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "sequence": 1,
                 "start": 1,
@@ -209,7 +209,7 @@ class CreateBusTimetableRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "routeID": 1,
                 "start": 1,

@@ -8,7 +8,7 @@ class CreateCampusRequest(BaseModel):
     name: Annotated[str, Field(max_length=30, alias="name")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 1,
                 "name": "서울캠퍼스",
@@ -20,7 +20,7 @@ class UpdateCampusRequest(BaseModel):
     name: Annotated[str, Field(max_length=30, alias="name")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "서울캠퍼스",
             },

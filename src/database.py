@@ -1,8 +1,10 @@
 # Get database engine.
 import datetime
-from typing import AsyncGenerator, Optional
+from typing import AsyncGenerator, Optional, Any
 
+from pydantic import BaseModel
 from redis.asyncio import Redis
+from sqlalchemy import Select, Insert, Update, CursorResult
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from config import settings
@@ -24,11 +26,31 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
         await session.close()
 
 
+async def fetch_one(select_query: Select | Insert | Update) -> dict[str, Any] | None:
+    async with engine.begin() as conn:
+        cursor: CursorResult = await conn.execute(select_query)
+        first_row = cursor.first()
+        if first_row is None:
+            return None
+        return first_row._asdict()
+
+
+async def fetch_all(select_query: Select | Insert | Update) -> list[dict[str, Any]]:
+    async with engine.begin() as conn:
+        cursor: CursorResult = await conn.execute(select_query)
+        return [row._asdict() for row in cursor.all()]
+
+
+async def execute_query(query: Select | Insert | Update) -> None:
+    async with engine.begin() as conn:
+        await conn.execute(query)
+
+
 # Redis database engine.
 redis_client: Redis = None  # type: ignore
 
 
-class RedisData:
+class RedisData(BaseModel):
     key: str | bytes
     value: str | bytes
     ttl: Optional[int | datetime.timedelta] = None

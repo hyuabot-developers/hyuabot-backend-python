@@ -29,7 +29,7 @@ async def test_register_username_taken(
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from src.user.dependancies import service
+    from user.dependancies import service
 
     async def fake_getter(*args, **kwargs):
         return True

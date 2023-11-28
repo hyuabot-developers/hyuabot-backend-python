@@ -12,7 +12,7 @@ class CreateCafeteriaRequest(BaseModel):
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 1,
                 "name": "학생식당",
@@ -29,7 +29,7 @@ class UpdateCafeteriaRequest(BaseModel):
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "학생식당",
                 "latitude": 37.123456,
@@ -49,7 +49,7 @@ class CreateCafeteriaMenuRequest(BaseModel):
     price: Annotated[str, Field(alias="price", max_length=30)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "cafeteriaID": 1,
                 "date": "2021-07-31",
@@ -64,7 +64,7 @@ class UpdateCafeteriaMenuRequest(BaseModel):
     price: Annotated[str, Field(alias="price", max_length=30)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "price": "3000원",
             },

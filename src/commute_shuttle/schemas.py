@@ -10,7 +10,7 @@ class CreateCommuteShuttleRouteRequest(BaseModel):
     route_description_english: Annotated[str, Field(max_length=100, alias="english")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "서울캠퍼스",
                 "korean": "서울캠퍼스 셔틀버스 노선",
@@ -30,7 +30,7 @@ class UpdateCommuteShuttleRouteRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "korean": "서울캠퍼스 셔틀버스 노선",
                 "english": "Seoul Campus Shuttle Bus Route",
@@ -45,7 +45,7 @@ class CreateCommuteShuttleStopRequest(BaseModel):
     longitude: Annotated[float, Field(alias="longitude")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "서울캠퍼스",
                 "description": "서울캠퍼스 셔틀버스 정류장",
@@ -61,7 +61,7 @@ class UpdateCommuteShuttleStopRequest(BaseModel):
     longitude: Annotated[Optional[float], Field(alias="longitude")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "description": "서울캠퍼스 셔틀버스 정류장",
                 "latitude": 37.123456,
@@ -80,7 +80,7 @@ class CreateCommuteShuttleTimetableRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "route": "서울캠퍼스",
                 "stop": "서울캠퍼스",
@@ -98,7 +98,7 @@ class UpdateCommuteShuttleTimetableRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "sequence": 1,
                 "departureTime": "08:00",

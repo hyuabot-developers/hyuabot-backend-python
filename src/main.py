@@ -1,12 +1,13 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from redis.asyncio import ConnectionPool, Redis
 from starlette.middleware.cors import CORSMiddleware
 
 import database
 from config import app_configs, settings
+from user.router import router as auth_router
 
 
 @asynccontextmanager
@@ -36,6 +37,11 @@ app.add_middleware(
     allow_methods=("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"),
     allow_headers=settings.CORS_HEADERS,
 )
+
+# API routes
+api = APIRouter()
+api.include_router(auth_router, prefix="/auth")
+app.include_router(api, prefix="/api")
 
 
 @app.get("/healthcheck", include_in_schema=False)

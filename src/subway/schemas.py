@@ -9,7 +9,7 @@ class CreateSubwayStation(BaseModel):
     name: Annotated[str, Field(max_length=30, alias="name")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "서울역",
             },
@@ -21,7 +21,7 @@ class CreateSubwayRoute(BaseModel):
     name: Annotated[str, Field(max_length=30, alias="name")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 1001,
                 "name": "1호선",
@@ -33,7 +33,7 @@ class UpdateSubwayRoute(BaseModel):
     name: Annotated[Optional[str], Field(max_length=30, alias="name")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "1호선",
             },
@@ -51,7 +51,7 @@ class CreateSubwayRouteStation(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": "K101",
                 "name": "서울역",
@@ -71,7 +71,7 @@ class UpdateSubwayRouteStation(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "서울역",
                 "sequence": 1,
@@ -98,7 +98,7 @@ class CreateSubwayTimetable(BaseModel):
     heading: Annotated[str, Field(alias="heading", max_length=10)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "stationID": "K101",
                 "startStationID": "K101",

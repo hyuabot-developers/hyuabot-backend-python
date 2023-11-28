@@ -8,7 +8,7 @@ class CreateNoticeCategoryRequest(BaseModel):
     name: Annotated[str, Field(max_length=20, alias="name")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "공지사항",
             },
@@ -27,7 +27,7 @@ class CreateNoticeReqeust(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "title": "공지사항",
                 "url": "https://www.google.com",
@@ -48,7 +48,7 @@ class UpdateNoticeRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "title": "공지사항",
                 "url": "https://www.google.com",

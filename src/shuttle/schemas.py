@@ -13,7 +13,7 @@ class CreateShuttleHolidayRequest(BaseModel):
     calendar: Annotated[str, Field(alias="calendar", regex=r"^(lunar|solar)$")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "date": "2021-07-31",
                 "type": "weekends",
@@ -26,7 +26,7 @@ class CreateShuttlePeriodTypeRequest(BaseModel):
     type: Annotated[str, Field(alias="type", max_length=20)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "type": "weekday",
             },
@@ -51,7 +51,7 @@ class CreateShuttlePeriodRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "type": "weekday",
                 "start": "2021-07-31T00:00:00+09:00",
@@ -69,7 +69,7 @@ class CreateShuttleRouteRequest(BaseModel):
     end_stop_id: Annotated[str, Field(alias="end", max_length=15)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "DHSS",
                 "tag": "DH",
@@ -95,7 +95,7 @@ class UpdateShuttleRouteRequest(BaseModel):
     end_stop_id: Annotated[Optional[str], Field(alias="end", max_length=15)]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "tag": "DH",
                 "korean": "셔틀콕 ~ 한대앞 ~ 셔틀콕",
@@ -112,7 +112,7 @@ class CreateShuttleStopRequest(BaseModel):
     longitude: Annotated[float, Field(alias="longitude")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "shuttlecock_o",
                 "latitude": 37.123456,
@@ -126,7 +126,7 @@ class UpdateShuttleStopRequest(BaseModel):
     longitude: Annotated[Optional[float], Field(alias="longitude")]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "latitude": 37.123456,
                 "longitude": 127.123456,
@@ -144,7 +144,7 @@ class CreateShuttleRouteStopRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "route": "DHSS",
                 "stop": "shuttlecock_o",
@@ -162,7 +162,7 @@ class UpdateShuttleRouteStopRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "sequence": 1,
                 "cumulativeTime": "00:00:00",
@@ -180,7 +180,7 @@ class CreateShuttleTimetableRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "period": "weekday",
                 "weekdays": True,
@@ -200,7 +200,7 @@ class UpdateShuttleTimetableRequest(BaseModel):
     ]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "period": "weekday",
                 "weekdays": True,

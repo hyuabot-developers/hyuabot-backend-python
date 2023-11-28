@@ -4,8 +4,11 @@ from typing import AsyncGenerator
 import pytest
 import pytest_asyncio
 from async_asgi_testclient import TestClient
+from sqlalchemy import text
 
+from database import engine
 from main import app
+from user.security import hash_password
 
 
 @pytest.fixture(scope="session")
@@ -24,3 +27,23 @@ async def client() -> AsyncGenerator[TestClient, None]:
 
     async with TestClient(app, scope=scope) as client:
         yield client
+
+
+@pytest_asyncio.fixture
+async def clean_db() -> None:
+    async with engine.begin() as conn:
+        await conn.execute(text("DELETE FROM auth_refresh_token"))
+        await conn.execute(text("DELETE FROM admin_user"))
+
+
+@pytest_asyncio.fixture
+async def create_test_user() -> None:
+    hashed_password = hash_password("test_password")
+    async with engine.begin() as conn:
+        await conn.execute(
+            text(
+                "INSERT INTO admin_user VALUES ("
+                "'test_id', :password, 'test_name', 'test@gmail.com', 'test_phone', true)",
+            ),
+            {"password": hashed_password},
+        )

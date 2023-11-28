@@ -26,7 +26,7 @@ class User(Base):
 class RefreshToken(Base):
     __tablename__ = "auth_refresh_token"
 
-    uuid: Mapped[str] = mapped_column("uuid", UUID, primary_key=True)
+    uuid: Mapped[str] = mapped_column("uuid", UUID(as_uuid=True), primary_key=True)
     user_id: Mapped[str] = mapped_column("user_id", String(20))
     refresh_token: Mapped[str] = mapped_column("refresh_token", String(64))
     expired_at: Mapped[datetime.datetime] = mapped_column(

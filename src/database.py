@@ -4,7 +4,7 @@ from typing import AsyncGenerator, Optional, Any
 
 from pydantic import BaseModel
 from redis.asyncio import Redis
-from sqlalchemy import Select, Insert, Update, CursorResult
+from sqlalchemy import Select, Insert, Update, CursorResult, Delete
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from config import settings
@@ -41,7 +41,7 @@ async def fetch_all(select_query: Select | Insert | Update) -> list[dict[str, An
         return [row._asdict() for row in cursor.all()]
 
 
-async def execute_query(query: Select | Insert | Update) -> None:
+async def execute_query(query: Select | Insert | Update | Delete) -> None:
     async with engine.begin() as conn:
         await conn.execute(query)
 

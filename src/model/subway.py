@@ -9,6 +9,7 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
     String,
     Time,
+    ForeignKeyConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -44,6 +45,13 @@ class SubwayRouteStation(Base):
         "SubwayTimetable",
         back_populates="station",
         cascade="all, delete-orphan",
+        primaryjoin="SubwayRouteStation.id == SubwayTimetable.station_id",
+    )
+    realtime: Mapped[List["SubwayRealtime"]] = relationship(
+        "SubwayRealtime",
+        back_populates="station",
+        cascade="all, delete-orphan",
+        primaryjoin="SubwayRouteStation.id == SubwayRealtime.station_id",
     )
 
 
@@ -56,6 +64,18 @@ class SubwayTimetable(Base):
             "weekday",
             "departure_time",
             name="pk_subway_timetable",
+        ),
+        ForeignKeyConstraint(
+            [
+                "station_id",
+                "start_station_id",
+                "terminal_station_id",
+            ],
+            [
+                "subway_route_station.station_id",
+                "subway_route_station.station_id",
+                "subway_route_station.station_id",
+            ],
         ),
     )
 
@@ -89,6 +109,10 @@ class SubwayRealtime(Base):
             "arrival_sequence",
             name="pk_subway_realtime",
         ),
+        ForeignKeyConstraint(
+            ["station_id", "terminal_station_id"],
+            ["subway_route_station.station_id", "subway_route_station.station_id"],
+        ),
     )
 
     station_id: Mapped[str] = mapped_column("station_id", String(10))
@@ -102,7 +126,7 @@ class SubwayRealtime(Base):
     is_express: Mapped[bool] = mapped_column("is_express_train", Boolean)
     is_last: Mapped[bool] = mapped_column("is_last_train", Boolean)
     status: Mapped[int] = mapped_column("status_code", Integer)
-    updated_at: Mapped[datetime.datetime] = mapped_column("last_updated", DateTime)
+    updated_at: Mapped[datetime.datetime] = mapped_column("last_updated_time", DateTime)
 
     station: Mapped["SubwayRouteStation"] = relationship(
         "SubwayRouteStation",

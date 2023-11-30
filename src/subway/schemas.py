@@ -60,9 +60,12 @@ class CreateSubwayRouteStation(BaseModel):
 
 
 class UpdateSubwayRouteStation(BaseModel):
-    name: Annotated[Optional[str], Field(max_length=30, alias="name")]
-    sequence: Annotated[Optional[int], Field(alias="sequence", ge=0)]
-    cumulative_time: Annotated[datetime.timedelta, Field(alias="cumulativeTime")]
+    name: Annotated[Optional[str], Field(max_length=30, alias="name", default=None)]
+    sequence: Annotated[Optional[int], Field(alias="sequence", ge=0, default=None)]
+    cumulative_time: Annotated[
+        datetime.timedelta,
+        Field(alias="cumulativeTime", default=None),
+    ]
 
     class Config:
         json_schema_extra = {
@@ -149,8 +152,8 @@ class SubwayStartEndStation(BaseModel):
 
 class SubwayTimetableItemResponse(BaseModel):
     station_id: Annotated[str, Field(alias="stationID", pattern=r"^K[0-9]{3}$")]
-    start_station_id: Annotated[str, Field(alias="start_station_id")]
-    terminal_station_id: Annotated[str, Field(alias="terminal_station_id")]
+    start_station_id: Annotated[str, Field(alias="startStationID")]
+    terminal_station_id: Annotated[str, Field(alias="terminalStationID")]
     departure_time: Annotated[datetime.time, Field(alias="departureTime")]
     weekday: Annotated[str, Field(alias="weekday", max_length=10)]
     heading: Annotated[str, Field(alias="heading", max_length=10)]

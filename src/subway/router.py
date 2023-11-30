@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 from fastapi import APIRouter, Depends
 from starlette import status
@@ -15,9 +16,7 @@ from subway.dependancies import (
 )
 from subway.exceptions import (
     StationNameNotFound,
-    StationNotFound,
     TimetableNotFound,
-    RouteNotFound,
 )
 from subway.schemas import (
     SubwayStationListResponse,
@@ -150,16 +149,13 @@ async def get_route(
     route_id: int = Depends(get_valid_route),
     _: str = Depends(parse_jwt_user_data),
 ):
-    route = await service.get_route(route_id)
-    if route is None:
-        raise RouteNotFound()
+    route: dict[str, Any] = await service.get_route(route_id)  # type: ignore
     return {"name": route["route_name"], "id": route["route_id"]}
 
 
 @router.patch(
     "/route/{route_id}",
     status_code=status.HTTP_200_OK,
-    response_model=SubwayRouteItemResponse,
 )
 async def update_route(
     payload: UpdateSubwayRoute,
@@ -167,10 +163,6 @@ async def update_route(
     _: str = Depends(parse_jwt_user_data),
 ):
     await service.update_route(route_id, payload)
-    route = await service.get_route(route_id)
-    if route is None:
-        raise DetailedHTTPException()
-    return {"name": route["route_name"], "id": route["route_id"]}
 
 
 @router.delete(
@@ -219,12 +211,10 @@ async def get_route_station_list(
     response_model=SubwayRouteStationDetailResponse,
 )
 async def get_route_station(
-    station_id: str,
+    station_id: str = Depends(get_valid_route_station),
     _: str = Depends(parse_jwt_user_data),
 ):
-    station = await service.get_route_station(station_id)
-    if station is None:
-        raise StationNotFound()
+    station: dict[str, Any] = await service.get_route_station(station_id)  # type: ignore
     return {
         "id": station["station_id"],
         "name": station["station_name"],
@@ -262,7 +252,6 @@ async def create_route_station(
 @router.patch(
     "/station/{station_id}",
     status_code=status.HTTP_200_OK,
-    response_model=SubwayRouteStationDetailResponse,
 )
 async def update_route_station(
     payload: UpdateSubwayRouteStation,
@@ -270,18 +259,6 @@ async def update_route_station(
     _: str = Depends(parse_jwt_user_data),
 ):
     await service.update_route_station(station_id, payload)
-    station = await service.get_route_station(station_id)
-    if station is None:
-        raise DetailedHTTPException()
-    return {
-        "id": station["station_id"],
-        "name": station["station_name"],
-        "routeID": station["route_id"],
-        "sequence": station["station_sequence"],
-        "cumulativeTime": timedelta_to_str(
-            station["cumulative_time"],
-        ),
-    }
 
 
 @router.delete(
@@ -309,8 +286,8 @@ async def get_route_station_timetable_list(
         "data": map(
             lambda x: {
                 "stationID": x["station_id"],
-                "start_station_id": x["start_station_id"],
-                "terminal_station_id": x["terminal_station_id"],
+                "startStationID": x["start_station_id"],
+                "terminalStationID": x["terminal_station_id"],
                 "departureTime": remove_timezone(x["departure_time"]),
                 "weekday": x["weekday"],
                 "heading": x["up_down_type"],
@@ -335,8 +312,8 @@ async def create_route_station_timetable(
         raise DetailedHTTPException()
     return {
         "stationID": timetable["station_id"],
-        "start_station_id": timetable["start_station_id"],
-        "terminal_station_id": timetable["terminal_station_id"],
+        "startStationID": timetable["start_station_id"],
+        "terminalStationID": timetable["terminal_station_id"],
         "departureTime": remove_timezone(timetable["departure_time"]),
         "weekday": timetable["weekday"],
         "heading": timetable["up_down_type"],
@@ -365,8 +342,8 @@ async def get_route_station_timetable(
         raise TimetableNotFound()
     return {
         "stationID": data["station_id"],
-        "start_station_id": data["start_station_id"],
-        "terminal_station_id": data["terminal_station_id"],
+        "startStationID": data["start_station_id"],
+        "terminalStationID": data["terminal_station_id"],
         "departureTime": remove_timezone(data["departure_time"]),
         "weekday": data["weekday"],
         "heading": data["up_down_type"],

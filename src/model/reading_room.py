@@ -1,7 +1,7 @@
 import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, Integer, String
+from sqlalchemy import Boolean, DateTime, Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from model import Base
@@ -14,7 +14,11 @@ class ReadingRoom(Base):
     __tablename__ = "reading_room"
 
     id: Mapped[int] = mapped_column("room_id", Integer, primary_key=True)
-    campus_id: Mapped[int] = mapped_column("campus_id", Integer)
+    campus_id: Mapped[int] = mapped_column(
+        "campus_id",
+        Integer,
+        ForeignKey("campus.campus_id"),
+    )
     name: Mapped[str] = mapped_column("room_name", String(30))
     active: Mapped[bool] = mapped_column("is_active", Boolean, default=False)
     reservable: Mapped[bool] = mapped_column("is_reservable", Boolean, default=False)

@@ -33,6 +33,7 @@ async def client() -> AsyncGenerator[TestClient, None]:
 @pytest_asyncio.fixture
 async def clean_db() -> None:
     async with engine.begin() as conn:
+        await conn.execute(text("DELETE FROM campus"))
         await conn.execute(text("DELETE FROM subway_realtime"))
         await conn.execute(text("DELETE FROM subway_timetable"))
         await conn.execute(text("DELETE FROM subway_route_station"))
@@ -53,6 +54,17 @@ async def create_test_user() -> None:
             ),
             {"password": hashed_password},
         )
+
+
+# Campus Datas
+@pytest_asyncio.fixture
+async def create_test_campus() -> None:
+    values = ""
+    for i in range(1, 10):
+        values += f"({i}, 'test_campus{i}'),"
+    insert_sql = f"INSERT INTO campus VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
 
 
 # Subway Datas

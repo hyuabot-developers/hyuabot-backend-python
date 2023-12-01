@@ -3,6 +3,7 @@ from starlette import status
 
 from campus import service
 from campus.dependancies import create_valid_campus, get_valid_campus
+from campus.exceptions import CampusNotFound
 from campus.schemas import (
     CampusListResponse,
     CampusDetailResponse,
@@ -15,8 +16,8 @@ from user.jwt import parse_jwt_user_data
 router = APIRouter()
 
 
-@router.get("/", response_model=CampusListResponse)
-async def get_campuses(
+@router.get("", response_model=CampusListResponse)
+async def get_campus_list(
     _: str = Depends(parse_jwt_user_data),
     name: str | None = None,
 ):
@@ -37,12 +38,12 @@ async def get_campuses(
 
 @router.get("/{campus_id}", response_model=CampusDetailResponse)
 async def get_campus(
+    campus_id: int,
     _: str = Depends(parse_jwt_user_data),
-    campus_id: int = Depends(get_valid_campus),
 ):
     data = await service.get_campus(campus_id)
     if data is None:
-        raise DetailedHTTPException()
+        raise CampusNotFound()
     return {
         "id": data["campus_id"],
         "name": data["campus_name"],
@@ -62,7 +63,7 @@ async def delete_campus(
 
 
 @router.post(
-    "/",
+    "",
     status_code=status.HTTP_201_CREATED,
     response_model=CampusDetailResponse,
 )

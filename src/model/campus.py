@@ -1,13 +1,11 @@
-from typing import TYPE_CHECKING, List
+from typing import List
 
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from model import Base
-
-if TYPE_CHECKING:
-    from model.cafeteria import Cafeteria
-    from model.reading_room import ReadingRoom
+from model.cafeteria import Cafeteria
+from model.reading_room import ReadingRoom
 
 
 class Campus(Base):

@@ -7,6 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 import database
 from config import app_configs, settings
+from campus.router import router as campus_router
 from subway.router import router as subway_router
 from user.router import router as auth_router
 
@@ -41,6 +42,7 @@ app.add_middleware(
 
 # API routes
 api = APIRouter()
+api.include_router(campus_router, prefix="/campus", tags=["campus"])
 api.include_router(subway_router, prefix="/subway", tags=["subway"])
 api.include_router(auth_router, prefix="/auth")
 app.include_router(api, prefix="/api")

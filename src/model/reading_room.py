@@ -20,15 +20,15 @@ class ReadingRoom(Base):
         ForeignKey("campus.campus_id"),
     )
     name: Mapped[str] = mapped_column("room_name", String(30))
-    active: Mapped[bool] = mapped_column("is_active", Boolean, default=False)
-    reservable: Mapped[bool] = mapped_column("is_reservable", Boolean, default=False)
+    active: Mapped[bool] = mapped_column("is_active", Boolean)
+    reservable: Mapped[bool] = mapped_column("is_reservable", Boolean)
     total_seats: Mapped[int] = mapped_column("total", Integer, default=0)
     active_total_seats: Mapped[int] = mapped_column("active_total", Integer, default=0)
     occupied_seats: Mapped[int] = mapped_column("occupied", Integer, default=0)
-    available_seats: Mapped[int] = mapped_column("available", Integer, default=0)
+    available_seats: Mapped[int] = mapped_column("available", Integer)
     updated_at: Mapped[datetime.datetime] = mapped_column(
-        "last_updated",
-        DateTime,
+        "last_updated_time",
+        DateTime(timezone=True),
         default=datetime.datetime.now,
     )
 

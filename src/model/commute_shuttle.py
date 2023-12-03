@@ -1,7 +1,14 @@
 import datetime
 from typing import List
 
-from sqlalchemy import Float, Integer, PrimaryKeyConstraint, String, Time
+from sqlalchemy import (
+    Float,
+    Integer,
+    PrimaryKeyConstraint,
+    String,
+    Time,
+    ForeignKeyConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from model import Base
@@ -43,6 +50,16 @@ class CommuteShuttleTimetable(Base):
             "route_name",
             "stop_name",
             name="pk_commute_shuttle_timetable",
+        ),
+        ForeignKeyConstraint(
+            ["route_name"],
+            ["commute_shuttle_route.route_name"],
+            name="fk_commute_shuttle_timetable_route",
+        ),
+        ForeignKeyConstraint(
+            ["stop_name"],
+            ["commute_shuttle_stop.stop_name"],
+            name="fk_commute_shuttle_timetable_stop",
         ),
     )
 

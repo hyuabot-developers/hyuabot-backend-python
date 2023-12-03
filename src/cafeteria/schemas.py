@@ -39,11 +39,7 @@ class UpdateCafeteriaRequest(BaseModel):
 
 
 class CreateCafeteriaMenuRequest(BaseModel):
-    cafeteria_id: Annotated[int, Field(alias="cafeteriaID", ge=1)]
-    date: Annotated[
-        datetime.date,
-        Field(alias="date", regex=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$"),
-    ]
+    date: Annotated[datetime.date, Field(alias="date")]
     time: Annotated[str, Field(alias="time")]
     menu: Annotated[str, Field(alias="menu", max_length=400)]
     price: Annotated[str, Field(alias="price", max_length=30)]
@@ -51,7 +47,6 @@ class CreateCafeteriaMenuRequest(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "cafeteriaID": 1,
                 "date": "2021-07-31",
                 "time": "조식",
                 "menu": "토스트",
@@ -71,28 +66,28 @@ class UpdateCafeteriaMenuRequest(BaseModel):
         }
 
 
+class CafeteriaListItemResponse(BaseModel):
+    cafeteria_id: Annotated[int, Field(alias="id", ge=1)]
+    cafeteria_name: Annotated[str, Field(max_length=50, alias="name")]
+
+
 class CafeteriaListResponse(BaseModel):
     data: Annotated[list["CafeteriaListItemResponse"], Field(alias="data")]
 
 
-class CafeteriaListItemResponse(BaseModel):
-    cafeteria_id: Annotated[int, Field(alias="cafeteriaID", ge=1)]
-    cafeteria_name: Annotated[str, Field(max_length=50, alias="name")]
-
-
 class CafeteriaDetailResponse(BaseModel):
-    cafeteria_id: Annotated[int, Field(alias="cafeteriaID", ge=1)]
+    cafeteria_id: Annotated[int, Field(alias="id", ge=1)]
     cafeteria_name: Annotated[str, Field(max_length=50, alias="name")]
     latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
-    menu: Annotated[list["CafeteriaMenuResponse"], Field(alias="menu")]
 
 
 class CafeteriaMenuResponse(BaseModel):
-    date: Annotated[
-        datetime.date,
-        Field(alias="date", regex=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$"),
-    ]
+    date: Annotated[datetime.date, Field(alias="date")]
     time: Annotated[str, Field(alias="time")]
     menu: Annotated[str, Field(alias="menu", max_length=400)]
     price: Annotated[str, Field(alias="price", max_length=30)]
+
+
+class CafeteriaMenuListResponse(BaseModel):
+    data: Annotated[list["CafeteriaMenuResponse"], Field(alias="data")]

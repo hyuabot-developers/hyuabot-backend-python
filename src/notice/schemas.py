@@ -20,7 +20,7 @@ class CreateNoticeReqeust(BaseModel):
     url: Annotated[str, Field(max_length=100, alias="url")]
     expired_at: Annotated[
         Optional[datetime.datetime],
-        Field(alias="expired"),
+        Field(alias="expired", default=None),
     ]
 
     class Config:
@@ -34,11 +34,17 @@ class CreateNoticeReqeust(BaseModel):
 
 
 class UpdateNoticeRequest(BaseModel):
-    title: Annotated[Optional[str], Field(max_length=100, alias="title")]
-    url: Annotated[Optional[str], Field(max_length=100, alias="url")]
+    title: Annotated[
+        Optional[str],
+        Field(max_length=100, alias="title", default=None),
+    ]
+    url: Annotated[
+        Optional[str],
+        Field(max_length=100, alias="url", default=None),
+    ]
     expired_at: Annotated[
         Optional[datetime.datetime],
-        Field(alias="expired"),
+        Field(alias="expired", default=None),
     ]
 
     class Config:

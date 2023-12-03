@@ -34,6 +34,8 @@ async def client() -> AsyncGenerator[TestClient, None]:
 @pytest_asyncio.fixture
 async def clean_db() -> None:
     async with engine.begin() as conn:
+        await conn.execute(text("DELETE FROM notices"))
+        await conn.execute(text("DELETE FROM notice_category"))
         await conn.execute(text("DELETE FROM menu"))
         await conn.execute(text("DELETE FROM restaurant"))
         await conn.execute(text("DELETE FROM reading_room"))
@@ -91,6 +93,27 @@ async def create_test_cafeteria_menu(create_test_cafeteria) -> None:
             feed_date = datetime.datetime.now().date() + datetime.timedelta(days=j)
             values += f"({i}, '{feed_date}', '{random.choice(types)}', 'test_menu{i}', 'test_price'),"
     insert_sql = f"INSERT INTO menu VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+# Notice Datas
+@pytest_asyncio.fixture
+async def create_test_notice_category() -> None:
+    values = ""
+    for i in range(100, 110):
+        values += f"({i}, 'test_category{i}'),"
+    insert_sql = f"INSERT INTO notice_category VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_notice(create_test_notice_category, create_test_user) -> None:
+    values = ""
+    for i in range(9999, 10000):
+        values += f"({i}, 'test_title{i}', 'test_url', '2023-12-01T23:59:59', 100, 'test_id'),"
+    insert_sql = f"INSERT INTO notices VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
 

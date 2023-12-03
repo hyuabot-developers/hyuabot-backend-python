@@ -65,6 +65,11 @@ async def get_notice(
     return await fetch_one(select_query)
 
 
+async def get_notice_by_id(notice_id: int) -> dict[str, str] | None:
+    select_query = select(Notice).where(Notice.id == notice_id)
+    return await fetch_one(select_query)
+
+
 async def create_notice(
     user_id: str,
     category_id: int,
@@ -106,7 +111,6 @@ async def update_notice(
     update_query = (
         update(Notice)
         .where(
-            Notice.user_id == user_id,
             Notice.category_id == notice_category_id,
             Notice.id == notice_id,
         )

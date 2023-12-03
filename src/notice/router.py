@@ -6,6 +6,7 @@ from notice.dependancies import (
     create_valid_category,
     get_valid_category,
     create_valid_notice,
+    get_valid_notice,
 )
 from notice.exceptions import (
     CategoryNotFound,
@@ -66,7 +67,7 @@ async def create_notice_category(
 
 @router.get("/{notice_category_id}", response_model=NoticeCategoryDetailResponse)
 async def get_notice_category(
-    notice_category_id: int = Depends(get_valid_category),
+    notice_category_id: int,
     _: str = Depends(parse_jwt_user_data),
 ):
     data = await service.get_notice_category(notice_category_id)
@@ -89,7 +90,7 @@ async def delete_notice_category(
     await service.delete_notice_category(notice_category_id)
 
 
-@router.get("/{notice_category_id}/notice", response_model=NoticeListResponse)
+@router.get("/{notice_category_id}/notices", response_model=NoticeListResponse)
 async def get_notice_list(
     notice_category_id: int = Depends(get_valid_category),
     _: str = Depends(parse_jwt_user_data),
@@ -110,7 +111,7 @@ async def get_notice_list(
 
 
 @router.get(
-    "/{notice_category_id}/notice/{notice_id}",
+    "/{notice_category_id}/notices/{notice_id}",
     response_model=NoticeDetailResponse,
 )
 async def get_notice(
@@ -131,7 +132,7 @@ async def get_notice(
 
 
 @router.post(
-    "/{notice_category_id}/notice",
+    "/{notice_category_id}/notices",
     status_code=status.HTTP_201_CREATED,
     response_model=NoticeDetailResponse,
 )
@@ -157,13 +158,13 @@ async def create_notice(
 
 
 @router.patch(
-    "/{notice_category_id}/notice/{notice_id}",
+    "/{notice_category_id}/notices/{notice_id}",
     response_model=NoticeDetailResponse,
 )
 async def update_notice(
     new_notice: UpdateNoticeRequest,
-    notice_id: int,
     notice_category_id: int = Depends(get_valid_category),
+    notice_id: int = Depends(get_valid_notice),
     user_id: str = Depends(parse_jwt_user_data),
 ):
     data = await service.update_notice(
@@ -184,7 +185,7 @@ async def update_notice(
 
 
 @router.delete(
-    "/{notice_category_id}/notice/{notice_id}",
+    "/{notice_category_id}/notices/{notice_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_notice(

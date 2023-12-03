@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import random
 from typing import AsyncGenerator
 
 import pytest
@@ -33,6 +34,8 @@ async def client() -> AsyncGenerator[TestClient, None]:
 @pytest_asyncio.fixture
 async def clean_db() -> None:
     async with engine.begin() as conn:
+        await conn.execute(text("DELETE FROM menu"))
+        await conn.execute(text("DELETE FROM restaurant"))
         await conn.execute(text("DELETE FROM reading_room"))
         await conn.execute(text("DELETE FROM campus"))
         await conn.execute(text("DELETE FROM subway_realtime"))
@@ -64,6 +67,30 @@ async def create_test_campus() -> None:
     for i in range(1, 10):
         values += f"({i}, 'test_campus{i}'),"
     insert_sql = f"INSERT INTO campus VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+# Cafeteria Datas
+@pytest_asyncio.fixture
+async def create_test_cafeteria(create_test_campus) -> None:
+    values = ""
+    for i in range(1, 10):
+        values += f"({i // 5 + 1}, {i}, 'test_cafeteria{i}', 89.0, 89.0),"
+    insert_sql = f"INSERT INTO restaurant VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_cafeteria_menu(create_test_cafeteria) -> None:
+    values = "(1, '2023-12-01', '조식', 'test_menu', 'test_price'),"
+    types = ["조식", "중식", "석식"]
+    for i in range(1, 10):
+        for j in range(-5, 5):
+            feed_date = datetime.datetime.now().date() + datetime.timedelta(days=j)
+            values += f"({i}, '{feed_date}', '{random.choice(types)}', 'test_menu{i}', 'test_price'),"
+    insert_sql = f"INSERT INTO menu VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
 

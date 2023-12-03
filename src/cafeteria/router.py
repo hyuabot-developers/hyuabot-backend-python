@@ -60,7 +60,7 @@ async def get_cafeteria(
     return {
         "id": data["restaurant_id"],
         "name": data["restaurant_name"],
-        "campus": data["campus_id"],
+        "campusID": data["campus_id"],
         "latitude": data["latitude"],
         "longitude": data["longitude"],
     }
@@ -82,7 +82,7 @@ async def create_cafeteria(
     return {
         "id": data["restaurant_id"],
         "name": data["restaurant_name"],
-        "campus": data["campus_id"],
+        "campusID": data["campus_id"],
         "latitude": data["latitude"],
         "longitude": data["longitude"],
     }
@@ -96,11 +96,11 @@ async def update_cafeteria(
 ):
     data = await service.update_cafeteria(cafeteria_id, new_cafeteria)
     if data is None:
-        raise CafeteriaNotFound()
+        raise DetailedHTTPException()
     return {
         "id": data["restaurant_id"],
         "name": data["restaurant_name"],
-        "campus": data["campus_id"],
+        "campusID": data["campus_id"],
         "latitude": data["latitude"],
         "longitude": data["longitude"],
     }
@@ -120,10 +120,17 @@ async def delete_cafeteria(
     response_model=CafeteriaMenuListResponse,
 )
 async def get_cafeteria_menu(
+    date: datetime.date | None = None,
     cafeteria_id: int = Depends(get_valid_cafeteria),
     _: str = Depends(parse_jwt_user_data),
 ):
-    data = await service.get_list_menu_by_cafeteria_id(cafeteria_id)
+    if date is None:
+        data = await service.get_list_menu_by_cafeteria_id(cafeteria_id)
+    else:
+        data = await service.get_list_menu_by_cafeteria_id_and_date(
+            cafeteria_id,
+            date,
+        )
     return {
         "data": map(
             lambda x: {
@@ -206,13 +213,15 @@ async def update_cafeteria_menu(
     )
     if data is None:
         raise MenuNotFound()
-    await service.update_menu(
+    data = await service.update_menu(
         cafeteria_id,
         feed_date,
         time_type,
         menu_food,
         new_menu,
     )
+    if data is None:
+        raise DetailedHTTPException()
     return {
         "date": data["feed_date"],
         "time": data["time_type"],
@@ -232,6 +241,14 @@ async def delete_cafeteria_menu(
     cafeteria_id: int = Depends(get_valid_cafeteria),
     _: str = Depends(parse_jwt_user_data),
 ):
+    data = await service.get_menu(
+        cafeteria_id,
+        feed_date,
+        time_type,
+        menu_food,
+    )
+    if data is None:
+        raise MenuNotFound()
     await service.delete_menu(
         cafeteria_id,
         feed_date,

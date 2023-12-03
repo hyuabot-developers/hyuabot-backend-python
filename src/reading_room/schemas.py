@@ -61,4 +61,4 @@ class ReadingRoomDetailResponse(BaseModel):
     active_seats: Annotated[int, Field(alias="active", ge=0)]
     occupied_seats: Annotated[int, Field(alias="occupied", ge=0)]
     available_seats: Annotated[int, Field(alias="available", ge=0)]
-    updated_at: Annotated[datetime.datetime, Field(alias="updatedAt")]
+    updated_at: Annotated[Optional[datetime.datetime], Field(alias="updatedAt")]

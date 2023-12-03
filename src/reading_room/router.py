@@ -22,12 +22,12 @@ router = APIRouter()
 @router.get("", response_model=ReadingRoomListResponse)
 async def get_reading_room_list(
     _: str = Depends(parse_jwt_user_data),
-    campus_id: int | None = None,
+    campus: int | None = None,
 ):
-    if campus_id is None:
+    if campus is None:
         data = await service.list_reading_room()
     else:
-        data = await service.list_reading_room_filter(campus_id)
+        data = await service.list_reading_room_filter(campus)
     return {
         "data": map(
             lambda x: {

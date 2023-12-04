@@ -34,6 +34,9 @@ async def client() -> AsyncGenerator[TestClient, None]:
 @pytest_asyncio.fixture
 async def clean_db() -> None:
     async with engine.begin() as conn:
+        await conn.execute(text("DELETE FROM commute_shuttle_timetable"))
+        await conn.execute(text("DELETE FROM commute_shuttle_stop"))
+        await conn.execute(text("DELETE FROM commute_shuttle_route"))
         await conn.execute(text("DELETE FROM notices"))
         await conn.execute(text("DELETE FROM notice_category"))
         await conn.execute(text("DELETE FROM menu"))
@@ -93,6 +96,40 @@ async def create_test_cafeteria_menu(create_test_cafeteria) -> None:
             feed_date = datetime.datetime.now().date() + datetime.timedelta(days=j)
             values += f"({i}, '{feed_date}', '{random.choice(types)}', 'test_menu{i}', 'test_price'),"
     insert_sql = f"INSERT INTO menu VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+# Commute Shuttle Datas
+@pytest_asyncio.fixture
+async def create_test_commute_shuttle_route() -> None:
+    values = ""
+    for i in range(1, 10):
+        values += f"('test_route{i}', 'test_description{i}', 'test_description{i}'),"
+    insert_sql = f"INSERT INTO commute_shuttle_route VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_commute_shuttle_stop() -> None:
+    values = ""
+    for i in range(1, 50):
+        values += f"('test_stop{i}', 'test_description{i}', 89.9, 89.9),"
+    insert_sql = f"INSERT INTO commute_shuttle_stop VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_commute_shuttle_timetable(
+    create_test_commute_shuttle_route,
+    create_test_commute_shuttle_stop,
+) -> None:
+    values = ""
+    for i in range(1, 50):
+        values += f"('test_route{(i // 10 + 1)}', 'test_stop{i}', {i}, '07:{str(i).zfill(2)}:00'),"
+    insert_sql = f"INSERT INTO commute_shuttle_timetable VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
 

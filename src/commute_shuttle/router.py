@@ -42,7 +42,7 @@ async def get_route_list(
     return {
         "data": map(
             lambda x: {
-                "route": x["route_name"],
+                "name": x["route_name"],
                 "korean": x["route_description_korean"],
                 "english": x["route_description_english"],
             },
@@ -60,7 +60,7 @@ async def get_route(
     if data is None:
         raise RouteNotFound()
     return {
-        "route": data["route_name"],
+        "name": data["route_name"],
         "korean": data["route_description_korean"],
         "english": data["route_description_english"],
     }
@@ -79,7 +79,7 @@ async def create_route(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "route": data["route_name"],
+        "name": data["route_name"],
         "korean": data["route_description_korean"],
         "english": data["route_description_english"],
     }
@@ -98,7 +98,7 @@ async def update_route(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "route": data["route_name"],
+        "name": data["route_name"],
         "korean": data["route_description_korean"],
         "english": data["route_description_english"],
     }
@@ -130,12 +130,12 @@ async def get_stop_list(
     }
 
 
-@router.get("/stop/{stop_id}", response_model=CommuteShuttleStopDetailResponse)
+@router.get("/stop/{stop_name}", response_model=CommuteShuttleStopDetailResponse)
 async def get_stop(
-    stop_id: str,
+    stop_name: str,
     _: str = Depends(parse_jwt_user_data),
 ):
-    data = await service.get_stop(stop_id)
+    data = await service.get_stop(stop_name)
     if data is None:
         raise StopNotFound()
     return {
@@ -167,15 +167,15 @@ async def create_stop(
 
 
 @router.patch(
-    "/stop/{stop_id}",
+    "/stop/{stop_name}",
     response_model=CommuteShuttleStopDetailResponse,
 )
 async def update_stop(
     new_stop: UpdateCommuteShuttleStopRequest,
-    stop_id: str = Depends(get_valid_stop),
+    stop_name: str = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
-    data = await service.update_stop(stop_id, new_stop)
+    data = await service.update_stop(stop_name, new_stop)
     if data is None:
         raise DetailedHTTPException()
     return {
@@ -186,27 +186,27 @@ async def update_stop(
     }
 
 
-@router.delete("/stop/{stop_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/stop/{stop_name}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_stop(
-    stop_id: str = Depends(get_valid_stop),
+    stop_name: str = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
-    await service.delete_stop(stop_id)
+    await service.delete_stop(stop_name)
 
 
 @router.get("/timetable", response_model=CommuteShuttleTimetableListResponse)
 async def get_timetable_list(
-    route_name: str | None = None,
+    route: str | None = None,
     _: str = Depends(parse_jwt_user_data),
 ):
-    if route_name is None:
+    if route is None:
         data = await service.list_timetable()
     else:
-        data = await service.list_timetable_filter(route_name)
+        data = await service.list_timetable_filter(route)
     return {
         "data": map(
             lambda x: {
-                "route": x["route_name"],
+                "name": x["route_name"],
                 "stop": x["stop_name"],
                 "sequence": x["stop_order"],
                 "time": x["departure_time"],
@@ -229,7 +229,7 @@ async def get_timetable(
     if data is None:
         raise TimetableNotFound()
     return {
-        "route": data["route_name"],
+        "name": data["route_name"],
         "stop": data["stop_name"],
         "sequence": data["stop_order"],
         "time": data["departure_time"],
@@ -251,7 +251,7 @@ async def create_timetable(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "route": data["route_name"],
+        "name": data["route_name"],
         "stop": data["stop_name"],
         "sequence": data["stop_order"],
         "time": data["departure_time"],
@@ -268,11 +268,14 @@ async def update_timetable(
     stop_name: str = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
+    data = await service.get_timetable(route_name, stop_name)
+    if data is None:
+        raise TimetableNotFound()
     data = await service.update_timetable(route_name, stop_name, new_timetable)
     if data is None:
         raise DetailedHTTPException()
     return {
-        "route": data["route_name"],
+        "name": data["route_name"],
         "stop": data["stop_name"],
         "sequence": data["stop_order"],
         "time": data["departure_time"],

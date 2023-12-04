@@ -35,10 +35,10 @@ async def create_valid_stop(
     return new_stop
 
 
-async def get_valid_stop(stop_id: str) -> str:
-    if await service.get_stop(stop_id) is None:
+async def get_valid_stop(stop_name: str) -> str:
+    if await service.get_stop(stop_name) is None:
         raise StopNotFound()
-    return stop_id
+    return stop_name
 
 
 async def create_valid_timetable(
@@ -54,12 +54,3 @@ async def create_valid_timetable(
     ):
         raise DuplicateTimetableSequence()
     return new_timetable
-
-
-async def get_valid_timetable(
-    route_name: str,
-    stop_name: str,
-) -> tuple[str, str]:
-    if await service.get_timetable(route_name, stop_name) is None:
-        raise StopNotFound()
-    return route_name, stop_name

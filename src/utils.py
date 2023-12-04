@@ -5,6 +5,7 @@ import string
 
 logger = logging.getLogger(__name__)
 ALPHA_NUM = string.ascii_letters + string.digits
+KST = datetime.timezone(datetime.timedelta(hours=9))
 
 
 def generate_random_alphanum(length: int = 20) -> str:

@@ -6,12 +6,11 @@ from shuttle.exceptions import (
     TimetableNotFound,
     RouteNotFound,
     StopNotFound,
-    RouteStopNotFound,
     DuplicateStopName,
     DuplicateRouteStop,
     DuplicateRouteName,
-    PeriodNotFound,
     DuplicatePeriod,
+    DuplicateTimetable,
 )
 from shuttle.schemas import (
     CreateShuttleHolidayRequest,
@@ -37,21 +36,19 @@ async def create_valid_period(
 ) -> CreateShuttlePeriodRequest:
     if await service.get_period(
         new_period.type,
-        datetime.datetime.combine(new_period.start, datetime.time.min, tzinfo=KST),
-        datetime.datetime.combine(new_period.end, datetime.time.max, tzinfo=KST),
+        datetime.datetime.combine(
+            new_period.start,
+            datetime.time(0, 0, 0),
+            tzinfo=KST,
+        ),
+        datetime.datetime.combine(
+            new_period.end,
+            datetime.time(23, 59, 59),
+            tzinfo=KST,
+        ),
     ):
         raise DuplicatePeriod()
     return new_period
-
-
-async def get_valid_period(
-    period_type_name: str,
-    start: datetime.datetime,
-    end: datetime.datetime,
-) -> str:
-    if await service.get_period(period_type_name, start, end) is None:
-        raise PeriodNotFound()
-    return period_type_name
 
 
 async def create_valid_route(
@@ -83,20 +80,15 @@ async def get_valid_stop(stop_name: str) -> str:
 
 
 async def create_valid_route_stop(
+    route_name: str,
     new_route_stop: CreateShuttleRouteStopRequest,
 ) -> CreateShuttleRouteStopRequest:
     if await service.get_route_stop(
-        new_route_stop.route_name,
+        route_name,
         new_route_stop.stop_name,
     ):
         raise DuplicateRouteStop()
     return new_route_stop
-
-
-async def get_valid_route_stop(route_name: str, stop_name: str) -> str:
-    if await service.get_route_stop(route_name, stop_name) is None:
-        raise RouteStopNotFound()
-    return route_name
 
 
 async def create_valid_timetable(
@@ -104,6 +96,16 @@ async def create_valid_timetable(
 ) -> CreateShuttleTimetableRequest:
     if await service.get_route(new_timetable.route_name) is None:
         raise RouteNotFound()
+    elif (
+        await service.get_timetable_by_filter(
+            new_timetable.route_name,
+            new_timetable.period_type,
+            new_timetable.is_weekdays,
+            new_timetable.departure_time,
+        )
+        is not None
+    ):
+        raise DuplicateTimetable()
     return new_timetable
 
 

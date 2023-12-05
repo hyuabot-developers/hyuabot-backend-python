@@ -21,3 +21,7 @@ def timedelta_to_str(td: datetime.timedelta) -> str:
 
 def remove_timezone(dt: datetime.datetime) -> datetime.datetime:
     return dt.replace(tzinfo=None)
+
+
+def timestamp_tz_to_datetime(ts: datetime.time) -> str:
+    return ts.strftime("%H:%M:%S")

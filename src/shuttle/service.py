@@ -13,7 +13,6 @@ from model.shuttle import (
     ShuttleTimetable,
     ShuttleTimetableView,
 )
-from shuttle.exceptions import RouteNotFound
 from shuttle.schemas import (
     CreateShuttleHolidayRequest,
     CreateShuttlePeriodRequest,
@@ -292,16 +291,11 @@ async def delete_stop(stop_name: str) -> None:
 
 
 async def list_route_stop_filter(
-    route_name: str | None = None,
-    stop_name: str | None = None,
+    route_name: str,
 ):
-    conditions = []
-    if route_name:
-        conditions.append(ShuttleRouteStop.route_name == route_name)
-    if stop_name:
-        conditions.append(ShuttleRouteStop.stop_name == stop_name)
-
-    select_query = select(ShuttleRouteStop).where(*conditions)
+    select_query = select(ShuttleRouteStop).where(
+        ShuttleRouteStop.route_name == route_name,
+    )
     return await fetch_all(select_query)
 
 
@@ -320,13 +314,11 @@ async def create_route_stop(
     route_name: str,
     new_route_stop: CreateShuttleRouteStopRequest,
 ) -> dict[str, Any] | None:
-    if await get_route(route_name) is None:
-        raise RouteNotFound()
     insert_query = (
         insert(ShuttleRouteStop)
         .values(
             {
-                "route_name": new_route_stop.route_name,
+                "route_name": route_name,
                 "stop_name": new_route_stop.stop_name,
                 "stop_order": new_route_stop.sequence,
                 "cumulative_time": new_route_stop.cumulative_time,
@@ -389,9 +381,13 @@ async def list_timetable_filter(
     elif weekdays is False:
         conditions.append(ShuttleTimetable.is_weekdays.isnot(true()))
     if start_time:
-        conditions.append(ShuttleTimetable.departure_time >= start_time)
+        conditions.append(
+            ShuttleTimetable.departure_time >= start_time.replace(tzinfo=KST),
+        )
     if end_time:
-        conditions.append(ShuttleTimetable.departure_time <= end_time)
+        conditions.append(
+            ShuttleTimetable.departure_time <= end_time.replace(tzinfo=KST),
+        )
     select_query = select(ShuttleTimetable).where(*conditions)
     return await fetch_all(select_query)
 
@@ -401,9 +397,24 @@ async def get_timetable(seq: int) -> dict[str, str] | None:
     return await fetch_one(select_query)
 
 
+async def get_timetable_by_filter(
+    route_name: str,
+    period_type: str,
+    is_weekdays: bool,
+    departure_time: datetime.time,
+) -> dict[str, str] | None:
+    select_query = select(ShuttleTimetable).where(
+        ShuttleTimetable.route_name == route_name,
+        ShuttleTimetable.period == period_type,
+        ShuttleTimetable.is_weekdays == is_weekdays,
+        ShuttleTimetable.departure_time == departure_time.replace(tzinfo=KST),
+    )
+    return await fetch_one(select_query)
+
+
 async def create_timetable(
     new_timetable: CreateShuttleTimetableRequest,
-) -> dict[str, str] | None:
+) -> dict[str, Any] | None:
     insert_query = (
         insert(ShuttleTimetable)
         .values(

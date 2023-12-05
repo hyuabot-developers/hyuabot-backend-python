@@ -50,7 +50,7 @@ from shuttle.schemas import (
     UpdateShuttleRouteStopRequest,
 )
 from user.jwt import parse_jwt_user_data
-from utils import timedelta_to_str
+from utils import timedelta_to_str, timestamp_tz_to_datetime
 
 router = APIRouter()
 
@@ -125,6 +125,8 @@ async def delete_holiday(
     date: datetime.date,
     _: str = Depends(parse_jwt_user_data),
 ):
+    if await service.get_holiday(calendar, date) is None:
+        raise HolidayNotFound()
     await service.delete_holiday(calendar, date)
 
 
@@ -209,6 +211,21 @@ async def delete_period(
     end: datetime.date,
     _: str = Depends(parse_jwt_user_data),
 ):
+    if (
+        await service.get_period(
+            period_type,
+            datetime.datetime.strptime(
+                f"{start}T00:00:00+09:00",
+                "%Y-%m-%dT%H:%M:%S%z",
+            ),
+            datetime.datetime.strptime(
+                f"{end}T23:59:59+09:00",
+                "%Y-%m-%dT%H:%M:%S%z",
+            ),
+        )
+        is None
+    ):
+        raise PeriodNotFound()
     await service.delete_period(period_type, start, end)
 
 
@@ -259,7 +276,7 @@ async def create_route(
 
 @router.get("/route/{route_name}", response_model=ShuttleRouteDetailResponse)
 async def get_route(
-    route_name: str = Depends(get_valid_route),
+    route_name: str,
     _: str = Depends(parse_jwt_user_data),
 ):
     data = await service.get_route(route_name)
@@ -347,7 +364,7 @@ async def create_stop(
 
 @router.get("/stop/{stop_name}", response_model=ShuttleStopItemResponse)
 async def get_stop(
-    stop_name: str = Depends(get_valid_stop),
+    stop_name: str,
     _: str = Depends(parse_jwt_user_data),
 ):
     data = await service.get_stop(stop_name)
@@ -399,7 +416,7 @@ async def get_route_stop_list(
                 "route": x["route_name"],
                 "stop": x["stop_name"],
                 "sequence": x["stop_order"],
-                "cumulativeTime": x["cumulative_time"],
+                "cumulativeTime": timedelta_to_str(x["cumulative_time"]),
             },
             data,
         ),
@@ -412,10 +429,11 @@ async def get_route_stop_list(
     response_model=ShuttleRouteStopItemResponse,
 )
 async def create_route_stop(
-    new_route_stop: CreateShuttleRouteStopRequest = Depends(create_valid_route_stop),
+    new_route_stop: CreateShuttleRouteStopRequest,
     route_name: str = Depends(get_valid_route),
     _: str = Depends(parse_jwt_user_data),
 ):
+    new_route_stop = await create_valid_route_stop(route_name, new_route_stop)
     data = await service.create_route_stop(route_name, new_route_stop)
     if data is None:
         raise DetailedHTTPException()
@@ -457,6 +475,9 @@ async def update_route_stop(
     stop_name: str = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
+    data = await service.get_route_stop(route_name, stop_name)
+    if data is None:
+        raise RouteStopNotFound()
     data = await service.update_route_stop(route_name, stop_name, new_route_stop)
     if data is None:
         raise DetailedHTTPException()
@@ -477,6 +498,8 @@ async def delete_route_stop(
     stop_name: str = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
+    if await service.get_route_stop(route_name, stop_name) is None:
+        raise RouteStopNotFound()
     await service.delete_route_stop(route_name, stop_name)
 
 
@@ -488,7 +511,7 @@ async def get_timetable_list(
     start: datetime.time | None = None,
     end: datetime.time | None = None,
 ):
-    if any([route, weekdays, start, end]):
+    if any([route, weekdays is not None, start, end]):
         data = await service.list_timetable_filter(
             route=route,
             weekdays=weekdays,
@@ -504,7 +527,7 @@ async def get_timetable_list(
                 "period": x["period_type"],
                 "weekdays": x["weekday"],
                 "route": x["route_name"],
-                "time": x["departure_time"],
+                "time": timestamp_tz_to_datetime(x["departure_time"]),
             },
             data,
         ),
@@ -528,7 +551,9 @@ async def create_timetable(
         "period": data["period_type"],
         "weekdays": data["weekday"],
         "route": data["route_name"],
-        "time": data["departure_time"],
+        "time": timestamp_tz_to_datetime(
+            data["departure_time"],
+        ),
     }
 
 

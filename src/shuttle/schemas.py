@@ -120,7 +120,6 @@ class UpdateShuttleStopRequest(BaseModel):
 
 
 class CreateShuttleRouteStopRequest(BaseModel):
-    route_name: Annotated[str, Field(max_length=15, alias="route")]
     stop_name: Annotated[str, Field(max_length=15, alias="stop")]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
     cumulative_time: Annotated[datetime.timedelta, Field(alias="cumulativeTime")]
@@ -128,7 +127,6 @@ class CreateShuttleRouteStopRequest(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "route": "DHSS",
                 "stop": "shuttlecock_o",
                 "sequence": 1,
                 "cumulativeTime": "00:00:00",

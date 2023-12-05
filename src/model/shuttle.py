@@ -12,6 +12,7 @@ from sqlalchemy import (
     Time,
     Date,
     ForeignKeyConstraint,
+    Sequence,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -181,7 +182,12 @@ class ShuttleTimetable(Base):
         ),
     )
 
-    id: Mapped[int] = mapped_column("seq", Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(
+        "seq",
+        Integer,
+        Sequence("shuttle_timetable_seq_seq"),
+        primary_key=True,
+    )
     period: Mapped[str] = mapped_column("period_type", String(20))
     is_weekdays: Mapped[bool] = mapped_column("weekday", Boolean)
     route_name: Mapped[str] = mapped_column("route_name", String(15))

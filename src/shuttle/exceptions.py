@@ -41,8 +41,8 @@ class RouteStopNotFound(NotFound):
     DETAIL = "ROUTE_STOP_NOT_FOUND"
 
 
-class DuplicateTimetableSequence(Conflict):
-    DETAIL = "DUPLICATE_TIMETABLE_SEQUENCE"
+class DuplicateTimetable(Conflict):
+    DETAIL = "DUPLICATE_TIMETABLE"
 
 
 class TimetableNotFound(NotFound):

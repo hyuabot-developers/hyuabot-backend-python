@@ -5,12 +5,9 @@ from pydantic import BaseModel, Field
 
 
 class CreateShuttleHolidayRequest(BaseModel):
-    date: Annotated[
-        datetime.date,
-        Field(alias="date", regex=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$"),
-    ]
-    type: Annotated[str, Field(alias="type", regex=r"^(weekends|halt)$")]
-    calendar: Annotated[str, Field(alias="calendar", regex=r"^(lunar|solar)$")]
+    date: Annotated[datetime.date, Field(alias="date")]
+    type: Annotated[str, Field(alias="type", pattern=r"^(weekends|halt)$")]
+    calendar: Annotated[str, Field(alias="calendar", pattern=r"^(lunar|solar)$")]
 
     class Config:
         json_schema_extra = {
@@ -35,27 +32,15 @@ class CreateShuttlePeriodTypeRequest(BaseModel):
 
 class CreateShuttlePeriodRequest(BaseModel):
     type: Annotated[str, Field(alias="type", max_length=20)]
-    start: Annotated[
-        datetime.datetime,
-        Field(
-            alias="start",
-            regex=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}+09:00$",
-        ),
-    ]
-    end: Annotated[
-        datetime.datetime,
-        Field(
-            alias="end",
-            regex=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}+09:00$",
-        ),
-    ]
+    start: Annotated[datetime.date, Field(alias="start")]
+    end: Annotated[datetime.date, Field(alias="end")]
 
     class Config:
         json_schema_extra = {
             "example": {
-                "type": "weekday",
-                "start": "2021-07-31T00:00:00+09:00",
-                "end": "2021-07-31T00:00:00+09:00",
+                "type": "semester",
+                "start": "2021-07-31",
+                "end": "2021-08-31",
             },
         }
 
@@ -135,18 +120,13 @@ class UpdateShuttleStopRequest(BaseModel):
 
 
 class CreateShuttleRouteStopRequest(BaseModel):
-    route_name: Annotated[str, Field(max_length=15, alias="route")]
     stop_name: Annotated[str, Field(max_length=15, alias="stop")]
-    sequence: Annotated[int, Field(alias="sequence", ge=1)]
-    cumulative_time: Annotated[
-        datetime.timedelta,
-        Field(alias="cumulativeTime", regex=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
-    ]
+    sequence: Annotated[int, Field(alias="sequence", ge=0)]
+    cumulative_time: Annotated[datetime.timedelta, Field(alias="cumulativeTime")]
 
     class Config:
         json_schema_extra = {
             "example": {
-                "route": "DHSS",
                 "stop": "shuttlecock_o",
                 "sequence": 1,
                 "cumulativeTime": "00:00:00",
@@ -158,7 +138,7 @@ class UpdateShuttleRouteStopRequest(BaseModel):
     sequence: Annotated[Optional[int], Field(alias="sequence", ge=1)]
     cumulative_time: Annotated[
         Optional[datetime.timedelta],
-        Field(alias="cumulativeTime", regex=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
+        Field(alias="cumulativeTime"),
     ]
 
     class Config:
@@ -174,10 +154,7 @@ class CreateShuttleTimetableRequest(BaseModel):
     period_type: Annotated[str, Field(alias="period", max_length=20)]
     is_weekdays: Annotated[bool, Field(alias="weekdays")]
     route_name: Annotated[str, Field(max_length=15, alias="route")]
-    departure_time: Annotated[
-        datetime.time,
-        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
-    ]
+    departure_time: Annotated[datetime.time, Field(alias="time")]
 
     class Config:
         json_schema_extra = {
@@ -185,7 +162,7 @@ class CreateShuttleTimetableRequest(BaseModel):
                 "period": "weekday",
                 "weekdays": True,
                 "route": "DHSS",
-                "departureTime": "08:00",
+                "time": "08:00",
             },
         }
 
@@ -194,10 +171,7 @@ class UpdateShuttleTimetableRequest(BaseModel):
     period_type: Annotated[Optional[str], Field(alias="period", max_length=20)]
     is_weekdays: Annotated[Optional[bool], Field(alias="weekdays")]
     route_name: Annotated[Optional[str], Field(max_length=15, alias="route")]
-    departure_time: Annotated[
-        Optional[datetime.time],
-        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
-    ]
+    departure_time: Annotated[Optional[datetime.time], Field(alias="time")]
 
     class Config:
         json_schema_extra = {
@@ -205,53 +179,38 @@ class UpdateShuttleTimetableRequest(BaseModel):
                 "period": "weekday",
                 "weekdays": True,
                 "route": "DHSS",
-                "departureTime": "08:00",
+                "time": "08:00",
             },
         }
+
+
+class ShuttleHolidayItemResponse(BaseModel):
+    date: Annotated[datetime.date, Field(alias="date")]
+    type: Annotated[str, Field(alias="type", pattern=r"^(weekends|halt)$")]
+    calendar: Annotated[str, Field(alias="calendar", pattern=r"^(lunar|solar)$")]
 
 
 class ShuttleHolidayListResponse(BaseModel):
     data: Annotated[list["ShuttleHolidayItemResponse"], Field(alias="data")]
 
 
-class ShuttleHolidayItemResponse(BaseModel):
-    date: Annotated[
-        datetime.date,
-        Field(alias="date", regex=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$"),
-    ]
-    type: Annotated[str, Field(alias="type", regex=r"^(weekends|halt)$")]
-    calendar: Annotated[str, Field(alias="calendar", regex=r"^(lunar|solar)$")]
+class ShuttlePeriodItemResponse(BaseModel):
+    type: Annotated[str, Field(alias="type", max_length=20)]
+    start: Annotated[datetime.datetime, Field(alias="start")]
+    end: Annotated[datetime.datetime, Field(alias="end")]
 
 
 class ShuttlePeriodListResponse(BaseModel):
     data: Annotated[list["ShuttlePeriodItemResponse"], Field(alias="data")]
 
 
-class ShuttlePeriodItemResponse(BaseModel):
-    type: Annotated[str, Field(alias="type", max_length=20)]
-    start: Annotated[
-        datetime.datetime,
-        Field(
-            alias="start",
-            regex=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}+09:00$",
-        ),
-    ]
-    end: Annotated[
-        datetime.datetime,
-        Field(
-            alias="end",
-            regex=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}+09:00$",
-        ),
-    ]
+class ShuttleRouteListItemResponse(BaseModel):
+    name: Annotated[str, Field(max_length=15, alias="name")]
+    tag: Annotated[str, Field(max_length=10, alias="tag")]
 
 
 class ShuttleRouteListResponse(BaseModel):
     data: Annotated[list["ShuttleRouteListItemResponse"], Field(alias="data")]
-
-
-class ShuttleRouteListItemResponse(BaseModel):
-    name: Annotated[str, Field(max_length=15, alias="name")]
-    tag: Annotated[str, Field(max_length=10, alias="tag")]
 
 
 class ShuttleRouteDetailResponse(BaseModel):
@@ -261,20 +220,12 @@ class ShuttleRouteDetailResponse(BaseModel):
     route_description_english: Annotated[str, Field(max_length=100, alias="english")]
     start_stop_id: Annotated[str, Field(alias="start", max_length=15)]
     end_stop_id: Annotated[str, Field(alias="end", max_length=15)]
-    stops: Annotated[list["ShuttleRouteStopResponse"], Field(alias="stops")]
 
 
 class ShuttleRouteStopResponse(BaseModel):
     stop_name: Annotated[str, Field(max_length=15, alias="stop")]
-    sequence: Annotated[int, Field(alias="sequence", ge=1)]
-    cumulative_time: Annotated[
-        datetime.timedelta,
-        Field(alias="cumulativeTime", regex=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
-    ]
-
-
-class ShuttleStopListResponse(BaseModel):
-    data: Annotated[list["ShuttleStopItemResponse"], Field(alias="data")]
+    sequence: Annotated[int, Field(alias="sequence", ge=0)]
+    cumulative_time: Annotated[datetime.timedelta, Field(alias="cumulativeTime")]
 
 
 class ShuttleStopItemResponse(BaseModel):
@@ -283,22 +234,19 @@ class ShuttleStopItemResponse(BaseModel):
     longitude: Annotated[float, Field(alias="longitude")]
 
 
-class ShuttleRouteStopListResponse(BaseModel):
-    data: Annotated[list["ShuttleRouteStopItemResponse"], Field(alias="data")]
+class ShuttleStopListResponse(BaseModel):
+    data: Annotated[list["ShuttleStopItemResponse"], Field(alias="data")]
 
 
 class ShuttleRouteStopItemResponse(BaseModel):
     route_name: Annotated[str, Field(max_length=15, alias="route")]
     stop_name: Annotated[str, Field(max_length=15, alias="stop")]
-    sequence: Annotated[int, Field(alias="sequence", ge=1)]
-    cumulative_time: Annotated[
-        datetime.timedelta,
-        Field(alias="cumulativeTime", regex=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
-    ]
+    sequence: Annotated[int, Field(alias="sequence", ge=0)]
+    cumulative_time: Annotated[str, Field(alias="cumulativeTime")]
 
 
-class ShuttleTimetableListResponse(BaseModel):
-    data: Annotated[list["ShuttleTimetableItemResponse"], Field(alias="data")]
+class ShuttleRouteStopListResponse(BaseModel):
+    data: Annotated[list["ShuttleRouteStopItemResponse"], Field(alias="data")]
 
 
 class ShuttleTimetableItemResponse(BaseModel):
@@ -306,14 +254,11 @@ class ShuttleTimetableItemResponse(BaseModel):
     route_name: Annotated[str, Field(max_length=15, alias="route")]
     period_type: Annotated[str, Field(alias="period", max_length=20)]
     is_weekdays: Annotated[bool, Field(alias="weekdays")]
-    departure_time: Annotated[
-        datetime.time,
-        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
-    ]
+    departure_time: Annotated[datetime.time, Field(alias="time")]
 
 
-class ShuttleTimetableViewResponse(BaseModel):
-    data: Annotated[list["ShuttleTimetableViewItemResponse"], Field(alias="data")]
+class ShuttleTimetableListResponse(BaseModel):
+    data: Annotated[list["ShuttleTimetableItemResponse"], Field(alias="data")]
 
 
 class ShuttleTimetableViewItemResponse(BaseModel):
@@ -322,7 +267,8 @@ class ShuttleTimetableViewItemResponse(BaseModel):
     stop_name: Annotated[str, Field(max_length=15, alias="stop")]
     period_type: Annotated[str, Field(alias="period", max_length=20)]
     is_weekdays: Annotated[bool, Field(alias="weekdays")]
-    departure_time: Annotated[
-        datetime.time,
-        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
-    ]
+    departure_time: Annotated[datetime.time, Field(alias="time")]
+
+
+class ShuttleTimetableViewResponse(BaseModel):
+    data: Annotated[list["ShuttleTimetableViewItemResponse"], Field(alias="data")]

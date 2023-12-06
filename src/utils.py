@@ -5,6 +5,7 @@ import string
 
 logger = logging.getLogger(__name__)
 ALPHA_NUM = string.ascii_letters + string.digits
+KST = datetime.timezone(datetime.timedelta(hours=9))
 
 
 def generate_random_alphanum(length: int = 20) -> str:
@@ -20,3 +21,7 @@ def timedelta_to_str(td: datetime.timedelta) -> str:
 
 def remove_timezone(dt: datetime.datetime) -> datetime.datetime:
     return dt.replace(tzinfo=None)
+
+
+def timestamp_tz_to_datetime(ts: datetime.time) -> str:
+    return ts.strftime("%H:%M:%S")

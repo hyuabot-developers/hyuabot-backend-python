@@ -10,6 +10,9 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
     String,
     Time,
+    Date,
+    ForeignKeyConstraint,
+    Sequence,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -36,15 +39,59 @@ class ShuttlePeriod(Base):
             "period_end",
             name="pk_shuttle_period",
         ),
+        ForeignKeyConstraint(
+            ["period_type"],
+            ["shuttle_period_type.period_type"],
+            name="fk_shuttle_period_type",
+        ),
     )
 
-    type: Mapped[str] = mapped_column("period_type", String(20))
-    start: Mapped[datetime.datetime] = mapped_column("period_start", DateTime)
-    end: Mapped[datetime.datetime] = mapped_column("period_end", DateTime)
+    type_id: Mapped[str] = mapped_column("period_type", String(20))
+    start: Mapped[datetime.datetime] = mapped_column(
+        "period_start",
+        DateTime(timezone=True),
+    )
+    end: Mapped[datetime.datetime] = mapped_column(
+        "period_end",
+        DateTime(timezone=True),
+    )
+
+    type: Mapped["ShuttlePeriodType"] = relationship(
+        "ShuttlePeriodType",
+        back_populates="periods",
+    )
+
+
+class ShuttleHoliday(Base):
+    __tablename__ = "shuttle_holiday"
+    __table_args__ = (
+        PrimaryKeyConstraint(
+            "holiday_date",
+            "holiday_type",
+            "calendar_type",
+            name="pk_shuttle_holiday",
+        ),
+    )
+
+    date: Mapped[datetime.date] = mapped_column("holiday_date", Date)
+    type: Mapped[str] = mapped_column("holiday_type", String(15))
+    calendar: Mapped[str] = mapped_column("calendar_type", String(15))
 
 
 class ShuttleRoute(Base):
     __tablename__ = "shuttle_route"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["start_stop"],
+            ["shuttle_stop.stop_name"],
+            name="fk_shuttle_route_start_stop",
+        ),
+        ForeignKeyConstraint(
+            ["end_stop"],
+            ["shuttle_stop.stop_name"],
+            name="fk_shuttle_route_end_stop",
+        ),
+    )
 
     name: Mapped[str] = mapped_column("route_name", String(15), primary_key=True)
     korean: Mapped[str] = mapped_column("route_description_korean", String(100))
@@ -53,8 +100,14 @@ class ShuttleRoute(Base):
     start_stop_id: Mapped[str] = mapped_column("start_stop", String(15))
     end_stop_id: Mapped[str] = mapped_column("end_stop", String(15))
 
-    start_stop: Mapped["ShuttleStop"] = relationship("ShuttleStop")
-    end_stop: Mapped["ShuttleStop"] = relationship("ShuttleStop")
+    start_stop: Mapped["ShuttleStop"] = relationship(
+        "ShuttleStop",
+        foreign_keys=[start_stop_id],
+    )
+    end_stop: Mapped["ShuttleStop"] = relationship(
+        "ShuttleStop",
+        foreign_keys=[end_stop_id],
+    )
     timetable: Mapped[List["ShuttleTimetable"]] = relationship(
         "ShuttleTimetable",
         back_populates="route",
@@ -89,6 +142,16 @@ class ShuttleRouteStop(Base):
             "stop_name",
             name="pk_shuttle_route_stop",
         ),
+        ForeignKeyConstraint(
+            ["route_name"],
+            ["shuttle_route.route_name"],
+            name="fk_shuttle_route_stop_route",
+        ),
+        ForeignKeyConstraint(
+            ["stop_name"],
+            ["shuttle_stop.stop_name"],
+            name="fk_shuttle_route_stop_stop",
+        ),
     )
 
     route_name: Mapped[str] = mapped_column("route_name", String(15))
@@ -111,12 +174,32 @@ class ShuttleRouteStop(Base):
 
 class ShuttleTimetable(Base):
     __tablename__ = "shuttle_timetable"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["route_name"],
+            ["shuttle_route.route_name"],
+            name="fk_shuttle_timetable_route",
+        ),
+    )
 
-    id: Mapped[int] = mapped_column("seq", Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(
+        "seq",
+        Integer,
+        Sequence("shuttle_timetable_seq_seq"),
+        primary_key=True,
+    )
     period: Mapped[str] = mapped_column("period_type", String(20))
     is_weekdays: Mapped[bool] = mapped_column("weekday", Boolean)
     route_name: Mapped[str] = mapped_column("route_name", String(15))
-    departure_time: Mapped[datetime.time] = mapped_column("departure_time", Time)
+    departure_time: Mapped[datetime.time] = mapped_column(
+        "departure_time",
+        Time(timezone=True),
+    )
+
+    route: Mapped["ShuttleRoute"] = relationship(
+        "ShuttleRoute",
+        back_populates="timetable",
+    )
 
 
 class ShuttleTimetableView(Base):
@@ -136,4 +219,7 @@ class ShuttleTimetableView(Base):
     route_name: Mapped[str] = mapped_column("route_name", String(15))
     route_tag: Mapped[str] = mapped_column("route_tag", String(10))
     stop_name: Mapped[str] = mapped_column("stop_name", String(15))
-    departure_time: Mapped[datetime.time] = mapped_column("departure_time", Time)
+    departure_time: Mapped[datetime.time] = mapped_column(
+        "departure_time",
+        Time(timezone=True),
+    )

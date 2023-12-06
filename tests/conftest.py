@@ -34,6 +34,19 @@ async def client() -> AsyncGenerator[TestClient, None]:
 @pytest_asyncio.fixture
 async def clean_db() -> None:
     async with engine.begin() as conn:
+        await conn.execute(text("DELETE FROM shuttle_timetable"))
+        await conn.execute(text("DELETE FROM shuttle_route_stop"))
+        await conn.execute(text("DELETE FROM shuttle_route"))
+        await conn.execute(text("DELETE FROM shuttle_stop"))
+        await conn.execute(text("DELETE FROM shuttle_period"))
+        await conn.execute(text("DELETE FROM shuttle_period_type"))
+        await conn.execute(text("DELETE FROM shuttle_holiday"))
+        await conn.execute(
+            text("ALTER SEQUENCE shuttle_timetable_seq_seq RESTART WITH 1"),
+        )
+        await conn.execute(text("DELETE FROM commute_shuttle_timetable"))
+        await conn.execute(text("DELETE FROM commute_shuttle_stop"))
+        await conn.execute(text("DELETE FROM commute_shuttle_route"))
         await conn.execute(text("DELETE FROM notices"))
         await conn.execute(text("DELETE FROM notice_category"))
         await conn.execute(text("DELETE FROM menu"))
@@ -97,6 +110,40 @@ async def create_test_cafeteria_menu(create_test_cafeteria) -> None:
         await conn.execute(text(insert_sql))
 
 
+# Commute Shuttle Datas
+@pytest_asyncio.fixture
+async def create_test_commute_shuttle_route() -> None:
+    values = ""
+    for i in range(1, 10):
+        values += f"('test_route{i}', 'test_description{i}', 'test_description{i}'),"
+    insert_sql = f"INSERT INTO commute_shuttle_route VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_commute_shuttle_stop() -> None:
+    values = ""
+    for i in range(1, 50):
+        values += f"('test_stop{i}', 'test_description{i}', 89.9, 89.9),"
+    insert_sql = f"INSERT INTO commute_shuttle_stop VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_commute_shuttle_timetable(
+    create_test_commute_shuttle_route,
+    create_test_commute_shuttle_stop,
+) -> None:
+    values = ""
+    for i in range(1, 50):
+        values += f"('test_route{(i // 10 + 1)}', 'test_stop{i}', {i}, '07:{str(i).zfill(2)}:00'),"
+    insert_sql = f"INSERT INTO commute_shuttle_timetable VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
 # Notice Datas
 @pytest_asyncio.fixture
 async def create_test_notice_category() -> None:
@@ -127,6 +174,101 @@ async def create_test_reading_room(create_test_campus) -> None:
             f"({i % 2 + 1}, {i}, 'test_reading_room{i}', true, true, 100, 100, 0),"
         )
     insert_sql = f"INSERT INTO reading_room VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+# Shuttle Datas
+@pytest_asyncio.fixture
+async def create_test_shuttle_period_type() -> None:
+    types = ["semester", "vacation", "vacation_session"]
+    values = ""
+    for i in types:
+        values += f"('{i}'),"
+    insert_sql = f"INSERT INTO shuttle_period_type VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_shuttle_period(create_test_shuttle_period_type) -> None:
+    types = ["semester", "vacation", "vacation_session"]
+    start = datetime.datetime.combine(
+        datetime.datetime.now() - datetime.timedelta(days=365),
+        datetime.datetime.min.time(),
+    )
+    values = "('semester', '2021-12-01 00:00:00+09:00', '2022-12-01 23:59:59+09:00'),"
+    for i in range(1, 10):
+        end = datetime.datetime.combine(
+            start + datetime.timedelta(days=random.randint(1, 30)),
+            datetime.datetime.max.time(),
+        )
+        values += f"('{random.choice(types)}', '{start}+09:00', '{end}+09:00'),"
+        start = datetime.datetime.combine(
+            end + datetime.timedelta(days=1),
+            datetime.datetime.min.time(),
+        )
+
+    insert_sql = f"INSERT INTO shuttle_period VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_shuttle_holiday() -> None:
+    start_date = datetime.datetime.now().date()
+    types = ["weekends", "halt"]
+    values = ""
+    for i in range(1, 10):
+        values += f"('{start_date}', '{random.choice(types)}', 'solar'),"
+        start_date += datetime.timedelta(days=random.randint(1, 30))
+    insert_sql = f"INSERT INTO shuttle_holiday VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_shuttle_stop() -> None:
+    values = ""
+    for i in range(1, 10):
+        values += f"('test_stop{i}', 89.9, 89.9),"
+    insert_sql = f"INSERT INTO shuttle_stop VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_shuttle_route(create_test_shuttle_stop) -> None:
+    values = ""
+    for i in range(1, 10):
+        values += (
+            f"('test_route{i}', 'test_description{i}', 'test_description{i}',"
+            "'test_tag', 'test_stop1', 'test_stop2'),"
+        )
+    insert_sql = f"INSERT INTO shuttle_route VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_shuttle_route_stop(create_test_shuttle_route) -> None:
+    values = ""
+    for i in range(1, 10):
+        values += f"('test_route{i}', 'test_stop{i}', {i}, '00:0{i}:00'),"
+    insert_sql = f"INSERT INTO shuttle_route_stop VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_shuttle_timetable(
+    create_test_shuttle_period,
+    create_test_shuttle_route,
+) -> None:
+    values = ""
+    for i in range(1, 10):
+        values += f"({i}, 'semester', true, 'test_route1', '0{i}:00+09:00'),"
+    insert_sql = f"INSERT INTO shuttle_timetable VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
 

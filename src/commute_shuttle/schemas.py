@@ -74,10 +74,7 @@ class CreateCommuteShuttleTimetableRequest(BaseModel):
     route_name: Annotated[str, Field(max_length=15, alias="route")]
     stop_name: Annotated[str, Field(max_length=50, alias="stop")]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
-    departure_time: Annotated[
-        datetime.time,
-        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
-    ]
+    departure_time: Annotated[datetime.time, Field(alias="time")]
 
     class Config:
         json_schema_extra = {
@@ -85,83 +82,74 @@ class CreateCommuteShuttleTimetableRequest(BaseModel):
                 "route": "서울캠퍼스",
                 "stop": "서울캠퍼스",
                 "sequence": 1,
-                "departureTime": "08:00",
+                "time": "08:00",
             },
         }
 
 
 class UpdateCommuteShuttleTimetableRequest(BaseModel):
     sequence: Annotated[Optional[int], Field(alias="sequence", ge=0)]
-    departure_time: Annotated[
-        Optional[datetime.time],
-        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
-    ]
+    departure_time: Annotated[Optional[datetime.time], Field(alias="time")]
 
     class Config:
         json_schema_extra = {
             "example": {
                 "sequence": 1,
-                "departureTime": "08:00",
+                "time": "08:00",
             },
         }
+
+
+class CommuteShuttleRouteListItemResponse(BaseModel):
+    route_name: Annotated[str, Field(max_length=15, alias="name")]
+    route_description_korean: Annotated[str, Field(max_length=100, alias="korean")]
+    route_description_english: Annotated[str, Field(max_length=100, alias="english")]
 
 
 class CommuteShuttleRouteListResponse(BaseModel):
     data: Annotated[list["CommuteShuttleRouteListItemResponse"], Field(alias="data")]
 
 
-class CommuteShuttleRouteListItemResponse(BaseModel):
-    route_name: Annotated[str, Field(max_length=15, alias="route")]
-    route_description_korean: Annotated[str, Field(max_length=100, alias="korean")]
-    route_description_english: Annotated[str, Field(max_length=100, alias="english")]
-
-
 class CommuteShuttleRouteDetailResponse(BaseModel):
-    route_name: Annotated[str, Field(max_length=15, alias="route")]
+    route_name: Annotated[str, Field(max_length=15, alias="name")]
     route_description_korean: Annotated[str, Field(max_length=100, alias="korean")]
     route_description_english: Annotated[str, Field(max_length=100, alias="english")]
-
-
-class CommuteShuttleStopListResponse(BaseModel):
-    data: Annotated[list["CommuteShuttleStopListItemResponse"], Field(alias="data")]
 
 
 class CommuteShuttleStopListItemResponse(BaseModel):
-    stop_name: Annotated[str, Field(max_length=50, alias="stop")]
+    stop_name: Annotated[str, Field(max_length=50, alias="name")]
     stop_description: Annotated[str, Field(max_length=100, alias="description")]
     latitude: Annotated[float, Field(alias="latitude")]
     longitude: Annotated[float, Field(alias="longitude")]
+
+
+class CommuteShuttleStopListResponse(BaseModel):
+    data: Annotated[list[CommuteShuttleStopListItemResponse], Field(alias="data")]
 
 
 class CommuteShuttleStopDetailResponse(BaseModel):
-    stop_name: Annotated[str, Field(max_length=50, alias="stop")]
+    stop_name: Annotated[str, Field(max_length=50, alias="name")]
     stop_description: Annotated[str, Field(max_length=100, alias="description")]
     latitude: Annotated[float, Field(alias="latitude")]
     longitude: Annotated[float, Field(alias="longitude")]
+
+
+class CommuteShuttleTimetableListItemResponse(BaseModel):
+    route_name: Annotated[str, Field(max_length=15, alias="name")]
+    stop_name: Annotated[str, Field(max_length=50, alias="stop")]
+    sequence: Annotated[int, Field(alias="sequence", ge=0)]
+    departure_time: Annotated[datetime.time, Field(alias="time")]
 
 
 class CommuteShuttleTimetableListResponse(BaseModel):
     data: Annotated[
-        list["CommuteShuttleTimetableListItemResponse"],
+        list[CommuteShuttleTimetableListItemResponse],
         Field(alias="data"),
     ]
 
 
-class CommuteShuttleTimetableListItemResponse(BaseModel):
-    route_name: Annotated[str, Field(max_length=15, alias="route")]
-    stop_name: Annotated[str, Field(max_length=50, alias="stop")]
-    sequence: Annotated[int, Field(alias="sequence", ge=0)]
-    departure_time: Annotated[
-        datetime.time,
-        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
-    ]
-
-
 class CommuteShuttleTimetableDetailResponse(BaseModel):
-    route_name: Annotated[str, Field(max_length=15, alias="route")]
+    route_name: Annotated[str, Field(max_length=15, alias="name")]
     stop_name: Annotated[str, Field(max_length=50, alias="stop")]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
-    departure_time: Annotated[
-        datetime.time,
-        Field(alias="departureTime", regex=r"^[0-9]{2}:[0-9]{2}$"),
-    ]
+    departure_time: Annotated[datetime.time, Field(alias="time")]

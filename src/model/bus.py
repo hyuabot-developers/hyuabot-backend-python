@@ -10,6 +10,7 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
     String,
     Time,
+    ForeignKeyConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -25,6 +26,21 @@ class BusTimetable(Base):
             "weekday",
             "departure_time",
             name="pk_bus_timetable",
+        ),
+        ForeignKeyConstraint(
+            ["route_id"],
+            ["bus_route.route_id"],
+            name="fk_bus_timetable_route_id",
+        ),
+        ForeignKeyConstraint(
+            ["start_stop_id"],
+            ["bus_stop.stop_id"],
+            name="fk_bus_timetable_start_stop_id",
+        ),
+        ForeignKeyConstraint(
+            ["route_id", "start_stop_id"],
+            ["bus_route_stop.route_id", "bus_route_stop.start_stop_id"],
+            name="fk_bus_timetable_route_stop",
         ),
     )
 
@@ -48,6 +64,11 @@ class BusRealtime(Base):
             "arrival_sequence",
             name="pk_bus_realtime",
         ),
+        ForeignKeyConstraint(
+            ["route_id", "stop_id"],
+            ["bus_route_stop.route_id", "bus_route_stop.stop_id"],
+            name="fk_bus_realtime_route_stop",
+        ),
     )
 
     stop_id: Mapped[int] = mapped_column("stop_id", Integer)
@@ -68,6 +89,21 @@ class BusRouteStop(Base):
             "stop_id",
             name="pk_bus_route_stop",
         ),
+        ForeignKeyConstraint(
+            ["route_id"],
+            ["bus_route.route_id"],
+            name="fk_bus_route_stop_route_id",
+        ),
+        ForeignKeyConstraint(
+            ["stop_id"],
+            ["bus_stop.stop_id"],
+            name="fk_bus_route_stop_stop_id",
+        ),
+        ForeignKeyConstraint(
+            ["start_stop_id"],
+            ["bus_stop.stop_id"],
+            name="fk_bus_route_stop_start_stop_id",
+        ),
     )
 
     route_id: Mapped[int] = mapped_column("route_id", Integer)
@@ -81,29 +117,45 @@ class BusRouteStop(Base):
     )
     stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        back_populates="routes",
+        primaryjoin="BusRouteStop.stop_id == BusStop.id",
     )
     start_stop: Mapped["BusStop"] = relationship(
         "BusStop",
         back_populates="start_routes",
-        foreign_keys=[start_stop_id],
+        primaryjoin="BusRouteStop.start_stop_id == BusStop.id",
     )
     timetable: Mapped[List["BusTimetable"]] = relationship(
         "BusTimetable",
-        back_populates="stop",
         cascade="all, delete-orphan",
-        foreign_keys=[route_id, start_stop_id],
+        primaryjoin=(
+            "and_(BusRouteStop.route_id == BusTimetable.route_id, "
+            "BusRouteStop.start_stop_id == BusTimetable.start_stop_id)"
+        ),
     )
     realtime: Mapped[List["BusRealtime"]] = relationship(
         "BusRealtime",
-        back_populates="stop",
         cascade="all, delete-orphan",
-        foreign_keys=[route_id, start_stop_id],
+        primaryjoin=(
+            "and_(BusRouteStop.route_id == BusRealtime.route_id, "
+            "BusRouteStop.stop_id == BusRealtime.stop_id)"
+        ),
     )
 
 
 class BusRoute(Base):
     __tablename__ = "bus_route"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["start_stop_id"],
+            ["bus_stop.stop_id"],
+            name="fk_bus_route_start_stop_id",
+        ),
+        ForeignKeyConstraint(
+            ["end_stop_id"],
+            ["bus_stop.stop_id"],
+            name="fk_bus_route_end_stop_id",
+        ),
+    )
 
     id: Mapped[int] = mapped_column("route_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("route_name", String(30))
@@ -132,12 +184,10 @@ class BusRoute(Base):
     )
     start_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        back_populates="start_routes",
         foreign_keys=[start_stop_id],
     )
     end_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        back_populates="end_routes",
         foreign_keys=[end_stop_id],
     )
 
@@ -153,11 +203,6 @@ class BusStop(Base):
     latitude: Mapped[float] = mapped_column("latitude", Float)
     longitude: Mapped[float] = mapped_column("longitude", Float)
 
-    routes: Mapped[List["BusRouteStop"]] = relationship(
-        "BusRouteStop",
-        back_populates="stop",
-        cascade="all, delete-orphan",
-    )
     start_routes: Mapped[List["BusRouteStop"]] = relationship(
         "BusRouteStop",
         back_populates="start_stop",

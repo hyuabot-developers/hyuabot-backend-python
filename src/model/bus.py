@@ -47,7 +47,10 @@ class BusTimetable(Base):
     route_id: Mapped[int] = mapped_column("route_id", Integer)
     start_stop_id: Mapped[int] = mapped_column("start_stop_id", Integer)
     weekday: Mapped[str] = mapped_column("weekday", String(10))
-    departure_time: Mapped[datetime.time] = mapped_column("departure_time", Time)
+    departure_time: Mapped[datetime.time] = mapped_column(
+        "departure_time",
+        Time(timezone=True),
+    )
 
     route: Mapped["BusRoute"] = relationship(
         "BusRoute",
@@ -78,7 +81,7 @@ class BusRealtime(Base):
     seats: Mapped[int] = mapped_column("remaining_seat_count", Integer)
     time: Mapped[datetime.timedelta] = mapped_column("remaining_time", Interval)
     low_floor: Mapped[bool] = mapped_column("low_plate", Boolean)
-    updated_at: Mapped[datetime.datetime] = mapped_column("last_updated", DateTime)
+    updated_at: Mapped[datetime.datetime] = mapped_column("last_updated_time", DateTime)
 
 
 class BusRouteStop(Base):

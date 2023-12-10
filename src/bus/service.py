@@ -14,6 +14,7 @@ from bus.schemas import (
 )
 from database import fetch_all, fetch_one, execute_query
 from model.bus import BusRoute, BusStop, BusRouteStop, BusTimetable, BusRealtime
+from utils import KST
 
 
 async def list_routes() -> list[dict[str, Any]]:
@@ -43,23 +44,27 @@ async def get_route(route_id: int) -> dict[str, Any] | None:
 
 
 async def create_route(new_holiday: CreateBusRouteRequest) -> dict[str, Any] | None:
-    insert_query = insert(BusRoute).values(
-        {
-            "route_id": new_holiday.id,
-            "route_name": new_holiday.name,
-            "route_type_code": new_holiday.type_code,
-            "route_type_name": new_holiday.type_name,
-            "company_id": new_holiday.company_id,
-            "company_name": new_holiday.company_name,
-            "company_telephone": new_holiday.company_telephone,
-            "district_code": new_holiday.district_code,
-            "up_first_time": new_holiday.up_first_time,
-            "up_last_time": new_holiday.up_last_time,
-            "down_first_time": new_holiday.down_first_time,
-            "down_last_time": new_holiday.down_last_time,
-            "start_stop_id": new_holiday.start_stop_id,
-            "end_stop_id": new_holiday.end_stop_id,
-        },
+    insert_query = (
+        insert(BusRoute)
+        .values(
+            {
+                "route_id": new_holiday.id,
+                "route_name": new_holiday.name,
+                "route_type_code": new_holiday.type_code,
+                "route_type_name": new_holiday.type_name,
+                "company_id": new_holiday.company_id,
+                "company_name": new_holiday.company_name,
+                "company_telephone": new_holiday.company_telephone,
+                "district_code": new_holiday.district_code,
+                "up_first_time": new_holiday.up_first_time,
+                "up_last_time": new_holiday.up_last_time,
+                "down_first_time": new_holiday.down_first_time,
+                "down_last_time": new_holiday.down_last_time,
+                "start_stop_id": new_holiday.start_stop_id,
+                "end_stop_id": new_holiday.end_stop_id,
+            },
+        )
+        .returning(BusRoute)
     )
     return await fetch_one(insert_query)
 
@@ -164,16 +169,20 @@ async def get_stop(stop_id: int) -> dict[str, Any] | None:
 
 
 async def create_stop(new_stop: CreateBusStopRequest) -> dict[str, Any] | None:
-    insert_query = insert(BusStop).values(
-        {
-            "stop_id": new_stop.id,
-            "stop_name": new_stop.name,
-            "district_code": new_stop.district_code,
-            "mobile_number": new_stop.mobile_number,
-            "region_name": new_stop.region_name,
-            "latitude": new_stop.latitude,
-            "longitude": new_stop.longitude,
-        },
+    insert_query = (
+        insert(BusStop)
+        .values(
+            {
+                "stop_id": new_stop.id,
+                "stop_name": new_stop.name,
+                "district_code": new_stop.district_code,
+                "mobile_number": new_stop.mobile_number,
+                "region_name": new_stop.region_name,
+                "latitude": new_stop.latitude,
+                "longitude": new_stop.longitude,
+            },
+        )
+        .returning(BusStop)
     )
     return await fetch_one(insert_query)
 
@@ -244,13 +253,17 @@ async def create_route_stop(
     route_id: int,
     new_route_stop: CreateBusRouteStopRequest,
 ) -> dict[str, Any] | None:
-    insert_query = insert(BusRouteStop).values(
-        {
-            "route_id": route_id,
-            "stop_id": new_route_stop.stop_id,
-            "stop_sequence": new_route_stop.sequence,
-            "start_stop_id": new_route_stop.start_stop_id,
-        },
+    insert_query = (
+        insert(BusRouteStop)
+        .values(
+            {
+                "route_id": route_id,
+                "stop_id": new_route_stop.stop_id,
+                "stop_sequence": new_route_stop.sequence,
+                "start_stop_id": new_route_stop.start_stop_id,
+            },
+        )
+        .returning(BusRouteStop)
     )
     return await fetch_one(insert_query)
 
@@ -338,13 +351,17 @@ async def get_timetable(
 async def create_timetable(
     new_timetable: CreateBusTimetableRequest,
 ) -> dict[str, Any] | None:
-    insert_query = insert(BusTimetable).values(
-        {
-            "route_id": new_timetable.route_id,
-            "start_stop_id": new_timetable.start_stop_id,
-            "weekday": new_timetable.weekdays,
-            "departure_time": new_timetable.departure_time,
-        },
+    insert_query = (
+        insert(BusTimetable)
+        .values(
+            {
+                "route_id": new_timetable.route_id,
+                "start_stop_id": new_timetable.start_stop_id,
+                "weekday": new_timetable.weekdays,
+                "departure_time": new_timetable.departure_time.replace(tzinfo=KST),
+            },
+        )
+        .returning(BusTimetable)
     )
     return await fetch_one(insert_query)
 

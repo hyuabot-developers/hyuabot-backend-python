@@ -39,6 +39,7 @@ from bus.schemas import (
 )
 from exceptions import DetailedHTTPException
 from user.jwt import parse_jwt_user_data
+from utils import timestamp_tz_to_datetime, KST
 
 router = APIRouter()
 
@@ -51,17 +52,17 @@ async def get_bus_route_list(
     _: str = Depends(parse_jwt_user_data),
 ):
     if name is None and type_ is None and company is None:
-        routes = await service.list_routes()
+        data = await service.list_routes()
     else:
-        routes = await service.list_routes_filter(name, type_, company)
+        data = await service.list_routes_filter(name, type_, company)
     return {
         "data": map(
-            lambda route: {
-                "id": route["route_id"],
-                "name": route["route_name"],
-                "type": route["route_type_name"],
+            lambda x: {
+                "id": x["route_id"],
+                "name": x["route_name"],
+                "type": x["route_type_name"],
             },
-            routes,
+            data,
         ),
     }
 
@@ -71,11 +72,9 @@ async def get_bus_route_detail(
     route_id: int,
     _: str = Depends(parse_jwt_user_data),
 ):
-    if service.get_route(route_id) is None:
-        raise RouteNotFound()
     route = await service.get_route(route_id)
     if route is None:
-        raise DetailedHTTPException()
+        raise RouteNotFound()
     return {
         "id": route["route_id"],
         "name": route["route_name"],
@@ -197,11 +196,9 @@ async def get_bus_stop_detail(
     stop_id: int,
     _: str = Depends(parse_jwt_user_data),
 ):
-    if service.get_stop(stop_id) is None:
-        raise StopNotFound()
     stop = await service.get_stop(stop_id)
     if stop is None:
-        raise DetailedHTTPException()
+        raise StopNotFound()
     return {
         "id": stop["stop_id"],
         "name": stop["stop_name"],
@@ -270,14 +267,11 @@ async def get_bus_route_stop_list(
     route_id: int = Depends(get_valid_route),
     _: str = Depends(parse_jwt_user_data),
 ):
-    if service.get_route(route_id) is None:
-        raise RouteNotFound()
     route_stops = await service.list_route_stops(route_id)
     return {
         "data": map(
             lambda route_stop: {
                 "id": route_stop["stop_id"],
-                "name": route_stop["stop_name"],
                 "sequence": route_stop["stop_sequence"],
                 "start": route_stop["start_stop_id"],
             },
@@ -295,14 +289,11 @@ async def get_bus_route_stop_detail(
     stop_id: int = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
-    if service.get_route_stop(route_id, stop_id) is None:
-        raise RouteStopNotFound()
     route_stop = await service.get_route_stop(route_id, stop_id)
     if route_stop is None:
-        raise DetailedHTTPException()
+        raise RouteStopNotFound()
     return {
         "id": route_stop["stop_id"],
-        "name": route_stop["stop_name"],
         "sequence": route_stop["stop_sequence"],
         "start": route_stop["start_stop_id"],
     }
@@ -318,14 +309,13 @@ async def create_bus_route_stop(
     new_route_stop: CreateBusRouteStopRequest = Depends(create_valid_route_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
-    if service.get_route_stop(route_id, new_route_stop.stop_id) is not None:
+    if await service.get_route_stop(route_id, new_route_stop.stop_id) is not None:
         raise DuplicateRouteStop()
     route_stop = await service.create_route_stop(route_id, new_route_stop)
     if route_stop is None:
         raise DetailedHTTPException()
     return {
         "id": route_stop["stop_id"],
-        "name": route_stop["stop_name"],
         "sequence": route_stop["stop_sequence"],
         "start": route_stop["start_stop_id"],
     }
@@ -341,14 +331,11 @@ async def update_bus_route_stop(
     stop_id: int = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
-    if service.get_route_stop(route_id, stop_id) is None:
-        raise RouteStopNotFound()
     route_stop = await service.update_route_stop(route_id, stop_id, payload)
     if route_stop is None:
-        raise DetailedHTTPException()
+        raise RouteStopNotFound()
     return {
         "id": route_stop["stop_id"],
-        "name": route_stop["stop_name"],
         "sequence": route_stop["stop_sequence"],
         "start": route_stop["start_stop_id"],
     }
@@ -363,6 +350,8 @@ async def delete_bus_route_stop(
     stop_id: int = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
+    if await service.get_route_stop(route_id, stop_id) is None:
+        raise RouteStopNotFound()
     await service.delete_route_stop(route_id, stop_id)
     return None
 
@@ -371,7 +360,7 @@ async def delete_bus_route_stop(
 async def get_bus_timetable_list(
     route_id: int | None = None,
     start_stop_id: int | None = None,
-    weekday: str | None = None,
+    weekdays: str | None = None,
     start: datetime.time | None = None,
     end: datetime.time | None = None,
     _: str = Depends(parse_jwt_user_data),
@@ -379,7 +368,7 @@ async def get_bus_timetable_list(
     if (
         route_id is None
         and start_stop_id is None
-        and weekday is None
+        and weekdays is None
         and start is None
         and end is None
     ):
@@ -388,9 +377,9 @@ async def get_bus_timetable_list(
         timetables = await service.list_timetable_filter(
             route_id,
             start_stop_id,
-            weekday,
-            start,
-            end,
+            weekdays,
+            start.replace(tzinfo=KST) if start is not None else None,
+            end.replace(tzinfo=KST) if end is not None else None,
         )
     return {
         "data": map(
@@ -398,7 +387,9 @@ async def get_bus_timetable_list(
                 "routeID": timetable["route_id"],
                 "start": timetable["start_stop_id"],
                 "weekdays": timetable["weekday"],
-                "departureTime": timetable["departure_time"],
+                "departureTime": timestamp_tz_to_datetime(
+                    timetable["departure_time"],
+                ),
             },
             timetables,
         ),
@@ -411,26 +402,26 @@ async def get_bus_timetable_list(
 )
 async def get_bus_timetable_detail(
     weekday: str,
+    start_stop_id: int,
     departure_time: datetime.time,
     route_id: int = Depends(get_valid_route),
-    start_stop_id: int = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
-    if service.get_timetable(route_id, start_stop_id, weekday, departure_time) is None:
-        raise TimetableNotFound()
+    if await service.get_stop(start_stop_id) is None:
+        raise StopNotFound()
     timetable = await service.get_timetable(
         route_id,
         start_stop_id,
         weekday,
-        departure_time,
+        departure_time.replace(tzinfo=KST),
     )
     if timetable is None:
-        raise DetailedHTTPException()
+        raise TimetableNotFound()
     return {
         "routeID": timetable["route_id"],
         "start": timetable["start_stop_id"],
         "weekdays": timetable["weekday"],
-        "departureTime": timetable["departure_time"],
+        "departureTime": timestamp_tz_to_datetime(timetable["departure_time"]),
     }
 
 
@@ -450,7 +441,7 @@ async def create_bus_timetable(
         "routeID": timetable["route_id"],
         "start": timetable["start_stop_id"],
         "weekdays": timetable["weekday"],
-        "departureTime": timetable["departure_time"],
+        "departureTime": timestamp_tz_to_datetime(timetable["departure_time"]),
     }
 
 
@@ -460,12 +451,29 @@ async def create_bus_timetable(
 )
 async def delete_bus_timetable(
     weekday: str,
+    start_stop_id: int,
     departure_time: datetime.time,
     route_id: int = Depends(get_valid_route),
-    start_stop_id: int = Depends(get_valid_stop),
     _: str = Depends(parse_jwt_user_data),
 ):
-    await service.delete_timetable(route_id, start_stop_id, weekday, departure_time)
+    if await service.get_stop(start_stop_id) is None:
+        raise StopNotFound()
+    elif (
+        await service.get_timetable(
+            route_id,
+            start_stop_id,
+            weekday,
+            departure_time.replace(tzinfo=KST),
+        )
+        is None
+    ):
+        raise TimetableNotFound()
+    await service.delete_timetable(
+        route_id,
+        start_stop_id,
+        weekday,
+        departure_time.replace(tzinfo=KST),
+    )
     return None
 
 
@@ -489,7 +497,7 @@ async def get_bus_realtime_list(
                 "seat": realtime["remaining_seat_count"],
                 "time": realtime["remaining_time"],
                 "lowFloor": realtime["low_plate"],
-                "updatedAt": realtime["last_updated"],
+                "updatedAt": realtime["last_updated_time"],
             },
             realtime_list,
         ),

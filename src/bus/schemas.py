@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 class CreateBusRouteRequest(BaseModel):
     id: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=30, alias="name")]
-    type_code: Annotated[int, Field(alias="typeCode", ge=11, le=15)]
+    type_code: Annotated[str, Field(alias="typeCode")]
     type_name: Annotated[
         str,
         Field(alias="typeName", max_length=10, pattern=r"^(일반형|직행좌석형)시내버스$"),
@@ -53,7 +53,7 @@ class CreateBusRouteRequest(BaseModel):
 
 class UpdateBusRouteRequest(BaseModel):
     name: Annotated[Optional[str], Field(max_length=30, alias="name")]
-    type_code: Annotated[Optional[int], Field(alias="typeCode", ge=11, le=15)]
+    type_code: Annotated[Optional[str], Field(alias="typeCode")]
     type_name: Annotated[
         Optional[str],
         Field(alias="typeName", max_length=10, pattern=r"^(일반형|직행좌석형)시내버스$"),
@@ -104,7 +104,7 @@ class CreateBusStopRequest(BaseModel):
         str,
         Field(alias="mobileNumber", max_length=5, pattern=r"^[0-9]{5}$"),
     ]
-    region_name: Annotated[str, Field(alias="regionName", max_length=30)]
+    region_name: Annotated[str, Field(alias="regionName", max_length=10)]
     latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
 
@@ -129,7 +129,7 @@ class UpdateBusStopRequest(BaseModel):
         Optional[str],
         Field(alias="mobileNumber", max_length=5, pattern=r"^[0-9]{5}$"),
     ]
-    region_name: Annotated[Optional[str], Field(alias="regionName", max_length=30)]
+    region_name: Annotated[Optional[str], Field(alias="regionName", max_length=10)]
     latitude: Annotated[Optional[float], Field(alias="latitude", ge=-90, le=90)]
     longitude: Annotated[Optional[float], Field(alias="longitude", ge=-180, le=180)]
 
@@ -179,10 +179,7 @@ class UpdateBusRouteStopRequest(BaseModel):
 class CreateBusTimetableRequest(BaseModel):
     route_id: Annotated[int, Field(alias="routeID", ge=1)]
     start_stop_id: Annotated[int, Field(alias="start", ge=1)]
-    weekdays: Annotated[
-        str,
-        Field(alias="weekdays", pattern=r"^[weekdays|saturday|sunday]$"),
-    ]
+    weekdays: Annotated[str, Field(alias="weekdays")]
     departure_time: Annotated[datetime.time, Field(alias="departureTime")]
 
     class Config:
@@ -197,13 +194,13 @@ class CreateBusTimetableRequest(BaseModel):
 
 
 class BusRouteListItemResponse(BaseModel):
-    route_id: Annotated[int, Field(alias="id", ge=1)]
+    route_id: Annotated[int, Field(alias="id", ge=0)]
     route_name: Annotated[str, Field(max_length=30, alias="name")]
     type_name: Annotated[str, Field(max_length=10, alias="type")]
 
 
 class BusRouteListResponse(BaseModel):
-    data: Annotated[BusRouteListItemResponse, Field(alias="data")]
+    data: Annotated[list[BusRouteListItemResponse], Field(alias="data")]
 
 
 class BusRouteFirstLastTimeResponse(BaseModel):
@@ -234,7 +231,7 @@ class BusStopListItemResponse(BaseModel):
 
 
 class BusStopListResponse(BaseModel):
-    data: Annotated[BusStopListItemResponse, Field(alias="data")]
+    data: Annotated[list[BusStopListItemResponse], Field(alias="data")]
 
 
 class BusStopDetailResponse(BaseModel):
@@ -249,18 +246,16 @@ class BusStopDetailResponse(BaseModel):
 
 class BusRouteStopListItemResponse(BaseModel):
     stop_id: Annotated[int, Field(alias="id", ge=1)]
-    stop_name: Annotated[str, Field(max_length=30, alias="name")]
-    sequence: Annotated[int, Field(alias="sequence", ge=1)]
+    sequence: Annotated[int, Field(alias="sequence", ge=0)]
     start_stop_id: Annotated[int, Field(alias="start", ge=1)]
 
 
 class BusRouteStopListResponse(BaseModel):
-    data: Annotated[BusRouteStopListItemResponse, Field(alias="data")]
+    data: Annotated[list[BusRouteStopListItemResponse], Field(alias="data")]
 
 
 class BusRouteStopDetailResponse(BaseModel):
     stop_id: Annotated[int, Field(alias="id", ge=1)]
-    stop_name: Annotated[str, Field(max_length=30, alias="name")]
     sequence: Annotated[int, Field(alias="sequence", ge=1)]
     start_stop_id: Annotated[int, Field(alias="start", ge=1)]
 
@@ -276,7 +271,7 @@ class BusTimetableListItemResponse(BaseModel):
 
 
 class BusTimetableListResponse(BaseModel):
-    data: Annotated[BusTimetableListItemResponse, Field(alias="data")]
+    data: Annotated[list[BusTimetableListItemResponse], Field(alias="data")]
 
 
 class BusTimetableDetailResponse(BaseModel):
@@ -304,4 +299,4 @@ class BusRealtimeListItemResponse(BaseModel):
 
 
 class BusRealtimeListResponse(BaseModel):
-    data: Annotated[BusRealtimeListItemResponse, Field(alias="data")]
+    data: Annotated[list[BusRealtimeListItemResponse], Field(alias="data")]

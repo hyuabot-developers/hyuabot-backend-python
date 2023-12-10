@@ -134,6 +134,7 @@ class BusRouteStop(Base):
             "and_(BusRouteStop.route_id == BusTimetable.route_id, "
             "BusRouteStop.start_stop_id == BusTimetable.start_stop_id)"
         ),
+        viewonly=True,
     )
     realtime: Mapped[List["BusRealtime"]] = relationship(
         "BusRealtime",
@@ -142,6 +143,7 @@ class BusRouteStop(Base):
             "and_(BusRouteStop.route_id == BusRealtime.route_id, "
             "BusRouteStop.stop_id == BusRealtime.stop_id)"
         ),
+        viewonly=True,
     )
 
 
@@ -179,19 +181,21 @@ class BusRoute(Base):
         "BusRouteStop",
         back_populates="route",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
     timetable: Mapped[List["BusTimetable"]] = relationship(
         "BusTimetable",
         back_populates="route",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
     start_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        foreign_keys=[start_stop_id],
+        primaryjoin="BusRoute.start_stop_id == BusStop.id",
     )
     end_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        foreign_keys=[end_stop_id],
+        primaryjoin="BusRoute.end_stop_id == BusStop.id",
     )
 
 
@@ -210,5 +214,6 @@ class BusStop(Base):
         "BusRouteStop",
         back_populates="start_stop",
         cascade="all, delete-orphan",
-        foreign_keys=[BusRouteStop.start_stop_id],
+        primaryjoin="BusStop.id == BusRouteStop.start_stop_id",
+        viewonly=True,
     )

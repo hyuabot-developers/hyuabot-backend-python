@@ -35,6 +35,7 @@ class Cafeteria(Base):
     menu_list: Mapped[List["Menu"]] = relationship(
         back_populates="restaurant",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
 
 

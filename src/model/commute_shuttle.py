@@ -25,6 +25,7 @@ class CommuteShuttleRoute(Base):
         "CommuteShuttleTimetable",
         back_populates="route",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
 
 
@@ -40,6 +41,7 @@ class CommuteShuttleStop(Base):
         "CommuteShuttleTimetable",
         back_populates="stop",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
 
 

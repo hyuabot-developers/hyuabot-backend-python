@@ -2,7 +2,6 @@ import datetime
 from typing import Any
 
 from sqlalchemy import insert, select, delete, update
-from sqlalchemy.orm import joinedload
 
 from database import fetch_one, fetch_all, execute_query
 from model.subway import (
@@ -199,18 +198,11 @@ async def get_timetable(
     heading: str,
     departure_time: datetime.time,
 ) -> dict[str, Any] | None:
-    select_query = (
-        select(SubwayTimetable)
-        .where(
-            SubwayTimetable.station_id == station_id,
-            SubwayTimetable.is_weekdays == weekday,
-            SubwayTimetable.heading == heading,
-            SubwayTimetable.departure_time == departure_time,
-        )
-        .options(
-            joinedload(SubwayTimetable.start_station),
-            joinedload(SubwayTimetable.terminal_station),
-        )
+    select_query = select(SubwayTimetable).where(
+        SubwayTimetable.station_id == station_id,
+        SubwayTimetable.is_weekdays == weekday,
+        SubwayTimetable.heading == heading,
+        SubwayTimetable.departure_time == departure_time,
     )
     return await fetch_one(select_query)
 

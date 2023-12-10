@@ -34,6 +34,11 @@ async def client() -> AsyncGenerator[TestClient, None]:
 @pytest_asyncio.fixture
 async def clean_db() -> None:
     async with engine.begin() as conn:
+        await conn.execute(text("DELETE FROM bus_realtime"))
+        await conn.execute(text("DELETE FROM bus_timetable"))
+        await conn.execute(text("DELETE FROM bus_route_stop"))
+        await conn.execute(text("DELETE FROM bus_route"))
+        await conn.execute(text("DELETE FROM bus_stop"))
         await conn.execute(text("DELETE FROM shuttle_timetable"))
         await conn.execute(text("DELETE FROM shuttle_route_stop"))
         await conn.execute(text("DELETE FROM shuttle_route"))
@@ -73,6 +78,64 @@ async def create_test_user() -> None:
             ),
             {"password": hashed_password},
         )
+
+
+# Bus Datas
+@pytest_asyncio.fixture
+async def create_test_bus_stop() -> None:
+    values = ""
+    for i in range(1, 10):
+        values += f"({i}, 'test_stop{i}', 1, '0000{i}', '서울', 89.9, 89.9),"
+    insert_sql = f"INSERT INTO bus_stop VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_bus_route(create_test_bus_stop) -> None:
+    values = ""
+    for i in range(1, 10):
+        values += (
+            f"({i}, 'test_company', '031-111-1111', 1, '00:00:00+09:00', '23:59:59+09:00', "
+            f"'00:00:00+09:00', '23:59:59+09:00', 1, 9, {i}, 'test_route{i}', 'EXPRESS', 'EXPRESS'),"
+        )
+    insert_sql = f"INSERT INTO bus_route VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_bus_route_stop(create_test_bus_route) -> None:
+    values = ""
+    for i in range(1, 8):
+        values += f"(1, {i}, {i}, 1),"
+    insert_sql = f"INSERT INTO bus_route_stop VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_bus_timetable(create_test_bus_route_stop) -> None:
+    values = ""
+    for i in range(1, 10):
+        values += f"(1, 1, '0{i}:00:00+09:00', 'weekdays'),"
+        values += f"(1, 1, '0{i}:00:00+09:00', 'saturday'),"
+        values += f"(1, 1, '0{i}:00:00+09:00', 'sunday'),"
+    insert_sql = f"INSERT INTO bus_timetable VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_bus_realtime(create_test_bus_route_stop) -> None:
+    values = ""
+    for i in range(1, 10):
+        values += (
+            f"(1, 1, {i}, {i}, 41, '00:0{i}:00', false, '2023-12-01T23:59:59+09:00'),"
+        )
+    insert_sql = f"INSERT INTO bus_realtime VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
 
 
 # Campus Datas

@@ -25,6 +25,7 @@ class CommuteShuttleRoute(Base):
         "CommuteShuttleTimetable",
         back_populates="route",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
 
 
@@ -40,6 +41,7 @@ class CommuteShuttleStop(Base):
         "CommuteShuttleTimetable",
         back_populates="stop",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
 
 
@@ -66,7 +68,7 @@ class CommuteShuttleTimetable(Base):
     route_name: Mapped[str] = mapped_column("route_name", String(15))
     stop_name: Mapped[str] = mapped_column("stop_name", String(50))
     sequence: Mapped[int] = mapped_column("stop_order", Integer)
-    time: Mapped[datetime.time] = mapped_column("departure_time", Time)
+    time: Mapped[datetime.time] = mapped_column("departure_time", Time(timezone=True))
 
     route: Mapped["CommuteShuttleRoute"] = relationship(
         "CommuteShuttleRoute",

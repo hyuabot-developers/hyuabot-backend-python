@@ -17,8 +17,10 @@ class Campus(Base):
     cafeteria_list: Mapped[List["Cafeteria"]] = relationship(
         back_populates="campus",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
     reading_room_list: Mapped[List["ReadingRoom"]] = relationship(
         back_populates="campus",
         cascade="all, delete-orphan",
+        viewonly=True,
     )

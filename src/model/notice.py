@@ -26,6 +26,7 @@ class NoticeCategory(Base):
         back_populates="category",
         cascade="all, delete-orphan",
         primaryjoin="Notice.category_id == NoticeCategory.id",
+        viewonly=True,
     )
 
 

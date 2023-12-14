@@ -36,7 +36,7 @@ from subway.schemas import (
     CreateSubwayTimetable,
 )
 from user.jwt import parse_jwt_user_data
-from utils import timedelta_to_str, remove_timezone
+from utils import timedelta_to_str, remove_timezone, KST
 
 router = APIRouter()
 
@@ -336,7 +336,7 @@ async def get_route_station_timetable(
         station_id,
         weekday,
         heading,
-        departure_time,
+        departure_time.replace(tzinfo=KST),
     )
     if data is None:
         raise TimetableNotFound()
@@ -365,7 +365,7 @@ async def delete_route_station_timetable(
         station_id,
         weekday,
         heading,
-        departure_time,
+        departure_time.replace(tzinfo=KST),
     )
     return {"message": "Hello World"}
 

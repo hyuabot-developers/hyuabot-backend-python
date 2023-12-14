@@ -2,7 +2,6 @@ import datetime
 from typing import Any
 
 from sqlalchemy import insert, select, delete, update
-from sqlalchemy.orm import joinedload
 
 from database import fetch_one, fetch_all, execute_query
 from model.subway import (
@@ -21,6 +20,7 @@ from subway.schemas import (
     UpdateSubwayRouteStation,
     CreateSubwayTimetable,
 )
+from utils import KST
 
 
 async def create_station_name(
@@ -199,18 +199,11 @@ async def get_timetable(
     heading: str,
     departure_time: datetime.time,
 ) -> dict[str, Any] | None:
-    select_query = (
-        select(SubwayTimetable)
-        .where(
-            SubwayTimetable.station_id == station_id,
-            SubwayTimetable.is_weekdays == weekday,
-            SubwayTimetable.heading == heading,
-            SubwayTimetable.departure_time == departure_time,
-        )
-        .options(
-            joinedload(SubwayTimetable.start_station),
-            joinedload(SubwayTimetable.terminal_station),
-        )
+    select_query = select(SubwayTimetable).where(
+        SubwayTimetable.station_id == station_id,
+        SubwayTimetable.is_weekdays == weekday,
+        SubwayTimetable.heading == heading,
+        SubwayTimetable.departure_time == departure_time,
     )
     return await fetch_one(select_query)
 
@@ -227,7 +220,7 @@ async def create_timetable(
                 "station_id": station_id,
                 "start_station_id": new_timetable.start_station_id,
                 "terminal_station_id": new_timetable.terminal_station_id,
-                "departure_time": new_timetable.departure_time,
+                "departure_time": new_timetable.departure_time.replace(tzinfo=KST),
                 "weekday": new_timetable.weekday,
                 "heading": new_timetable.heading,
             },

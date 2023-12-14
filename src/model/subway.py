@@ -46,12 +46,14 @@ class SubwayRouteStation(Base):
         back_populates="station",
         cascade="all, delete-orphan",
         primaryjoin="SubwayRouteStation.id == SubwayTimetable.station_id",
+        viewonly=True,
     )
     realtime: Mapped[List["SubwayRealtime"]] = relationship(
         "SubwayRealtime",
         back_populates="station",
         cascade="all, delete-orphan",
         primaryjoin="SubwayRouteStation.id == SubwayRealtime.station_id",
+        viewonly=True,
     )
 
 
@@ -82,21 +84,16 @@ class SubwayTimetable(Base):
     station_id: Mapped[str] = mapped_column("station_id", String(10))
     heading: Mapped[str] = mapped_column("up_down_type", String(10))
     is_weekdays: Mapped[str] = mapped_column("weekday", String(10))
-    departure_time: Mapped[datetime.time] = mapped_column("departure_time", Time)
+    departure_time: Mapped[datetime.time] = mapped_column(
+        "departure_time",
+        Time(timezone=True),
+    )
     start_station_id: Mapped[str] = mapped_column("start_station_id", String(10))
     terminal_station_id: Mapped[str] = mapped_column("terminal_station_id", String(10))
 
     station: Mapped["SubwayRouteStation"] = relationship(
         "SubwayRouteStation",
         back_populates="timetable",
-    )
-    start_station: Mapped["SubwayRouteStation"] = relationship(
-        "SubwayRouteStation",
-        foreign_keys=[start_station_id],
-    )
-    terminal_station: Mapped["SubwayRouteStation"] = relationship(
-        "SubwayRouteStation",
-        foreign_keys=[terminal_station_id],
     )
 
 
@@ -126,13 +123,18 @@ class SubwayRealtime(Base):
     is_express: Mapped[bool] = mapped_column("is_express_train", Boolean)
     is_last: Mapped[bool] = mapped_column("is_last_train", Boolean)
     status: Mapped[int] = mapped_column("status_code", Integer)
-    updated_at: Mapped[datetime.datetime] = mapped_column("last_updated_time", DateTime)
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        "last_updated_time",
+        DateTime(timezone=True),
+        default=datetime.datetime.now,
+    )
 
     station: Mapped["SubwayRouteStation"] = relationship(
         "SubwayRouteStation",
         back_populates="realtime",
+        primaryjoin="SubwayRealtime.station_id == SubwayRouteStation.id",
     )
     terminal_station: Mapped["SubwayRouteStation"] = relationship(
         "SubwayRouteStation",
-        foreign_keys=[terminal_station_id],
+        primaryjoin="SubwayRealtime.terminal_station_id == SubwayRouteStation.id",
     )

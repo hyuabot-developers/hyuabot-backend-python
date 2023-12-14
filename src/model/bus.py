@@ -81,7 +81,10 @@ class BusRealtime(Base):
     seats: Mapped[int] = mapped_column("remaining_seat_count", Integer)
     time: Mapped[datetime.timedelta] = mapped_column("remaining_time", Interval)
     low_floor: Mapped[bool] = mapped_column("low_plate", Boolean)
-    updated_at: Mapped[datetime.datetime] = mapped_column("last_updated_time", DateTime)
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        "last_updated_time",
+        DateTime(timezone=True),
+    )
 
 
 class BusRouteStop(Base):
@@ -134,6 +137,7 @@ class BusRouteStop(Base):
             "and_(BusRouteStop.route_id == BusTimetable.route_id, "
             "BusRouteStop.start_stop_id == BusTimetable.start_stop_id)"
         ),
+        viewonly=True,
     )
     realtime: Mapped[List["BusRealtime"]] = relationship(
         "BusRealtime",
@@ -142,6 +146,7 @@ class BusRouteStop(Base):
             "and_(BusRouteStop.route_id == BusRealtime.route_id, "
             "BusRouteStop.stop_id == BusRealtime.stop_id)"
         ),
+        viewonly=True,
     )
 
 
@@ -168,10 +173,22 @@ class BusRoute(Base):
     company_name: Mapped[str] = mapped_column("company_name", String(30))
     company_telephone: Mapped[str] = mapped_column("company_telephone", String(15))
     district: Mapped[int] = mapped_column("district_code", Integer)
-    up_first_time: Mapped[datetime.time] = mapped_column("up_first_time", Time)
-    up_last_time: Mapped[datetime.time] = mapped_column("up_last_time", Time)
-    down_first_time: Mapped[datetime.time] = mapped_column("down_first_time", Time)
-    down_last_time: Mapped[datetime.time] = mapped_column("down_last_time", Time)
+    up_first_time: Mapped[datetime.time] = mapped_column(
+        "up_first_time",
+        Time(timezone=True),
+    )
+    up_last_time: Mapped[datetime.time] = mapped_column(
+        "up_last_time",
+        Time(timezone=True),
+    )
+    down_first_time: Mapped[datetime.time] = mapped_column(
+        "down_first_time",
+        Time(timezone=True),
+    )
+    down_last_time: Mapped[datetime.time] = mapped_column(
+        "down_last_time",
+        Time(timezone=True),
+    )
     start_stop_id: Mapped[int] = mapped_column("start_stop_id", Integer)
     end_stop_id: Mapped[int] = mapped_column("end_stop_id", Integer)
 
@@ -179,19 +196,21 @@ class BusRoute(Base):
         "BusRouteStop",
         back_populates="route",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
     timetable: Mapped[List["BusTimetable"]] = relationship(
         "BusTimetable",
         back_populates="route",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
     start_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        foreign_keys=[start_stop_id],
+        primaryjoin="BusRoute.start_stop_id == BusStop.id",
     )
     end_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        foreign_keys=[end_stop_id],
+        primaryjoin="BusRoute.end_stop_id == BusStop.id",
     )
 
 
@@ -210,5 +229,6 @@ class BusStop(Base):
         "BusRouteStop",
         back_populates="start_stop",
         cascade="all, delete-orphan",
-        foreign_keys=[BusRouteStop.start_stop_id],
+        primaryjoin="BusStop.id == BusRouteStop.start_stop_id",
+        viewonly=True,
     )

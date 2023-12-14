@@ -27,6 +27,7 @@ class ShuttlePeriodType(Base):
         "ShuttlePeriod",
         back_populates="type",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
 
 
@@ -102,21 +103,23 @@ class ShuttleRoute(Base):
 
     start_stop: Mapped["ShuttleStop"] = relationship(
         "ShuttleStop",
-        foreign_keys=[start_stop_id],
+        primaryjoin="ShuttleRoute.start_stop_id == ShuttleStop.name",
     )
     end_stop: Mapped["ShuttleStop"] = relationship(
         "ShuttleStop",
-        foreign_keys=[end_stop_id],
+        primaryjoin="ShuttleRoute.end_stop_id == ShuttleStop.name",
     )
     timetable: Mapped[List["ShuttleTimetable"]] = relationship(
         "ShuttleTimetable",
         back_populates="route",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
     stops: Mapped[List["ShuttleRouteStop"]] = relationship(
         "ShuttleRouteStop",
         back_populates="route",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
 
 
@@ -131,6 +134,7 @@ class ShuttleStop(Base):
         "ShuttleRouteStop",
         back_populates="stop",
         cascade="all, delete-orphan",
+        viewonly=True,
     )
 
 

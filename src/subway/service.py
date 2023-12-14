@@ -20,6 +20,7 @@ from subway.schemas import (
     UpdateSubwayRouteStation,
     CreateSubwayTimetable,
 )
+from utils import KST
 
 
 async def create_station_name(
@@ -219,7 +220,7 @@ async def create_timetable(
                 "station_id": station_id,
                 "start_station_id": new_timetable.start_station_id,
                 "terminal_station_id": new_timetable.terminal_station_id,
-                "departure_time": new_timetable.departure_time,
+                "departure_time": new_timetable.departure_time.replace(tzinfo=KST),
                 "weekday": new_timetable.weekday,
                 "heading": new_timetable.heading,
             },

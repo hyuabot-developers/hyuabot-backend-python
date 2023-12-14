@@ -14,6 +14,7 @@ from model.commute_shuttle import (
     CommuteShuttleStop,
     CommuteShuttleTimetable,
 )
+from utils import KST
 
 
 async def list_route() -> list[dict[str, str]]:
@@ -170,7 +171,7 @@ async def create_timetable(
                 "route_name": new_timetable.route_name,
                 "stop_name": new_timetable.stop_name,
                 "stop_order": new_timetable.sequence,
-                "departure_time": new_timetable.departure_time,
+                "departure_time": new_timetable.departure_time.replace(tzinfo=KST),
             },
         )
         .returning(CommuteShuttleTimetable)
@@ -192,7 +193,9 @@ async def update_timetable(
         .values(
             {
                 "stop_order": new_timetable.sequence,
-                "departure_time": new_timetable.departure_time,
+                "departure_time": new_timetable.departure_time.replace(tzinfo=KST)
+                if new_timetable.departure_time
+                else None,
             },
         )
         .returning(CommuteShuttleTimetable)

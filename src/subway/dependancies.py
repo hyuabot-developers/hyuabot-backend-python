@@ -14,6 +14,7 @@ from subway.schemas import (
     CreateSubwayRouteStation,
     CreateSubwayTimetable,
 )
+from utils import KST
 
 
 async def create_valid_station(new_station: CreateSubwayStation) -> CreateSubwayStation:
@@ -74,7 +75,7 @@ async def create_valid_timetable(
         station_id,
         new_timetable.weekday,
         new_timetable.heading,
-        new_timetable.departure_time,
+        new_timetable.departure_time.replace(tzinfo=KST),
     ):
         raise DuplicateTimetable()
 

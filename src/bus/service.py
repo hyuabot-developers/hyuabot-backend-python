@@ -56,10 +56,10 @@ async def create_route(new_holiday: CreateBusRouteRequest) -> dict[str, Any] | N
                 "company_name": new_holiday.company_name,
                 "company_telephone": new_holiday.company_telephone,
                 "district_code": new_holiday.district_code,
-                "up_first_time": new_holiday.up_first_time,
-                "up_last_time": new_holiday.up_last_time,
-                "down_first_time": new_holiday.down_first_time,
-                "down_last_time": new_holiday.down_last_time,
+                "up_first_time": new_holiday.up_first_time.replace(tzinfo=KST),
+                "up_last_time": new_holiday.up_last_time.replace(tzinfo=KST),
+                "down_first_time": new_holiday.down_first_time.replace(tzinfo=KST),
+                "down_last_time": new_holiday.down_last_time.replace(tzinfo=KST),
                 "start_stop_id": new_holiday.start_stop_id,
                 "end_stop_id": new_holiday.end_stop_id,
             },
@@ -112,22 +112,22 @@ async def update_route(
                     else BusRoute.district
                 ),
                 "up_first_time": (
-                    payload.up_first_time
+                    payload.up_first_time.replace(tzinfo=KST)
                     if payload.up_first_time is not None
                     else BusRoute.up_first_time
                 ),
                 "up_last_time": (
-                    payload.up_last_time
+                    payload.up_last_time.replace(tzinfo=KST)
                     if payload.up_last_time is not None
                     else BusRoute.up_last_time
                 ),
                 "down_first_time": (
-                    payload.down_first_time
+                    payload.down_first_time.replace(tzinfo=KST)
                     if payload.down_first_time is not None
                     else BusRoute.down_first_time
                 ),
                 "down_last_time": (
-                    payload.down_last_time
+                    payload.down_last_time.replace(tzinfo=KST)
                     if payload.down_last_time is not None
                     else BusRoute.down_last_time
                 ),

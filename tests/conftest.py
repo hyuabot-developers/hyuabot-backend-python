@@ -373,10 +373,10 @@ async def create_test_subway_timetable(
 ) -> None:
     values = ""
     for i in range(1, 10):
-        values += f"('K{str(i).zfill(3)}', 'K001', 'K009', '00:{str(i).zfill(2)}:00', 'weekdays', 'up'),"
-        values += f"('K{str(i).zfill(3)}', 'K009', 'K001', '00:{str(i).zfill(2)}:00', 'weekdays', 'down'),"
-        values += f"('K{str(i).zfill(3)}', 'K001', 'K009', '00:{str(i).zfill(2)}:00', 'weekends', 'up'),"
-        values += f"('K{str(i).zfill(3)}', 'K009', 'K001', '00:{str(i).zfill(2)}:00', 'weekends', 'down'),"
+        values += f"('K{str(i).zfill(3)}', 'K001', 'K009', '00:{str(i).zfill(2)}:00+09:00', 'weekdays', 'up'),"
+        values += f"('K{str(i).zfill(3)}', 'K009', 'K001', '00:{str(i).zfill(2)}:00+09:00', 'weekdays', 'down'),"
+        values += f"('K{str(i).zfill(3)}', 'K001', 'K009', '00:{str(i).zfill(2)}:00+09:00', 'weekends', 'up'),"
+        values += f"('K{str(i).zfill(3)}', 'K009', 'K001', '00:{str(i).zfill(2)}:00+09:00', 'weekends', 'down'),"
     insert_sql = f"INSERT INTO subway_timetable VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))

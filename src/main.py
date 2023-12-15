@@ -8,6 +8,7 @@ from starlette.middleware.cors import CORSMiddleware
 import database
 from config import app_configs, settings
 from bus.router import router as bus_router
+from building.router import router as building_router
 from cafeteria.router import router as cafeteria_router
 from commute_shuttle.router import router as commute_shuttle_router
 from campus.router import router as campus_router
@@ -50,6 +51,7 @@ app.add_middleware(
 api = APIRouter()
 api.include_router(bus_router, prefix="/bus", tags=["bus"])
 api.include_router(cafeteria_router, prefix="/cafeteria", tags=["cafeteria"])
+api.include_router(building_router, prefix="/building", tags=["building"])
 api.include_router(campus_router, prefix="/campus", tags=["campus"])
 api.include_router(commute_shuttle_router, prefix="/commute", tags=["commute-shuttle"])
 api.include_router(notice_router, prefix="/notice", tags=["notice"])

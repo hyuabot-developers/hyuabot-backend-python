@@ -43,7 +43,6 @@ class UpdateBuildingRequest(BaseModel):
 
 class CreateRoomRequest(BaseModel):
     id: Annotated[int, Field(alias="id")]
-    building_id: Annotated[str, Field(max_length=15, alias="buildingID")]
     name: Annotated[str, Field(max_length=30, alias="name")]
     floor: Annotated[str, Field(max_length=10, alias="floor")]
     number: Annotated[str, Field(max_length=10, alias="number")]
@@ -52,7 +51,6 @@ class CreateRoomRequest(BaseModel):
         json_schema_extra = {
             "example": {
                 "id": 1,
-                "buildingID": "Y28",
                 "name": "언론정보대학 행정팀",
                 "floor": "2층",
                 "number": "204",

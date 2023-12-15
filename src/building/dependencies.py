@@ -4,6 +4,7 @@ from building.exceptions import (
     BuildingNotFound,
     BuildingHasRoom,
     DuplicateRoomID,
+    RoomNotFound,
 )
 from building.schemas import (
     CreateBuildingRequest,
@@ -34,6 +35,12 @@ async def delete_valid_building(building_id: str) -> str:
 
 
 async def create_valid_room(new_room: CreateRoomRequest) -> CreateRoomRequest:
-    if await service.get_room(new_room.building_id, new_room.id):
+    if await service.get_room(new_room.id):
         raise DuplicateRoomID()
     return new_room
+
+
+async def get_valid_room(room_id: int) -> int:
+    if await service.get_room(room_id) is None:
+        raise RoomNotFound()
+    return room_id

@@ -7,8 +7,9 @@ from building.dependencies import (
     delete_valid_building,
     get_valid_building,
     create_valid_room,
+    get_valid_room,
 )
-from building.exceptions import BuildingNotFound
+from building.exceptions import BuildingNotFound, RoomNotFound
 from building.schemas import (
     BuildingListResponse,
     CreateBuildingRequest,
@@ -17,6 +18,7 @@ from building.schemas import (
     RoomListResponse,
     CreateRoomRequest,
     RoomItemResponse,
+    UpdateRoomRequest,
 )
 from exceptions import DetailedHTTPException
 from user.jwt import parse_jwt_user_data
@@ -59,7 +61,6 @@ async def create_building(
     new_building: CreateBuildingRequest = Depends(create_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):
-    print(new_building)
     building = await service.create_building(new_building)
     if building is None:
         raise DetailedHTTPException()
@@ -121,10 +122,21 @@ async def delete_building(
 
 @router.get("/{building_id}/room", response_model=RoomListResponse)
 async def get_building_room(
+    name: str | None = None,
+    floor: str | None = None,
+    number: str | None = None,
     building_id: str = Depends(get_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):
-    room_list = await service.list_room_filter(building_id)
+    if name is None and floor is None and number is None:
+        room_list = await service.list_room_filter(building_id)
+    else:
+        room_list = await service.list_room_filter(
+            building_id,
+            name,
+            floor,
+            number,
+        )
     return {
         "data": map(
             lambda x: {
@@ -163,11 +175,30 @@ async def create_building_room(
 
 @router.get("/{building_id}/room/{room_id}", response_model=RoomItemResponse)
 async def get_building_room_item(
+    room_id: int,
     building_id: str = Depends(get_valid_building),
-    room_id: int = Depends(get_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):
-    room = await service.get_room(building_id, room_id)
+    room = await service.get_room(room_id)
+    if room is None:
+        raise RoomNotFound()
+    return {
+        "id": room["id"],
+        "buildingID": building_id,
+        "name": room["name"],
+        "floor": room["floor"],
+        "number": room["number"],
+    }
+
+
+@router.patch("/{building_id}/room/{room_id}", response_model=RoomItemResponse)
+async def update_building_room_item(
+    payload: UpdateRoomRequest,
+    building_id: str = Depends(get_valid_building),
+    room_id: int = Depends(get_valid_room),
+    _: str = Depends(parse_jwt_user_data),
+):
+    room = await service.update_room(building_id, room_id, payload)
     if room is None:
         raise DetailedHTTPException()
     return {
@@ -181,7 +212,7 @@ async def get_building_room_item(
 
 @router.delete("/{building_id}/room/{room_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_building_room_item(
-    room_id: int,
+    room_id: int = Depends(get_valid_room),
     building_id: str = Depends(get_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):

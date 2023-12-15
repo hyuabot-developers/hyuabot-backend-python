@@ -6,6 +6,7 @@ from building.schemas import (
     CreateRoomRequest,
     CreateBuildingRequest,
     UpdateBuildingRequest,
+    UpdateRoomRequest,
 )
 from database import fetch_all, fetch_one, execute_query
 from model.building import Building, Room
@@ -96,11 +97,8 @@ async def list_room_filter(
     return await fetch_all(select_query)
 
 
-async def get_room(building_id: str, room_id: int) -> dict[str, Any] | None:
-    select_query = select(Room).where(
-        Room.building_id == building_id,
-        Room.id == room_id,
-    )
+async def get_room(room_id: int) -> dict[str, Any] | None:
+    select_query = select(Room).where(Room.id == room_id)
     return await fetch_one(select_query)
 
 
@@ -122,6 +120,29 @@ async def create_room(
         .returning(Room)
     )
     return await fetch_one(insert_query)
+
+
+async def update_room(
+    building_id: str,
+    room_id: int,
+    new_room: UpdateRoomRequest,
+) -> dict[str, Any] | None:
+    update_query = (
+        update(Room)
+        .where(
+            Room.building_id == building_id,
+            Room.id == room_id,
+        )
+        .values(
+            {
+                "name": new_room.name,
+                "floor": new_room.floor,
+                "number": new_room.number,
+            },
+        )
+        .returning(Room)
+    )
+    return await fetch_one(update_query)
 
 
 async def delete_room(building_id: str, room_id: int) -> None:

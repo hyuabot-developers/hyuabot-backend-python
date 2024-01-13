@@ -83,22 +83,25 @@ async def delete_building(building_id: str) -> None:
 async def list_room_filter(
     building_id: str,
     name: str | None = None,
-    floor: str | None = None,
     number: str | None = None,
 ) -> list[dict[str, Any]]:
     conditions = [Room.building_id == building_id]
     if name is not None:
         conditions.append(Room.name.like(f"%{name}%"))
-    if floor is not None:
-        conditions.append(Room.floor == floor)
     if number is not None:
         conditions.append(Room.number == number)
     select_query = select(Room).where(*conditions)
     return await fetch_all(select_query)
 
 
-async def get_room(room_id: int) -> dict[str, Any] | None:
-    select_query = select(Room).where(Room.id == room_id)
+async def get_room(
+    building_id: str,
+    room_number: str,
+) -> dict[str, Any] | None:
+    select_query = select(Room).where(
+        Room.building_id == building_id,
+        Room.number == room_number,
+    )
     return await fetch_one(select_query)
 
 
@@ -110,10 +113,8 @@ async def create_room(
         insert(Room)
         .values(
             {
-                "id": new_room.id,
                 "building_id": building_id,
                 "name": new_room.name,
-                "floor": new_room.floor,
                 "number": new_room.number,
             },
         )
@@ -124,14 +125,14 @@ async def create_room(
 
 async def update_room(
     building_id: str,
-    room_id: int,
+    room_number: str,
     new_room: UpdateRoomRequest,
 ) -> dict[str, Any] | None:
     update_query = (
         update(Room)
         .where(
             Room.building_id == building_id,
-            Room.id == room_id,
+            Room.number == room_number,
         )
         .values(
             {
@@ -145,9 +146,9 @@ async def update_room(
     return await fetch_one(update_query)
 
 
-async def delete_room(building_id: str, room_id: int) -> None:
+async def delete_room(building_id: str, room_number: str) -> None:
     delete_query = delete(Room).where(
         Room.building_id == building_id,
-        Room.id == room_id,
+        Room.number == room_number,
     )
     await execute_query(delete_query)

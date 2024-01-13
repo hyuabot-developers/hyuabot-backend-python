@@ -35,12 +35,12 @@ async def delete_valid_building(building_id: str) -> str:
 
 
 async def create_valid_room(new_room: CreateRoomRequest) -> CreateRoomRequest:
-    if await service.get_room(new_room.id):
+    if await service.get_room(new_room.building_id, new_room.number):
         raise DuplicateRoomID()
     return new_room
 
 
-async def get_valid_room(room_id: int) -> int:
-    if await service.get_room(room_id) is None:
+async def get_valid_room(building_id: str, room_number: str) -> str:
+    if await service.get_room(building_id, room_number) is None:
         raise RoomNotFound()
-    return room_id
+    return room_number

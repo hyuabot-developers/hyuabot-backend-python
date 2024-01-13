@@ -1,5 +1,12 @@
-from sqlalchemy import ForeignKeyConstraint, Integer, Float, Text, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import (
+    ForeignKeyConstraint,
+    Integer,
+    Float,
+    Text,
+    String,
+    PrimaryKeyConstraint,
+)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from model import Base
 
@@ -19,6 +26,10 @@ class Building(Base):
     latitude: Mapped[float] = mapped_column("latitude", Float)
     longitude: Mapped[float] = mapped_column("longitude", Float)
     url: Mapped[str] = mapped_column("url", Text)
+    rooms: Mapped[list["Room"]] = relationship(
+        "Room",
+        primaryjoin="Building.id == Room.building_id",
+    )
 
 
 class Room(Base):
@@ -28,10 +39,13 @@ class Room(Base):
             ["building_id"],
             ["building.id"],
         ),
+        PrimaryKeyConstraint(
+            "building_id",
+            "number",
+            name="pk_room",
+        ),
     )
 
-    id: Mapped[int] = mapped_column("id", Integer, primary_key=True)
     building_id: Mapped[str] = mapped_column("building_id", String(15))
     name: Mapped[str] = mapped_column("name", String(30))
-    floor: Mapped[str] = mapped_column("floor", String(10))
     number: Mapped[str] = mapped_column("number", String(10))

@@ -1,9 +1,7 @@
 import datetime
 import uuid
-from typing import Any
 
 import pytz
-from pydantic import UUID4
 from sqlalchemy import insert, select, true, update
 
 import utils
@@ -18,7 +16,7 @@ from user.schemas import CreateUserRequest
 from user.security import hash_password, verify_password
 
 
-async def create_user(user: CreateUserRequest) -> dict[str, Any] | None:
+async def create_user(user: CreateUserRequest) -> User | None:
     insert_query = (
         insert(User)
         .values(
@@ -37,13 +35,13 @@ async def create_user(user: CreateUserRequest) -> dict[str, Any] | None:
     return await fetch_one(insert_query)
 
 
-async def get_user_by_id(user_id: str) -> dict[str, Any] | None:
-    select_query = select(User).where(User.id == user_id)
+async def get_user_by_id(user_id: str) -> User | None:
+    select_query = select(User).where(User._id == user_id)
     return await fetch_one(select_query)
 
 
-async def get_active_user_by_id(user_id: str) -> dict[str, Any] | None:
-    select_query = select(User).where(User.id == user_id, User.active == true())
+async def get_active_user_by_id(user_id: str) -> User | None:
+    select_query = select(User).where(User._id == user_id, User.active == true())
     return await fetch_one(select_query)
 
 
@@ -75,14 +73,14 @@ async def create_refresh_token(
     return refresh_token
 
 
-async def get_refresh_token(refresh_token: str) -> dict[str, Any] | None:
+async def get_refresh_token(refresh_token: str) -> RefreshToken | None:
     select_query = select(RefreshToken).where(
         RefreshToken.refresh_token == refresh_token,
     )
     return await fetch_one(select_query)
 
 
-async def expire_refresh_token(refresh_token_uuid: UUID4) -> None:
+async def expire_refresh_token(refresh_token_uuid: str) -> None:
     update_query = (
         update(RefreshToken)
         .where(RefreshToken.uuid == refresh_token_uuid)
@@ -97,12 +95,12 @@ async def expire_refresh_token(refresh_token_uuid: UUID4) -> None:
 async def authenticate_user(
     username: str,
     password: str,
-) -> dict[str, Any]:
+) -> User:
     user = await get_active_user_by_id(user_id=username)
     if user is None:
         raise InvalidCredentials()
 
-    if not verify_password(password, user["password"]):
+    if not verify_password(password, user.password):
         raise InvalidCredentials()
 
     return user

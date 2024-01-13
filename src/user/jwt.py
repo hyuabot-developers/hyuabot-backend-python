@@ -1,11 +1,11 @@
 import datetime
-from typing import Any
 
 import pytz
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 
+from model.user import User
 from user.config import auth_config
 from user.exceptions import InvalidAccessToken
 
@@ -14,11 +14,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/users/token", auto_erro
 
 def create_access_token(
     *,
-    user: dict[str, Any],
+    user: User,
     expires_delta: datetime.timedelta = datetime.timedelta(minutes=auth_config.JWT_EXP),
 ) -> str:
     payload = {
-        "sub": user["user_id"],
+        "sub": user._id,
         "exp": datetime.datetime.now(pytz.timezone("Asia/Seoul")) + expires_delta,
     }
 

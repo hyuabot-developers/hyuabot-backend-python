@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class User(Base):
     __tablename__ = "admin_user"
 
-    id: Mapped[str] = mapped_column("user_id", String(20), primary_key=True)
+    _id: Mapped[str] = mapped_column("user_id", String(20), primary_key=True)
     password: Mapped[bytes] = mapped_column("password", BYTEA)
     name: Mapped[str] = mapped_column("name", String(20))
     email: Mapped[str] = mapped_column("email", String(50))
@@ -26,7 +26,7 @@ class User(Base):
         "Notice",
         back_populates="user",
         cascade="all, delete-orphan",
-        primaryjoin="Notice.user_id == User.id",
+        primaryjoin="Notice.user_id == User._id",
     )
 
 

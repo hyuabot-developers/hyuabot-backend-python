@@ -60,5 +60,5 @@ class Notice(Base):
     user: Mapped["User"] = relationship(
         "User",
         back_populates="notices",
-        primaryjoin="Notice.user_id == User.id",
+        primaryjoin="Notice.user_id == User._id",
     )

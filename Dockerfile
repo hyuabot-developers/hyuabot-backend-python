@@ -9,17 +9,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=utf-8
 
-COPY setup.cfg setup.py /tmp/
+COPY setup.cfg setup.py /
+COPY . /src
 
 RUN pip install -U pip && \
-    pip install --no-cache-dir -e /tmp/
-
-COPY . /src
-ENV PATH "$PATH:/src/scripts"
+    pip install --no-cache-dir -e /
 
 RUN useradd -m -d /src -s /bin/bash app \
     && chown -R app:app /src/* && chmod +x /src/scripts/*
 
+ENV PATH "$PATH:/src/scripts"
 WORKDIR /src
-
 CMD ["./scripts/start-prod.sh"]

@@ -1,5 +1,4 @@
 import datetime
-from typing import Any
 
 from sqlalchemy import select, insert, delete, update, true
 
@@ -28,7 +27,7 @@ from shuttle.schemas import (
 from utils import KST
 
 
-async def list_holiday() -> list[dict[str, str]]:
+async def list_holiday() -> list[ShuttleHoliday]:
     select_query = select(ShuttleHoliday)
     return await fetch_all(select_query)
 
@@ -38,7 +37,7 @@ async def list_holiday_filter(
     date: datetime.date | None = None,
     start_date: datetime.date | None = None,
     end_date: datetime.date | None = None,
-):
+) -> list[ShuttleHoliday]:
     conditions = []
     if calendar_type:
         conditions.append(ShuttleHoliday.calendar == calendar_type)
@@ -53,7 +52,7 @@ async def list_holiday_filter(
     return await fetch_all(select_query)
 
 
-async def get_holiday(calendar_type: str, date: datetime.date) -> dict[str, str] | None:
+async def get_holiday(calendar_type: str, date: datetime.date) -> ShuttleHoliday | None:
     select_query = select(ShuttleHoliday).where(
         ShuttleHoliday.calendar == calendar_type,
         ShuttleHoliday.date == date,
@@ -63,7 +62,7 @@ async def get_holiday(calendar_type: str, date: datetime.date) -> dict[str, str]
 
 async def create_holiday(
     new_holiday: CreateShuttleHolidayRequest,
-) -> dict[str, str] | None:
+) -> ShuttleHoliday | None:
     insert_query = (
         insert(ShuttleHoliday)
         .values(
@@ -86,7 +85,7 @@ async def delete_holiday(calendar_type: str, date: datetime.date) -> None:
     await execute_query(delete_query)
 
 
-async def list_period() -> list[dict[str, str]]:
+async def list_period() -> list[ShuttlePeriod]:
     select_query = select(ShuttlePeriod)
     return await fetch_all(select_query)
 
@@ -94,7 +93,7 @@ async def list_period() -> list[dict[str, str]]:
 async def list_period_filter(
     period_type: str | None = None,
     date: datetime.date | None = None,
-):
+) -> list[ShuttlePeriod]:
     conditions = []
     if period_type:
         conditions.append(ShuttlePeriod.type_id == period_type)
@@ -110,7 +109,7 @@ async def get_period(
     period_type: str,
     start: datetime.datetime,
     end: datetime.datetime,
-) -> dict[str, str] | None:
+) -> ShuttlePeriod | None:
     select_query = select(ShuttlePeriod).where(
         ShuttlePeriod.type_id == period_type,
         ShuttlePeriod.start == start,
@@ -121,7 +120,7 @@ async def get_period(
 
 async def create_period(
     new_period: CreateShuttlePeriodRequest,
-) -> dict[str, str] | None:
+) -> ShuttlePeriod | None:
     insert_query = (
         insert(ShuttlePeriod)
         .values(
@@ -163,7 +162,7 @@ async def delete_period(
     await execute_query(delete_query)
 
 
-async def list_route() -> list[dict[str, str]]:
+async def list_route() -> list[ShuttleRoute]:
     select_query = select(ShuttleRoute)
     return await fetch_all(select_query)
 
@@ -171,7 +170,7 @@ async def list_route() -> list[dict[str, str]]:
 async def list_route_filter(
     name: str | None = None,
     tag: str | None = None,
-):
+) -> list[ShuttleRoute]:
     conditions = []
     if name:
         conditions.append(ShuttleRoute.name == name)
@@ -182,14 +181,14 @@ async def list_route_filter(
     return await fetch_all(select_query)
 
 
-async def get_route(route_name: str) -> dict[str, str] | None:
+async def get_route(route_name: str) -> ShuttleRoute | None:
     select_query = select(ShuttleRoute).where(ShuttleRoute.name == route_name)
     return await fetch_one(select_query)
 
 
 async def create_route(
     new_route: CreateShuttleRouteRequest,
-) -> dict[str, str] | None:
+) -> ShuttleRoute | None:
     insert_query = (
         insert(ShuttleRoute)
         .values(
@@ -210,19 +209,22 @@ async def create_route(
 async def update_route(
     route_name: str,
     new_route: UpdateShuttleRouteRequest,
-) -> dict[str, str] | None:
+) -> ShuttleRoute | None:
+    payload = {}
+    if new_route.tag:
+        payload["tag"] = new_route.tag
+    if new_route.route_description_korean:
+        payload["korean"] = new_route.route_description_korean
+    if new_route.route_description_english:
+        payload["english"] = new_route.route_description_english
+    if new_route.start_stop_id:
+        payload["start_stop_id"] = new_route.start_stop_id
+    if new_route.end_stop_id:
+        payload["end_stop_id"] = new_route.end_stop_id
     update_query = (
         update(ShuttleRoute)
         .where(ShuttleRoute.name == route_name)
-        .values(
-            {
-                "route_tag": new_route.tag,
-                "route_description_korean": new_route.route_description_korean,
-                "route_description_english": new_route.route_description_english,
-                "start_stop_id": new_route.start_stop_id,
-                "end_stop_id": new_route.end_stop_id,
-            },
-        )
+        .values(payload)
         .returning(ShuttleRoute)
     )
     return await fetch_one(update_query)
@@ -233,26 +235,26 @@ async def delete_route(route_name: str) -> None:
     await execute_query(delete_query)
 
 
-async def list_stop() -> list[dict[str, str]]:
+async def list_stop() -> list[ShuttleStop]:
     select_query = select(ShuttleStop)
     return await fetch_all(select_query)
 
 
-async def list_stop_filter(name: str):
+async def list_stop_filter(name: str) -> list[ShuttleStop]:
     select_query = select(ShuttleStop).where(
         ShuttleStop.name == name,
     )
     return await fetch_all(select_query)
 
 
-async def get_stop(stop_name: str) -> dict[str, str] | None:
+async def get_stop(stop_name: str) -> ShuttleStop | None:
     select_query = select(ShuttleStop).where(ShuttleStop.name == stop_name)
     return await fetch_one(select_query)
 
 
 async def create_stop(
     new_stop: CreateShuttleStopRequest,
-) -> dict[str, str] | None:
+) -> ShuttleStop | None:
     insert_query = (
         insert(ShuttleStop)
         .values(
@@ -270,7 +272,7 @@ async def create_stop(
 async def update_stop(
     stop_name: str,
     new_stop: UpdateShuttleStopRequest,
-) -> dict[str, str] | None:
+) -> ShuttleStop | None:
     update_query = (
         update(ShuttleStop)
         .where(ShuttleStop.name == stop_name)
@@ -292,7 +294,7 @@ async def delete_stop(stop_name: str) -> None:
 
 async def list_route_stop_filter(
     route_name: str,
-):
+) -> list[ShuttleRouteStop]:
     select_query = select(ShuttleRouteStop).where(
         ShuttleRouteStop.route_name == route_name,
     )
@@ -302,7 +304,7 @@ async def list_route_stop_filter(
 async def get_route_stop(
     route_name: str,
     stop_name: str,
-) -> dict[str, Any] | None:
+) -> ShuttleRouteStop | None:
     select_query = select(ShuttleRouteStop).where(
         ShuttleRouteStop.route_name == route_name,
         ShuttleRouteStop.stop_name == stop_name,
@@ -313,7 +315,7 @@ async def get_route_stop(
 async def create_route_stop(
     route_name: str,
     new_route_stop: CreateShuttleRouteStopRequest,
-) -> dict[str, Any] | None:
+) -> ShuttleRouteStop | None:
     insert_query = (
         insert(ShuttleRouteStop)
         .values(
@@ -333,19 +335,19 @@ async def update_route_stop(
     route_name: str,
     stop_name: str,
     new_route_stop: UpdateShuttleRouteStopRequest,
-) -> dict[str, Any] | None:
+) -> ShuttleRouteStop | None:
+    payload: dict[str, int | datetime.timedelta] = {}
+    if new_route_stop.sequence:
+        payload["sequence"] = new_route_stop.sequence
+    if new_route_stop.cumulative_time:
+        payload["cumulative_time"] = new_route_stop.cumulative_time
     update_query = (
         update(ShuttleRouteStop)
         .where(
             ShuttleRouteStop.route_name == route_name,
             ShuttleRouteStop.stop_name == stop_name,
         )
-        .values(
-            {
-                "stop_order": new_route_stop.sequence,
-                "cumulative_time": new_route_stop.cumulative_time,
-            },
-        )
+        .values(payload)
         .returning(ShuttleRouteStop)
     )
     return await fetch_one(update_query)
@@ -362,7 +364,7 @@ async def delete_route_stop(
     await execute_query(delete_query)
 
 
-async def list_timetable() -> list[dict[str, str]]:
+async def list_timetable() -> list[ShuttleTimetable]:
     select_query = select(ShuttleTimetable)
     return await fetch_all(select_query)
 
@@ -372,7 +374,7 @@ async def list_timetable_filter(
     weekdays: bool | None = None,
     start_time: datetime.time | None = None,
     end_time: datetime.time | None = None,
-):
+) -> list[ShuttleTimetable]:
     conditions = []
     if route:
         conditions.append(ShuttleTimetable.route_name == route)
@@ -392,7 +394,7 @@ async def list_timetable_filter(
     return await fetch_all(select_query)
 
 
-async def get_timetable(seq: int) -> dict[str, str] | None:
+async def get_timetable(seq: int) -> ShuttleTimetable | None:
     select_query = select(ShuttleTimetable).where(ShuttleTimetable.id == seq)
     return await fetch_one(select_query)
 
@@ -402,7 +404,7 @@ async def get_timetable_by_filter(
     period_type: str,
     is_weekdays: bool,
     departure_time: datetime.time,
-) -> dict[str, str] | None:
+) -> ShuttleTimetable | None:
     select_query = select(ShuttleTimetable).where(
         ShuttleTimetable.route_name == route_name,
         ShuttleTimetable.period == period_type,
@@ -414,7 +416,7 @@ async def get_timetable_by_filter(
 
 async def create_timetable(
     new_timetable: CreateShuttleTimetableRequest,
-) -> dict[str, Any] | None:
+) -> ShuttleTimetable | None:
     insert_query = (
         insert(ShuttleTimetable)
         .values(
@@ -435,24 +437,22 @@ async def create_timetable(
 async def update_timetable(
     seq: int,
     new_timetable: UpdateShuttleTimetableRequest,
-) -> dict[str, str] | None:
+) -> ShuttleTimetable | None:
+    payload: dict[str, str | int | bool | datetime.time] = {}
+    if new_timetable.period_type:
+        payload["period"] = new_timetable.period_type
+    if new_timetable.is_weekdays:
+        payload["is_weekdays"] = new_timetable.is_weekdays
+    if new_timetable.route_name:
+        payload["route_name"] = new_timetable.route_name
+    if new_timetable.departure_time:
+        payload["departure_time"] = new_timetable.departure_time.replace(
+            tzinfo=KST,
+        )
     update_query = (
         update(ShuttleTimetable)
         .where(ShuttleTimetable.id == seq)
-        .values(
-            {
-                "period_type": new_timetable.period_type,
-                "weekday": new_timetable.is_weekdays,
-                "route_name": new_timetable.route_name,
-                "departure_time": (
-                    new_timetable.departure_time.replace(
-                        tzinfo=KST,
-                    )
-                    if new_timetable.departure_time
-                    else None
-                ),
-            },
-        )
+        .values(payload)
         .returning(ShuttleTimetable)
     )
     return await fetch_one(update_query)
@@ -463,7 +463,7 @@ async def delete_timetable(seq: int) -> None:
     await execute_query(delete_query)
 
 
-async def list_timetable_view() -> list[dict[str, str]]:
+async def list_timetable_view() -> list[ShuttleTimetableView]:
     select_query = select(ShuttleTimetableView)
     return await fetch_all(select_query)
 
@@ -474,7 +474,7 @@ async def list_timetable_view_filter(
     weekdays: bool | None = None,
     start_time: datetime.time | None = None,
     end_time: datetime.time | None = None,
-):
+) -> list[ShuttleTimetableView]:
     conditions = []
     if route:
         conditions.append(ShuttleTimetableView.route_name == route)

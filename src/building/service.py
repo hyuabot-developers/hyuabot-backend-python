@@ -59,7 +59,7 @@ async def update_building(
 ) -> Building | None:
     payload: dict[str, str | float] = {}
     if new_building.id_ is not None:
-        payload["id"] = new_building.id_
+        payload["id_"] = new_building.id_
     if new_building.latitude is not None:
         payload["latitude"] = new_building.latitude
     if new_building.longitude is not None:

@@ -97,7 +97,7 @@ async def create_test_building(create_test_campus) -> None:
 async def create_test_room(create_test_building) -> None:
     values = ""
     for i in range(1, 10):
-        values += f"(1, {i}, 'test_room{i}', '1', '101'),"
+        values += f"('test_building{i}', 'test_room{i}', '101'),"
     insert_sql = f"INSERT INTO room VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))

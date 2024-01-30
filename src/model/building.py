@@ -28,7 +28,7 @@ class Building(Base):
     url: Mapped[str] = mapped_column("url", Text)
     rooms: Mapped[list["Room"]] = relationship(
         "Room",
-        primaryjoin="Building.id == Room.building_id",
+        primaryjoin="Building.name == Room.building_name",
     )
 
 
@@ -36,16 +36,16 @@ class Room(Base):
     __tablename__ = "room"
     __table_args__ = (
         ForeignKeyConstraint(
-            ["building_id"],
-            ["building.id"],
+            ["building_name"],
+            ["building.name"],
         ),
         PrimaryKeyConstraint(
-            "building_id",
+            "building_name",
             "number",
             name="pk_room",
         ),
     )
 
-    building_id: Mapped[str] = mapped_column("building_id", String(15))
+    building_name: Mapped[str] = mapped_column("building_name", String(15))
     name: Mapped[str] = mapped_column("name", String(30))
     number: Mapped[str] = mapped_column("number", String(10))

@@ -1,3 +1,5 @@
+from typing import Callable
+
 from fastapi import APIRouter, Depends
 from starlette import status
 
@@ -21,6 +23,7 @@ from building.schemas import (
     UpdateRoomRequest,
 )
 from exceptions import DetailedHTTPException
+from model.building import Building, Room
 from user.jwt import parse_jwt_user_data
 
 router = APIRouter()
@@ -36,20 +39,16 @@ async def get_building_list(
         data = await service.list_building()
     else:
         data = await service.list_building_filter(campus, name)
-
-    return {
-        "data": map(
-            lambda x: {
-                "id": x["id"],
-                "name": x["name"],
-                "campusID": x["campus_id"],
-                "latitude": x["latitude"],
-                "longitude": x["longitude"],
-                "url": x["url"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[Building], dict[str, str | int | float]] = lambda x: {
+        "id": x.id,
+        "name": x.name,
+        "campusID": x.campus_id,
+        "latitude": x.latitude,
+        "longitude": x.longitude,
+        "url": x.url,
     }
+
+    return {"data": map(mapping_func, data)}
 
 
 @router.post(
@@ -65,149 +64,146 @@ async def create_building(
     if building is None:
         raise DetailedHTTPException()
     return {
-        "id": building["id"],
-        "name": building["name"],
-        "campusID": building["campus_id"],
-        "latitude": building["latitude"],
-        "longitude": building["longitude"],
-        "url": building["url"],
+        "id": building.id,
+        "name": building.name,
+        "campusID": building.campus_id,
+        "latitude": building.latitude,
+        "longitude": building.longitude,
+        "url": building.url,
     }
 
 
-@router.get("/{building_id}", response_model=BuildingItemResponse)
+@router.get("/{building_name}", response_model=BuildingItemResponse)
 async def get_building(
-    building_id: str,
+    building_name: str,
     _: str = Depends(parse_jwt_user_data),
 ):
-    building = await service.get_building(building_id)
+    building = await service.get_building(building_name)
     if building is None:
         raise BuildingNotFound()
     return {
-        "id": building["id"],
-        "name": building["name"],
-        "campusID": building["campus_id"],
-        "latitude": building["latitude"],
-        "longitude": building["longitude"],
-        "url": building["url"],
+        "id": building.id,
+        "name": building.name,
+        "campusID": building.campus_id,
+        "latitude": building.latitude,
+        "longitude": building.longitude,
+        "url": building.url,
     }
 
 
-@router.patch("/{building_id}", response_model=BuildingItemResponse)
+@router.patch("/{building_name}", response_model=BuildingItemResponse)
 async def update_building(
     payload: UpdateBuildingRequest,
-    building_id: str = Depends(get_valid_building),
+    building_name: str = Depends(get_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):
-    building = await service.update_building(building_id, payload)
+    building = await service.update_building(building_name, payload)
     if building is None:
         raise DetailedHTTPException()
     return {
-        "id": building["id"],
-        "name": building["name"],
-        "campusID": building["campus_id"],
-        "latitude": building["latitude"],
-        "longitude": building["longitude"],
-        "url": building["url"],
+        "id": building.id,
+        "name": building.name,
+        "campusID": building.campus_id,
+        "latitude": building.latitude,
+        "longitude": building.longitude,
+        "url": building.url,
     }
 
 
-@router.delete("/{building_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{building_name}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_building(
-    building_id: str = Depends(delete_valid_building),
+    building_name: str = Depends(delete_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):
-    await service.delete_building(building_id)
+    await service.delete_building(building_name)
     return None
 
 
-@router.get("/{building_id}/room", response_model=RoomListResponse)
+@router.get("/{building_name}/room", response_model=RoomListResponse)
 async def get_building_room(
     name: str | None = None,
     number: str | None = None,
-    building_id: str = Depends(get_valid_building),
+    building_name: str = Depends(get_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):
     if name is None and number is None:
-        room_list = await service.list_room_filter(building_id)
+        room_list = await service.list_room_filter(building_name)
     else:
         room_list = await service.list_room_filter(
-            building_id,
+            building_name,
             name,
             number,
         )
-    return {
-        "data": map(
-            lambda x: {
-                "buildingID": x["building_id"],
-                "name": x["name"],
-                "number": x["number"],
-            },
-            room_list,
-        ),
+    mapping_func: Callable[[Room], dict[str, str]] = lambda x: {
+        "buildingID": building_name,
+        "name": x.name,
+        "number": x.number,
     }
+    return {"data": map(mapping_func, room_list)}
 
 
 @router.post(
-    "/{building_id}/room",
+    "/{building_name}/room",
     response_model=RoomItemResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_building_room(
-    new_room: CreateRoomRequest = Depends(create_valid_room),
-    building_id: str = Depends(get_valid_building),
+    new_room: CreateRoomRequest,
+    building_name: str = Depends(get_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):
-    room = await service.create_room(building_id, new_room)
+    new_room = await create_valid_room(building_name, new_room)
+    room = await service.create_room(building_name, new_room)
     if room is None:
         raise DetailedHTTPException()
     return {
-        "buildingID": building_id,
-        "name": room["name"],
-        "number": room["number"],
+        "buildingID": building_name,
+        "name": room.name,
+        "number": room.number,
     }
 
 
-@router.get("/{building_id}/room/{room_number}", response_model=RoomItemResponse)
+@router.get("/{building_name}/room/{room_number}", response_model=RoomItemResponse)
 async def get_building_room_item(
     room_number: str,
-    building_id: str = Depends(get_valid_building),
+    building_name: str = Depends(get_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):
-    room = await service.get_room(building_id, room_number)
+    room = await service.get_room(building_name, room_number)
     if room is None:
         raise RoomNotFound()
     return {
-        "buildingID": building_id,
-        "name": room["name"],
-        "number": room["number"],
+        "buildingID": building_name,
+        "name": room.name,
+        "number": room.number,
     }
 
 
-@router.patch("/{building_id}/room/{room_number}", response_model=RoomItemResponse)
+@router.patch("/{building_name}/room/{room_number}", response_model=RoomItemResponse)
 async def update_building_room_item(
     payload: UpdateRoomRequest,
-    building_id: str = Depends(get_valid_building),
+    building_name: str = Depends(get_valid_building),
     room_number: str = Depends(get_valid_room),
     _: str = Depends(parse_jwt_user_data),
 ):
-    room = await service.update_room(building_id, room_number, payload)
+    room = await service.update_room(building_name, room_number, payload)
     if room is None:
         raise DetailedHTTPException()
     return {
-        "buildingID": room["building_id"],
-        "name": room["name"],
-        "number": room["number"],
+        "buildingID": building_name,
+        "name": room.name,
+        "number": room.number,
     }
 
 
 @router.delete(
-    "/{building_id}/room/{room_number}",
+    "/{building_name}/room/{room_number}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_building_room_item(
     room_number: str = Depends(get_valid_room),
-    building_id: str = Depends(get_valid_building),
+    building_name: str = Depends(get_valid_building),
     _: str = Depends(parse_jwt_user_data),
 ):
-    await service.delete_room(building_id, room_number)
+    await service.delete_room(building_name, room_number)
     return None

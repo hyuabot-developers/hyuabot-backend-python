@@ -1,5 +1,3 @@
-from typing import Any
-
 from sqlalchemy import select, insert, delete, update
 
 from building.schemas import (
@@ -12,7 +10,7 @@ from database import fetch_all, fetch_one, execute_query
 from model.building import Building, Room
 
 
-async def list_building() -> list[dict[str, Any]]:
+async def list_building() -> list[Building]:
     select_query = select(Building)
     return await fetch_all(select_query)
 
@@ -20,7 +18,7 @@ async def list_building() -> list[dict[str, Any]]:
 async def list_building_filter(
     campus_id: int | None = None,
     name: str | None = None,
-) -> list[dict[str, Any]]:
+) -> list[Building]:
     conditions = []
     if campus_id is not None:
         conditions.append(Building.campus_id == campus_id)
@@ -30,14 +28,14 @@ async def list_building_filter(
     return await fetch_all(select_query)
 
 
-async def get_building(building_id: str) -> dict[str, Any] | None:
-    select_query = select(Building).where(Building.id == building_id)
+async def get_building(building_name: str) -> Building | None:
+    select_query = select(Building).where(Building.name == building_name)
     return await fetch_one(select_query)
 
 
 async def create_building(
     new_building: CreateBuildingRequest,
-) -> dict[str, Any] | None:
+) -> Building | None:
     insert_query = (
         insert(Building)
         .values(
@@ -56,36 +54,38 @@ async def create_building(
 
 
 async def update_building(
-    building_id: str,
+    building_name: str,
     new_building: UpdateBuildingRequest,
-) -> dict[str, Any] | None:
+) -> Building | None:
+    payload: dict[str, str | float] = {}
+    if new_building.id is not None:
+        payload["id"] = new_building.id
+    if new_building.latitude is not None:
+        payload["latitude"] = new_building.latitude
+    if new_building.longitude is not None:
+        payload["longitude"] = new_building.longitude
+    if new_building.url is not None:
+        payload["url"] = new_building.url
     update_query = (
         update(Building)
-        .where(Building.id == building_id)
-        .values(
-            {
-                "name": new_building.name,
-                "latitude": new_building.latitude,
-                "longitude": new_building.longitude,
-                "url": new_building.url,
-            },
-        )
+        .where(Building.name == building_name)
+        .values(payload)
         .returning(Building)
     )
     return await fetch_one(update_query)
 
 
-async def delete_building(building_id: str) -> None:
-    delete_query = delete(Building).where(Building.id == building_id)
+async def delete_building(building_name: str) -> None:
+    delete_query = delete(Building).where(Building.id == building_name)
     await execute_query(delete_query)
 
 
 async def list_room_filter(
-    building_id: str,
+    building_name: str,
     name: str | None = None,
     number: str | None = None,
-) -> list[dict[str, Any]]:
-    conditions = [Room.building_id == building_id]
+) -> list[Room]:
+    conditions = [Room.building_name == building_name]
     if name is not None:
         conditions.append(Room.name.like(f"%{name}%"))
     if number is not None:
@@ -95,25 +95,25 @@ async def list_room_filter(
 
 
 async def get_room(
-    building_id: str,
+    building_name: str,
     room_number: str,
-) -> dict[str, Any] | None:
+) -> Room | None:
     select_query = select(Room).where(
-        Room.building_id == building_id,
+        Room.building_name == building_name,
         Room.number == room_number,
     )
     return await fetch_one(select_query)
 
 
 async def create_room(
-    building_id: str,
+    building_name: str,
     new_room: CreateRoomRequest,
-) -> dict[str, Any] | None:
+) -> Room | None:
     insert_query = (
         insert(Room)
         .values(
             {
-                "building_id": building_id,
+                "building_name": building_name,
                 "name": new_room.name,
                 "number": new_room.number,
             },
@@ -124,31 +124,31 @@ async def create_room(
 
 
 async def update_room(
-    building_id: str,
+    building_name: str,
     room_number: str,
     new_room: UpdateRoomRequest,
-) -> dict[str, Any] | None:
+) -> Room | None:
+    payload: dict[str, str] = {}
+    if new_room.name is not None:
+        payload["name"] = new_room.name
+    if new_room.number is not None:
+        payload["number"] = new_room.number
+
     update_query = (
         update(Room)
         .where(
-            Room.building_id == building_id,
+            Room.building_name == building_name,
             Room.number == room_number,
         )
-        .values(
-            {
-                "name": new_room.name,
-                "floor": new_room.floor,
-                "number": new_room.number,
-            },
-        )
+        .values(payload)
         .returning(Room)
     )
     return await fetch_one(update_query)
 
 
-async def delete_room(building_id: str, room_number: str) -> None:
+async def delete_room(building_name: str, room_number: str) -> None:
     delete_query = delete(Room).where(
-        Room.building_id == building_id,
+        Room.building_name == building_name,
         Room.number == room_number,
     )
     await execute_query(delete_query)

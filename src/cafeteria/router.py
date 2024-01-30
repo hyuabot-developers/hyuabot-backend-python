@@ -1,4 +1,5 @@
 import datetime
+from typing import Callable
 
 from fastapi import APIRouter, Depends
 from starlette import status
@@ -24,6 +25,7 @@ from cafeteria.schemas import (
     UpdateCafeteriaRequest,
 )
 from exceptions import DetailedHTTPException
+from model.cafeteria import Cafeteria, Menu
 from user.jwt import parse_jwt_user_data
 
 router = APIRouter()
@@ -38,15 +40,11 @@ async def get_cafeteria_list(
         data = await service.list_cafeteria()
     else:
         data = await service.list_cafeteria_filter(campus)
-    return {
-        "data": map(
-            lambda x: {
-                "id": x["restaurant_id"],
-                "name": x["restaurant_name"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[Cafeteria], dict[str, int | str]] = lambda x: {
+        "id": x.id,
+        "name": x.name,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.get("/{cafeteria_id}", response_model=CafeteriaDetailResponse)
@@ -58,11 +56,11 @@ async def get_cafeteria(
     if data is None:
         raise CafeteriaNotFound()
     return {
-        "id": data["restaurant_id"],
-        "name": data["restaurant_name"],
-        "campusID": data["campus_id"],
-        "latitude": data["latitude"],
-        "longitude": data["longitude"],
+        "id": data.id,
+        "name": data.name,
+        "campusID": data.campus_id,
+        "latitude": data.latitude,
+        "longitude": data.longitude,
     }
 
 
@@ -80,11 +78,11 @@ async def create_cafeteria(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "id": data["restaurant_id"],
-        "name": data["restaurant_name"],
-        "campusID": data["campus_id"],
-        "latitude": data["latitude"],
-        "longitude": data["longitude"],
+        "id": data.id,
+        "name": data.name,
+        "campusID": data.campus_id,
+        "latitude": data.latitude,
+        "longitude": data.longitude,
     }
 
 
@@ -98,11 +96,11 @@ async def update_cafeteria(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "id": data["restaurant_id"],
-        "name": data["restaurant_name"],
-        "campusID": data["campus_id"],
-        "latitude": data["latitude"],
-        "longitude": data["longitude"],
+        "id": data.id,
+        "name": data.name,
+        "campusID": data.campus_id,
+        "latitude": data.latitude,
+        "longitude": data.longitude,
     }
 
 
@@ -131,17 +129,13 @@ async def get_cafeteria_menu(
             cafeteria_id,
             date,
         )
-    return {
-        "data": map(
-            lambda x: {
-                "date": x["feed_date"],
-                "time": x["time_type"],
-                "menu": x["menu_food"],
-                "price": x["menu_price"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[Menu], dict[str, int | str | datetime.date]] = lambda x: {
+        "date": x.feed_date,
+        "time": x.time_type,
+        "menu": x.menu,
+        "price": x.price,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.post(
@@ -159,10 +153,10 @@ async def create_cafeteria_menu(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "date": data["feed_date"],
-        "time": data["time_type"],
-        "menu": data["menu_food"],
-        "price": data["menu_price"],
+        "date": data.feed_date,
+        "time": data.time_type,
+        "menu": data.menu,
+        "price": data.price,
     }
 
 
@@ -186,10 +180,10 @@ async def get_cafeteria_menu_item(
     if data is None:
         raise MenuNotFound()
     return {
-        "date": data["feed_date"],
-        "time": data["time_type"],
-        "menu": data["menu_food"],
-        "price": data["menu_price"],
+        "date": data.feed_date,
+        "time": data.time_type,
+        "menu": data.menu,
+        "price": data.price,
     }
 
 
@@ -223,10 +217,10 @@ async def update_cafeteria_menu(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "date": data["feed_date"],
-        "time": data["time_type"],
-        "menu": data["menu_food"],
-        "price": data["menu_price"],
+        "date": data.feed_date,
+        "time": data.time_type,
+        "menu": data.menu,
+        "price": data.price,
     }
 
 

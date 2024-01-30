@@ -115,7 +115,7 @@ async def get_route_list(
         "data": map(
             lambda x: {
                 "name": x.name,
-                "id": x._id,
+                "id": x.id_,
             },
             data,
         ),
@@ -136,7 +136,7 @@ async def create_route(
         raise DetailedHTTPException()
     return {
         "name": route.name,
-        "id": route._id,
+        "id": route.id_,
     }
 
 
@@ -150,7 +150,7 @@ async def get_route(
     _: str = Depends(parse_jwt_user_data),
 ):
     route: SubwayRoute = await service.get_route(route_id)
-    return {"name": route.name, "id": route._id}
+    return {"name": route.name, "id": route.id_}
 
 
 @router.patch(
@@ -192,7 +192,7 @@ async def get_route_station_list(
     return {
         "data": map(
             lambda x: {
-                "id": x._id,
+                "id": x.id_,
                 "name": x.name,
                 "routeID": x.route_id,
                 "sequence": x.sequence,
@@ -216,7 +216,7 @@ async def get_route_station(
 ):
     station = await service.get_route_station(station_id)
     return {
-        "id": station._id,
+        "id": station.id_,
         "name": station.name,
         "routeID": station.route_id,
         "sequence": station.sequence,
@@ -239,7 +239,7 @@ async def create_route_station(
     if station is None:
         raise DetailedHTTPException()
     return {
-        "id": station._id,
+        "id": station.id_,
         "name": station.name,
         "routeID": station.route_id,
         "sequence": station.sequence,

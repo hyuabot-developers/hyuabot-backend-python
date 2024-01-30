@@ -36,12 +36,12 @@ async def create_user(user: CreateUserRequest) -> User | None:
 
 
 async def get_user_by_id(user_id: str) -> User | None:
-    select_query = select(User).where(User._id == user_id)
+    select_query = select(User).where(User.id_ == user_id)
     return await fetch_one(select_query)
 
 
 async def get_active_user_by_id(user_id: str) -> User | None:
-    select_query = select(User).where(User._id == user_id, User.active == true())
+    select_query = select(User).where(User.id_ == user_id, User.active == true())
     return await fetch_one(select_query)
 
 

@@ -40,7 +40,7 @@ async def get_building_list(
     else:
         data = await service.list_building_filter(campus, name)
     mapping_func: Callable[[Building], dict[str, str | int | float]] = lambda x: {
-        "id": x.id,
+        "id": x.id_,
         "name": x.name,
         "campusID": x.campus_id,
         "latitude": x.latitude,
@@ -64,7 +64,7 @@ async def create_building(
     if building is None:
         raise DetailedHTTPException()
     return {
-        "id": building.id,
+        "id": building.id_,
         "name": building.name,
         "campusID": building.campus_id,
         "latitude": building.latitude,
@@ -82,7 +82,7 @@ async def get_building(
     if building is None:
         raise BuildingNotFound()
     return {
-        "id": building.id,
+        "id": building.id_,
         "name": building.name,
         "campusID": building.campus_id,
         "latitude": building.latitude,
@@ -101,7 +101,7 @@ async def update_building(
     if building is None:
         raise DetailedHTTPException()
     return {
-        "id": building.id,
+        "id": building.id_,
         "name": building.name,
         "campusID": building.campus_id,
         "latitude": building.latitude,

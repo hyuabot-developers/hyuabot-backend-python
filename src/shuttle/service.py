@@ -68,7 +68,7 @@ async def create_holiday(
         .values(
             {
                 "holiday_date": new_holiday.date,
-                "holiday_type": new_holiday.type,
+                "holiday_type": new_holiday.type_,
                 "calendar_type": new_holiday.calendar,
             },
         )
@@ -125,7 +125,7 @@ async def create_period(
         insert(ShuttlePeriod)
         .values(
             {
-                "period_type": new_period.type,
+                "period_type": new_period.type_,
                 "period_start": datetime.datetime.strptime(
                     f"{new_period.start}T00:00:00+09:00",
                     "%Y-%m-%dT%H:%M:%S%z",
@@ -395,7 +395,7 @@ async def list_timetable_filter(
 
 
 async def get_timetable(seq: int) -> ShuttleTimetable | None:
-    select_query = select(ShuttleTimetable).where(ShuttleTimetable.id == seq)
+    select_query = select(ShuttleTimetable).where(ShuttleTimetable.id_ == seq)
     return await fetch_one(select_query)
 
 
@@ -451,7 +451,7 @@ async def update_timetable(
         )
     update_query = (
         update(ShuttleTimetable)
-        .where(ShuttleTimetable.id == seq)
+        .where(ShuttleTimetable.id_ == seq)
         .values(payload)
         .returning(ShuttleTimetable)
     )
@@ -459,7 +459,7 @@ async def update_timetable(
 
 
 async def delete_timetable(seq: int) -> None:
-    delete_query = delete(ShuttleTimetable).where(ShuttleTimetable.id == seq)
+    delete_query = delete(ShuttleTimetable).where(ShuttleTimetable.id_ == seq)
     await execute_query(delete_query)
 
 

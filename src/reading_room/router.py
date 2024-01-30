@@ -32,7 +32,7 @@ async def get_reading_room_list(
     else:
         data = await service.list_reading_room_filter(campus)
     mapping_func: Callable[[ReadingRoom], dict[str, int | str]] = lambda x: {
-        "id": x.id,
+        "id": x.id_,
         "name": x.name,
     }
     return {"data": map(mapping_func, data)}
@@ -47,7 +47,7 @@ async def get_reading_room(
     if data is None:
         raise ReadingRoomNotFound()
     return {
-        "id": data.id,
+        "id": data.id_,
         "name": data.name,
         "total": data.total_seats,
         "active": data.active_total_seats,
@@ -82,7 +82,7 @@ async def create_reading_room(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "id": data.id,
+        "id": data.id_,
         "name": data.name,
         "total": data.total_seats,
         "active": data.active_total_seats,
@@ -105,7 +105,7 @@ async def update_reading_room(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "id": data.id,
+        "id": data.id_,
         "name": data.name,
         "total": data.total_seats,
         "active": data.active_total_seats,

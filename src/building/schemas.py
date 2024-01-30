@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class CreateBuildingRequest(BaseModel):
-    id: Annotated[str, Field(max_length=15, alias="id")]
+    id_: Annotated[str, Field(max_length=15, alias="id")]
     name: Annotated[str, Field(max_length=30, alias="name")]
     campus_id: Annotated[int, Field(alias="campusID")]
     latitude: Annotated[float, Field(alias="latitude")]
@@ -25,7 +25,7 @@ class CreateBuildingRequest(BaseModel):
 
 
 class UpdateBuildingRequest(BaseModel):
-    id: Annotated[Optional[str], Field(max_length=30, alias="id")]
+    id_: Annotated[Optional[str], Field(max_length=30, alias="id")]
     latitude: Annotated[Optional[float], Field(alias="latitude")]
     longitude: Annotated[Optional[float], Field(alias="longitude")]
     url: Annotated[Optional[str], Field(alias="url")]
@@ -68,7 +68,7 @@ class UpdateRoomRequest(BaseModel):
 
 
 class BuildingItemResponse(BaseModel):
-    id: Annotated[str, Field(max_length=15, alias="id")]
+    id_: Annotated[str, Field(max_length=15, alias="id")]
     name: Annotated[str, Field(max_length=30, alias="name")]
     campus_id: Annotated[int, Field(alias="campusID")]
     latitude: Annotated[float, Field(alias="latitude")]

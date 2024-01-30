@@ -58,7 +58,7 @@ async def get_bus_route_list(
     else:
         data = await service.list_routes_filter(name, type_, company)
     mapping_func: Callable[[BusRoute], dict[str, int | str]] = lambda x: {
-        "id": x.id,
+        "id": x.id_,
         "name": x.name,
         "type": x.type_name,
     }
@@ -74,7 +74,7 @@ async def get_bus_route_detail(
     if route is None:
         raise RouteNotFound()
     return {
-        "id": route.id,
+        "id": route.id_,
         "name": route.name,
         "type": route.type_name,
         "start": route.start_stop_id,
@@ -108,7 +108,7 @@ async def create_bus_route(
     if route is None:
         raise DetailedHTTPException()
     return {
-        "id": route.id,
+        "id": route.id_,
         "name": route.name,
         "type": route.type_name,
         "start": route.start_stop_id,
@@ -139,7 +139,7 @@ async def update_bus_route(
     if route is None:
         raise DetailedHTTPException()
     return {
-        "id": route.id,
+        "id": route.id_,
         "name": route.name,
         "type": route.type_name,
         "start": route.start_stop_id,
@@ -179,7 +179,7 @@ async def get_bus_stop_list(
     else:
         stops = await service.list_stops_filter(name)
     mapping_func: Callable[[BusStop], dict[str, int | str]] = lambda x: {
-        "id": x.id,
+        "id": x.id_,
         "name": x.name,
     }
     return {"data": map(mapping_func, stops)}
@@ -194,7 +194,7 @@ async def get_bus_stop_detail(
     if stop is None:
         raise StopNotFound()
     return {
-        "id": stop.id,
+        "id": stop.id_,
         "name": stop.name,
         "latitude": stop.latitude,
         "longitude": stop.longitude,
@@ -217,7 +217,7 @@ async def create_bus_stop(
     if stop is None:
         raise DetailedHTTPException()
     return {
-        "id": stop.id,
+        "id": stop.id_,
         "name": stop.name,
         "latitude": stop.latitude,
         "longitude": stop.longitude,
@@ -237,7 +237,7 @@ async def update_bus_stop(
     if stop is None:
         raise DetailedHTTPException()
     return {
-        "id": stop.id,
+        "id": stop.id_,
         "name": stop.name,
         "latitude": stop.latitude,
         "longitude": stop.longitude,

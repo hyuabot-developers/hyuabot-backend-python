@@ -25,14 +25,14 @@ class SubwayStation(Base):
 class SubwayRoute(Base):
     __tablename__ = "subway_route"
 
-    _id: Mapped[int] = mapped_column("route_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("route_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("route_name", String(30))
 
 
 class SubwayRouteStation(Base):
     __tablename__ = "subway_route_station"
 
-    _id: Mapped[str] = mapped_column("station_id", String(10), primary_key=True)
+    id_: Mapped[str] = mapped_column("station_id", String(10), primary_key=True)
     route_id: Mapped[int] = mapped_column("route_id", Integer)
     name: Mapped[str] = mapped_column("station_name", String(30))
     sequence: Mapped[int] = mapped_column("station_sequence", Integer)

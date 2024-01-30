@@ -18,7 +18,7 @@ def create_access_token(
     expires_delta: datetime.timedelta = datetime.timedelta(minutes=auth_config.JWT_EXP),
 ) -> str:
     payload = {
-        "sub": user._id,
+        "sub": user.id_,
         "exp": datetime.datetime.now(pytz.timezone("Asia/Seoul")) + expires_delta,
     }
 

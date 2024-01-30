@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class User(Base):
     __tablename__ = "admin_user"
 
-    _id: Mapped[str] = mapped_column("user_id", String(20), primary_key=True)
+    id_: Mapped[str] = mapped_column("user_id", String(20), primary_key=True)
     password: Mapped[bytes] = mapped_column("password", BYTEA)
     name: Mapped[str] = mapped_column("name", String(20))
     email: Mapped[str] = mapped_column("email", String(50))

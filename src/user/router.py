@@ -29,7 +29,7 @@ async def register_user(
     if user is None:
         raise DetailedHTTPException()
     return {
-        "username": user._id,
+        "username": user.id_,
         "nickname": user.name,
         "email": user.email,
         "phone": user.phone,
@@ -48,7 +48,7 @@ async def get_my_info(
     if user is None:
         raise InvalidCredentials()
     return {
-        "username": user._id,
+        "username": user.id_,
         "nickname": user.name,
         "email": user.email,
         "phone": user.phone,
@@ -65,7 +65,7 @@ async def auth_user(
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
     user = await service.authenticate_user(form_data.username, form_data.password)
-    refresh_token = await service.create_refresh_token(user_id=user._id)
+    refresh_token = await service.create_refresh_token(user_id=user.id_)
     response.set_cookie(
         **utils.get_refresh_token_settings(refresh_token),
     )
@@ -86,7 +86,7 @@ async def refresh_tokens(
     user: User = Depends(validate_refresh_token_user),
 ):
     refresh_token_value = await service.create_refresh_token(
-        user_id=str(user._id),
+        user_id=str(user.id_),
     )
     response.set_cookie(
         **utils.get_refresh_token_settings(refresh_token_value),

@@ -35,7 +35,7 @@ async def create_valid_period(
     new_period: CreateShuttlePeriodRequest,
 ) -> CreateShuttlePeriodRequest:
     if await service.get_period(
-        new_period.type,
+        new_period.type_,
         datetime.datetime.combine(
             new_period.start,
             datetime.time(0, 0, 0),

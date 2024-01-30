@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 class CreateShuttleHolidayRequest(BaseModel):
     date: Annotated[datetime.date, Field(alias="date")]
-    type: Annotated[str, Field(alias="type", pattern=r"^(weekends|halt)$")]
+    type_: Annotated[str, Field(alias="type", pattern=r"^(weekends|halt)$")]
     calendar: Annotated[str, Field(alias="calendar", pattern=r"^(lunar|solar)$")]
 
     class Config:
@@ -20,7 +20,7 @@ class CreateShuttleHolidayRequest(BaseModel):
 
 
 class CreateShuttlePeriodTypeRequest(BaseModel):
-    type: Annotated[str, Field(alias="type", max_length=20)]
+    type_: Annotated[str, Field(alias="type", max_length=20)]
 
     class Config:
         json_schema_extra = {
@@ -31,7 +31,7 @@ class CreateShuttlePeriodTypeRequest(BaseModel):
 
 
 class CreateShuttlePeriodRequest(BaseModel):
-    type: Annotated[str, Field(alias="type", max_length=20)]
+    type_: Annotated[str, Field(alias="type", max_length=20)]
     start: Annotated[datetime.date, Field(alias="start")]
     end: Annotated[datetime.date, Field(alias="end")]
 
@@ -186,7 +186,7 @@ class UpdateShuttleTimetableRequest(BaseModel):
 
 class ShuttleHolidayItemResponse(BaseModel):
     date: Annotated[datetime.date, Field(alias="date")]
-    type: Annotated[str, Field(alias="type", pattern=r"^(weekends|halt)$")]
+    type_: Annotated[str, Field(alias="type", pattern=r"^(weekends|halt)$")]
     calendar: Annotated[str, Field(alias="calendar", pattern=r"^(lunar|solar)$")]
 
 
@@ -195,7 +195,7 @@ class ShuttleHolidayListResponse(BaseModel):
 
 
 class ShuttlePeriodItemResponse(BaseModel):
-    type: Annotated[str, Field(alias="type", max_length=20)]
+    type_: Annotated[str, Field(alias="type", max_length=20)]
     start: Annotated[datetime.datetime, Field(alias="start")]
     end: Annotated[datetime.datetime, Field(alias="end")]
 

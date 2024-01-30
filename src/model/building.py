@@ -20,7 +20,7 @@ class Building(Base):
         ),
     )
 
-    id: Mapped[str] = mapped_column("id", String(15), primary_key=True)
+    id_: Mapped[str] = mapped_column("id", String(15), primary_key=True)
     name: Mapped[str] = mapped_column("name", String(30))
     campus_id: Mapped[int] = mapped_column("campus_id", Integer)
     latitude: Mapped[float] = mapped_column("latitude", Float)

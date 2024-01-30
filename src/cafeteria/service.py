@@ -31,7 +31,7 @@ async def create_cafeteria(
         insert(Cafeteria)
         .values(
             {
-                "restaurant_id": new_cafeteria.id,
+                "restaurant_id": new_cafeteria.id_,
                 "restaurant_name": new_cafeteria.name,
                 "campus_id": new_cafeteria.campus_id,
                 "latitude": new_cafeteria.latitude,
@@ -44,7 +44,7 @@ async def create_cafeteria(
 
 
 async def get_cafeteria(cafeteria_id: int) -> Cafeteria | None:
-    select_query = select(Cafeteria).where(Cafeteria.id == cafeteria_id)
+    select_query = select(Cafeteria).where(Cafeteria.id_ == cafeteria_id)
     return await fetch_one(select_query)
 
 
@@ -54,7 +54,7 @@ async def update_cafeteria(
 ) -> Cafeteria | None:
     update_query = (
         update(Cafeteria)
-        .where(Cafeteria.id == cafeteria_id)
+        .where(Cafeteria.id_ == cafeteria_id)
         .values(
             {
                 "name": new_cafeteria.name,
@@ -69,7 +69,7 @@ async def update_cafeteria(
 
 
 async def delete_cafeteria(cafeteria_id: int) -> None:
-    delete_query = delete(Cafeteria).where(Cafeteria.id == cafeteria_id)
+    delete_query = delete(Cafeteria).where(Cafeteria.id_ == cafeteria_id)
     await execute_query(delete_query)
 
 

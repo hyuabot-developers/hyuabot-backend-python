@@ -6,7 +6,7 @@ from model.campus import Campus
 
 
 async def get_campus(campus_id: int) -> Campus | None:
-    select_query = select(Campus).where(Campus.id == campus_id)
+    select_query = select(Campus).where(Campus.id_ == campus_id)
     return await fetch_one(select_query)
 
 
@@ -28,7 +28,7 @@ async def update_campus(
 ) -> Campus | None:
     update_query = (
         update(Campus)
-        .where(Campus.id == campus_id)
+        .where(Campus.id_ == campus_id)
         .values(
             {
                 "name": new_campus.name,
@@ -41,7 +41,7 @@ async def update_campus(
 
 
 async def delete_campus(campus_id: int) -> None:
-    delete_query = delete(Campus).where(Campus.id == campus_id)
+    delete_query = delete(Campus).where(Campus.id_ == campus_id)
     await execute_query(delete_query)
 
 
@@ -52,7 +52,7 @@ async def create_campus(
         insert(Campus)
         .values(
             {
-                "campus_id": new_campus.id,
+                "campus_id": new_campus.id_,
                 "campus_name": new_campus.name,
             },
         )

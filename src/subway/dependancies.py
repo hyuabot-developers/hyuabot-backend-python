@@ -32,7 +32,7 @@ async def delete_valid_station(station_name: str) -> str:
 
 
 async def create_valid_route(new_route: CreateSubwayRoute) -> CreateSubwayRoute:
-    if await service.get_route(new_route.id):
+    if await service.get_route(new_route.id_):
         raise DuplicateRouteID()
 
     return new_route
@@ -61,7 +61,7 @@ async def create_valid_route_station(
     if await service.get_station_name(new_station.name) is None:
         raise StationNameNotFound()
 
-    if await service.get_route_station(new_station.id):
+    if await service.get_route_station(new_station.id_):
         raise DuplicateStationID()
 
     return new_station

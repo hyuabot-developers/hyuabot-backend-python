@@ -17,7 +17,7 @@ class CreateSubwayStation(BaseModel):
 
 
 class CreateSubwayRoute(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=30, alias="name")]
 
     class Config:
@@ -41,7 +41,7 @@ class UpdateSubwayRoute(BaseModel):
 
 
 class CreateSubwayRouteStation(BaseModel):
-    id: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
+    id_: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
     name: Annotated[str, Field(max_length=30, alias="name")]
     route_id: Annotated[int, Field(alias="routeID", ge=1)]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
@@ -103,7 +103,7 @@ class CreateSubwayTimetable(BaseModel):
 
 
 class SubwayRouteItemResponse(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=30, alias="name")]
 
 
@@ -120,7 +120,7 @@ class SubwayStationListResponse(BaseModel):
 
 
 class SubwayRouteStationListItemResponse(BaseModel):
-    id: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
+    id_: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
     name: Annotated[str, Field(max_length=30, alias="name")]
     route_id: Annotated[int, Field(alias="routeID", ge=1)]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
@@ -135,7 +135,7 @@ class SubwayRouteStationListResponse(BaseModel):
 
 
 class SubwayRouteStationDetailResponse(BaseModel):
-    id: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
+    id_: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
     name: Annotated[str, Field(max_length=30, alias="name")]
     route_id: Annotated[int, Field(alias="routeID", ge=1)]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
@@ -146,7 +146,7 @@ class SubwayRouteStationDetailResponse(BaseModel):
 
 
 class SubwayStartEndStation(BaseModel):
-    id: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
+    id_: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
     name: Annotated[str, Field(max_length=30, alias="name")]
 
 

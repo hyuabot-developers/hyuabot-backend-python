@@ -29,7 +29,7 @@ async def get_campus_list(
     else:
         data = await service.list_campus_filter(name)
     mapping_func: Callable[[Campus], dict[str, int | str]] = lambda x: {
-        "id": x.id,
+        "id": x.id_,
         "name": x.name,
     }
     return {"data": map(mapping_func, data)}
@@ -44,7 +44,7 @@ async def get_campus(
     if data is None:
         raise CampusNotFound()
     return {
-        "id": data.id,
+        "id": data.id_,
         "name": data.name,
     }
 
@@ -74,7 +74,7 @@ async def create_campus(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "id": data.id,
+        "id": data.id_,
         "name": data.name,
     }
 
@@ -92,6 +92,6 @@ async def update_campus(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "id": data.id,
+        "id": data.id_,
         "name": data.name,
     }

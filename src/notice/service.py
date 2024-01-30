@@ -35,7 +35,9 @@ async def create_notice_category(
 
 
 async def get_notice_category(notice_category_id: int) -> NoticeCategory | None:
-    select_query = select(NoticeCategory).where(NoticeCategory.id == notice_category_id)
+    select_query = select(NoticeCategory).where(
+        NoticeCategory.id_ == notice_category_id,
+    )
     return await fetch_one(select_query)
 
 
@@ -45,7 +47,9 @@ async def get_notice_category_by_name(name: str) -> NoticeCategory | None:
 
 
 async def delete_notice_category(notice_category_id: int) -> None:
-    delete_query = delete(NoticeCategory).where(NoticeCategory.id == notice_category_id)
+    delete_query = delete(NoticeCategory).where(
+        NoticeCategory.id_ == notice_category_id,
+    )
     await execute_query(delete_query)
 
 
@@ -60,13 +64,13 @@ async def get_notice(
 ) -> Notice | None:
     select_query = select(Notice).where(
         Notice.category_id == category_id,
-        Notice.id == notice_id,
+        Notice.id_ == notice_id,
     )
     return await fetch_one(select_query)
 
 
 async def get_notice_by_id(notice_id: int) -> Notice | None:
-    select_query = select(Notice).where(Notice.id == notice_id)
+    select_query = select(Notice).where(Notice.id_ == notice_id)
     return await fetch_one(select_query)
 
 
@@ -97,7 +101,7 @@ async def delete_notice(
 ) -> None:
     delete_query = delete(Notice).where(
         Notice.category_id == notice_category_id,
-        Notice.id == notice_id,
+        Notice.id_ == notice_id,
     )
     await execute_query(delete_query)
 
@@ -112,7 +116,7 @@ async def update_notice(
         update(Notice)
         .where(
             Notice.category_id == notice_category_id,
-            Notice.id == notice_id,
+            Notice.id_ == notice_id,
         )
         .values(
             {

@@ -165,7 +165,7 @@ class BusRoute(Base):
         ),
     )
 
-    id: Mapped[int] = mapped_column("route_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("route_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("route_name", String(30))
     type_code: Mapped[str] = mapped_column("route_type_code", String(10))
     type_name: Mapped[str] = mapped_column("route_type_name", String(10))
@@ -217,7 +217,7 @@ class BusRoute(Base):
 class BusStop(Base):
     __tablename__ = "bus_stop"
 
-    id: Mapped[int] = mapped_column("stop_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("stop_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("stop_name", String(30))
     district: Mapped[int] = mapped_column("district_code", Integer)
     mobile_no: Mapped[str] = mapped_column("mobile_number", String(15))

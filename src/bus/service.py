@@ -38,7 +38,7 @@ async def list_routes_filter(
 
 
 async def get_route(route_id: int) -> BusRoute | None:
-    select_query = select(BusRoute).where(BusRoute.id == route_id)
+    select_query = select(BusRoute).where(BusRoute.id_ == route_id)
     return await fetch_one(select_query)
 
 
@@ -47,7 +47,7 @@ async def create_route(new_holiday: CreateBusRouteRequest) -> BusRoute | None:
         insert(BusRoute)
         .values(
             {
-                "route_id": new_holiday.id,
+                "route_id": new_holiday.id_,
                 "route_name": new_holiday.name,
                 "route_type_code": new_holiday.type_code,
                 "route_type_name": new_holiday.type_name,
@@ -74,7 +74,7 @@ async def update_route(
 ) -> BusRoute | None:
     update_query = (
         update(BusRoute)
-        .where(BusRoute.id == route_id)
+        .where(BusRoute.id_ == route_id)
         .values(
             {
                 "name": (payload.name if payload.name is not None else BusRoute.name),
@@ -146,7 +146,7 @@ async def update_route(
 
 
 async def delete_route(route_id: int) -> None:
-    delete_query = delete(BusRoute).where(BusRoute.id == route_id)
+    delete_query = delete(BusRoute).where(BusRoute.id_ == route_id)
     await execute_query(delete_query)
 
 
@@ -161,7 +161,7 @@ async def list_stops_filter(name: str) -> list[BusStop]:
 
 
 async def get_stop(stop_id: int) -> BusStop | None:
-    select_query = select(BusStop).where(BusStop.id == stop_id)
+    select_query = select(BusStop).where(BusStop.id_ == stop_id)
     return await fetch_one(select_query)
 
 
@@ -170,7 +170,7 @@ async def create_stop(new_stop: CreateBusStopRequest) -> BusStop | None:
         insert(BusStop)
         .values(
             {
-                "stop_id": new_stop.id,
+                "stop_id": new_stop.id_,
                 "stop_name": new_stop.name,
                 "district_code": new_stop.district_code,
                 "mobile_number": new_stop.mobile_number,
@@ -190,7 +190,7 @@ async def update_stop(
 ) -> BusStop | None:
     update_query = (
         update(BusStop)
-        .where(BusStop.id == stop_id)
+        .where(BusStop.id_ == stop_id)
         .values(
             {
                 "name": (payload.name if payload.name is not None else BusStop.name),
@@ -227,7 +227,7 @@ async def update_stop(
 
 
 async def delete_stop(stop_id: int) -> None:
-    delete_query = delete(BusStop).where(BusStop.id == stop_id)
+    delete_query = delete(BusStop).where(BusStop.id_ == stop_id)
     await execute_query(delete_query)
 
 

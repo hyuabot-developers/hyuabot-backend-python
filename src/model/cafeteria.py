@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class Cafeteria(Base):
     __tablename__ = "restaurant"
 
-    id: Mapped[int] = mapped_column("restaurant_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("restaurant_id", Integer, primary_key=True)
     campus_id: Mapped[int] = mapped_column(
         "campus_id",
         Integer,

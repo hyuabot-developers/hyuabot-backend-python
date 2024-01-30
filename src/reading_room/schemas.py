@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 class CreateReadingRoomRequest(BaseModel):
     campus_id: Annotated[int, Field(alias="campusID")]
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=30, alias="name")]
     active: Annotated[bool, Field(default=False)]
     reservable: Annotated[bool, Field(default=False)]
@@ -45,7 +45,7 @@ class UpdateReadingRoomRequest(BaseModel):
 
 
 class ReadingRoomListItemResponse(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=30, alias="name")]
 
 
@@ -54,7 +54,7 @@ class ReadingRoomListResponse(BaseModel):
 
 
 class ReadingRoomDetailResponse(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=30, alias="name")]
     reservable: Annotated[bool, Field(default=False)]
     total_seats: Annotated[int, Field(alias="total", ge=1)]

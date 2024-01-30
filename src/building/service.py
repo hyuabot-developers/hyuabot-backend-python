@@ -40,7 +40,7 @@ async def create_building(
         insert(Building)
         .values(
             {
-                "id": new_building.id,
+                "id": new_building.id_,
                 "name": new_building.name,
                 "campus_id": new_building.campus_id,
                 "latitude": new_building.latitude,
@@ -58,8 +58,8 @@ async def update_building(
     new_building: UpdateBuildingRequest,
 ) -> Building | None:
     payload: dict[str, str | float] = {}
-    if new_building.id is not None:
-        payload["id"] = new_building.id
+    if new_building.id_ is not None:
+        payload["id"] = new_building.id_
     if new_building.latitude is not None:
         payload["latitude"] = new_building.latitude
     if new_building.longitude is not None:
@@ -76,7 +76,7 @@ async def update_building(
 
 
 async def delete_building(building_name: str) -> None:
-    delete_query = delete(Building).where(Building.id == building_name)
+    delete_query = delete(Building).where(Building.id_ == building_name)
     await execute_query(delete_query)
 
 

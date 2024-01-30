@@ -67,7 +67,7 @@ async def create_route(
         insert(SubwayRoute)
         .values(
             {
-                "route_id": new_route.id,
+                "route_id": new_route.id_,
                 "route_name": new_route.name,
             },
         )
@@ -78,7 +78,7 @@ async def create_route(
 
 
 async def get_route(route_id: int) -> SubwayRoute:
-    select_query = select(SubwayRoute).where(SubwayRoute._id == route_id)
+    select_query = select(SubwayRoute).where(SubwayRoute.id_ == route_id)
     return await fetch_one(select_query)
 
 
@@ -99,7 +99,7 @@ async def update_route(
     update_query = (
         update(SubwayRoute)
         .where(
-            SubwayRoute._id == route_id,
+            SubwayRoute.id_ == route_id,
         )
         .values(
             {
@@ -113,7 +113,7 @@ async def update_route(
 
 
 async def delete_route(route_id: int) -> None:
-    delete_query = delete(SubwayRoute).where(SubwayRoute._id == route_id)
+    delete_query = delete(SubwayRoute).where(SubwayRoute.id_ == route_id)
     await execute_query(delete_query)
 
 
@@ -124,7 +124,7 @@ async def create_route_station(
         insert(SubwayRouteStation)
         .values(
             {
-                "station_id": new_station.id,
+                "station_id": new_station.id_,
                 "station_name": new_station.name,
                 "route_id": new_station.route_id,
                 "station_sequence": new_station.sequence,
@@ -139,7 +139,7 @@ async def create_route_station(
 
 async def get_route_station(station_id: str) -> SubwayRouteStation:
     select_query = select(SubwayRouteStation).where(
-        SubwayRouteStation._id == station_id,
+        SubwayRouteStation.id_ == station_id,
     )
     return await fetch_one(select_query)
 
@@ -170,7 +170,7 @@ async def update_route_station(
     update_query = (
         update(SubwayRouteStation)
         .where(
-            SubwayRouteStation._id == station_id,
+            SubwayRouteStation.id_ == station_id,
         )
         .values(new_data)
         .returning(SubwayRouteStation)
@@ -179,14 +179,14 @@ async def update_route_station(
     await execute_query(update_query)
 
     select_query = select(SubwayRouteStation).where(
-        SubwayRouteStation._id == station_id,
+        SubwayRouteStation.id_ == station_id,
     )
     return await fetch_one(select_query)
 
 
 async def delete_route_station(station_id: str) -> None:
     delete_query = delete(SubwayRouteStation).where(
-        SubwayRouteStation._id == station_id,
+        SubwayRouteStation.id_ == station_id,
     )
     await execute_query(delete_query)
 

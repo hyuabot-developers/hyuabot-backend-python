@@ -41,7 +41,7 @@ async def get_notice_category_list(
     else:
         data = await service.list_notice_category_filter(name)
     mapping_func: Callable[[NoticeCategory], dict[str, int | str]] = lambda x: {
-        "id": x.id,
+        "id": x.id_,
         "name": x.name,
     }
     return {"data": map(mapping_func, data)}
@@ -60,7 +60,7 @@ async def create_notice_category(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "id": data.id,
+        "id": data.id_,
         "name": data.name,
     }
 
@@ -74,7 +74,7 @@ async def get_notice_category(
     if data is None:
         raise CategoryNotFound()
     return {
-        "id": data.id,
+        "id": data.id_,
         "name": data.name,
     }
 
@@ -98,7 +98,7 @@ async def get_notice_list(
     data = await service.get_notice_list(notice_category_id)
     mapping_func: Callable[[Notice], dict[str, int | str | datetime]] = lambda x: {
         "userID": x.user_id,
-        "id": x.id,
+        "id": x.id_,
         "title": x.title,
         "url": x.url,
         "expiredAt": x.expired_at,
@@ -120,7 +120,7 @@ async def get_notice(
         raise NoticeNotFound()
     return {
         "userID": data.user_id,
-        "id": data.id,
+        "id": data.id_,
         "title": data.title,
         "url": data.url,
         "expiredAt": data.expired_at,
@@ -146,7 +146,7 @@ async def create_notice(
         raise DetailedHTTPException()
     return {
         "userID": data.user_id,
-        "id": data.id,
+        "id": data.id_,
         "title": data.title,
         "url": data.url,
         "expiredAt": data.expired_at,
@@ -173,7 +173,7 @@ async def update_notice(
         raise DetailedHTTPException()
     return {
         "userID": data.user_id,
-        "id": data.id,
+        "id": data.id_,
         "title": data.title,
         "url": data.url,
         "expiredAt": data.expired_at,

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class NoticeCategory(Base):
     __tablename__ = "notice_category"
 
-    id: Mapped[int] = mapped_column(
+    id_: Mapped[int] = mapped_column(
         "category_id",
         Integer,
         Sequence("notice_category_category_id_seq"),
@@ -43,7 +43,7 @@ class Notice(Base):
         ),
     )
 
-    id: Mapped[int] = mapped_column("notice_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("notice_id", Integer, primary_key=True)
     category_id: Mapped[int] = mapped_column("category_id", Integer)
     user_id: Mapped[str] = mapped_column("user_id", String(20))
     title: Mapped[str] = mapped_column("title", String(100))

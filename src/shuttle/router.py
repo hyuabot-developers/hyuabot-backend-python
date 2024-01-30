@@ -84,7 +84,7 @@ async def get_holiday_list(
         data = await service.list_holiday()
     mapping_func: Callable[[ShuttleHoliday], dict[str, Any]] = lambda x: {
         "date": x.date,
-        "type": x.type,
+        "type": x.type_,
         "calendar": x.calendar,
     }
     return {"data": map(mapping_func, data)}
@@ -104,7 +104,7 @@ async def create_holiday(
         raise DetailedHTTPException()
     return {
         "date": data.date,
-        "type": data.type,
+        "type": data.type_,
         "calendar": data.calendar,
     }
 
@@ -120,7 +120,7 @@ async def get_holiday(
         raise HolidayNotFound()
     return {
         "date": data.date,
-        "type": data.type,
+        "type": data.type_,
         "calendar": data.calendar,
     }
 
@@ -511,7 +511,7 @@ async def get_timetable_list(
     else:
         data = await service.list_timetable()
     mapping_func: Callable[[ShuttleTimetable], dict[str, Any]] = lambda x: {
-        "sequence": x.id,
+        "sequence": x.id_,
         "period": x.period,
         "weekdays": x.is_weekdays,
         "route": x.route_name,
@@ -533,7 +533,7 @@ async def create_timetable(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "sequence": data.id,
+        "sequence": data.id_,
         "period": data.period,
         "weekdays": data.is_weekdays,
         "route": data.route_name,
@@ -553,7 +553,7 @@ async def get_timetable(
     if data is None:
         raise TimetableNotFound()
     return {
-        "sequence": data.id,
+        "sequence": data.id_,
         "period": data.period,
         "weekdays": data.is_weekdays,
         "route": data.route_name,
@@ -574,7 +574,7 @@ async def update_timetable(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "sequence": data.id,
+        "sequence": data.id_,
         "period": data.period,
         "weekdays": data.is_weekdays,
         "route": data.route_name,
@@ -610,7 +610,7 @@ async def get_timetable_view(
     else:
         data = await service.list_timetable_view()
     mapping_func: Callable[[ShuttleTimetableView], dict[str, Any]] = lambda x: {
-        "sequence": x.id,
+        "sequence": x.id_,
         "period": x.period,
         "weekdays": x.is_weekdays,
         "route": x.route_name,

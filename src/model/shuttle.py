@@ -25,7 +25,7 @@ class ShuttlePeriodType(Base):
     type_: Mapped[str] = mapped_column("period_type", String(20), primary_key=True)
     periods: Mapped["List[ShuttlePeriod]"] = relationship(
         "ShuttlePeriod",
-        back_populates="type",
+        back_populates="type_",
         cascade="all, delete-orphan",
         viewonly=True,
     )

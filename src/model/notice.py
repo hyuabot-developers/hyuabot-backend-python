@@ -25,7 +25,7 @@ class NoticeCategory(Base):
         "Notice",
         back_populates="category",
         cascade="all, delete-orphan",
-        primaryjoin="Notice.category_id == NoticeCategory.id",
+        primaryjoin="Notice.category_id == NoticeCategory.id_",
         viewonly=True,
     )
 
@@ -60,5 +60,5 @@ class Notice(Base):
     user: Mapped["User"] = relationship(
         "User",
         back_populates="notices",
-        primaryjoin="Notice.user_id == User._id",
+        primaryjoin="Notice.user_id == User.id_",
     )

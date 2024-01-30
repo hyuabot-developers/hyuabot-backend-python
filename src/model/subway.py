@@ -45,14 +45,14 @@ class SubwayRouteStation(Base):
         "SubwayTimetable",
         back_populates="station",
         cascade="all, delete-orphan",
-        primaryjoin="SubwayRouteStation._id == SubwayTimetable.station_id",
+        primaryjoin="SubwayRouteStation.id_ == SubwayTimetable.station_id",
         viewonly=True,
     )
     realtime: Mapped[List["SubwayRealtime"]] = relationship(
         "SubwayRealtime",
         back_populates="station",
         cascade="all, delete-orphan",
-        primaryjoin="SubwayRouteStation._id == SubwayRealtime.station_id",
+        primaryjoin="SubwayRouteStation.id_ == SubwayRealtime.station_id",
         viewonly=True,
     )
 
@@ -132,9 +132,9 @@ class SubwayRealtime(Base):
     station: Mapped["SubwayRouteStation"] = relationship(
         "SubwayRouteStation",
         back_populates="realtime",
-        primaryjoin="SubwayRealtime.station_id == SubwayRouteStation._id",
+        primaryjoin="SubwayRealtime.station_id == SubwayRouteStation.id_",
     )
     terminal_station: Mapped["SubwayRouteStation"] = relationship(
         "SubwayRouteStation",
-        primaryjoin="SubwayRealtime.terminal_station_id == SubwayRouteStation._id",
+        primaryjoin="SubwayRealtime.terminal_station_id == SubwayRouteStation.id_",
     )

@@ -26,7 +26,7 @@ class User(Base):
         "Notice",
         back_populates="user",
         cascade="all, delete-orphan",
-        primaryjoin="Notice.user_id == User._id",
+        primaryjoin="Notice.user_id == User.id_",
     )
 
 

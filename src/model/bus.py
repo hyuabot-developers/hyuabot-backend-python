@@ -123,12 +123,12 @@ class BusRouteStop(Base):
     )
     stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        primaryjoin="BusRouteStop.stop_id == BusStop.id",
+        primaryjoin="BusRouteStop.stop_id == BusStop.id_",
     )
     start_stop: Mapped["BusStop"] = relationship(
         "BusStop",
         back_populates="start_routes",
-        primaryjoin="BusRouteStop.start_stop_id == BusStop.id",
+        primaryjoin="BusRouteStop.start_stop_id == BusStop.id_",
     )
     timetable: Mapped[List["BusTimetable"]] = relationship(
         "BusTimetable",
@@ -206,11 +206,11 @@ class BusRoute(Base):
     )
     start_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        primaryjoin="BusRoute.start_stop_id == BusStop.id",
+        primaryjoin="BusRoute.start_stop_id == BusStop.id_",
     )
     end_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        primaryjoin="BusRoute.end_stop_id == BusStop.id",
+        primaryjoin="BusRoute.end_stop_id == BusStop.id_",
     )
 
 
@@ -229,6 +229,6 @@ class BusStop(Base):
         "BusRouteStop",
         back_populates="start_stop",
         cascade="all, delete-orphan",
-        primaryjoin="BusStop.id == BusRouteStop.start_stop_id",
+        primaryjoin="BusStop.id_ == BusRouteStop.start_stop_id",
         viewonly=True,
     )

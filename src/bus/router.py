@@ -1,4 +1,5 @@
 import datetime
+from typing import Callable
 
 from fastapi import APIRouter, Depends
 from starlette import status
@@ -38,8 +39,9 @@ from bus.schemas import (
     BusRealtimeListResponse,
 )
 from exceptions import DetailedHTTPException
+from model.bus import BusRoute, BusStop, BusRouteStop, BusTimetable, BusRealtime
 from user.jwt import parse_jwt_user_data
-from utils import timestamp_tz_to_datetime, KST
+from utils import timestamp_tz_to_datetime, KST, datetime_to_str
 
 router = APIRouter()
 
@@ -55,16 +57,12 @@ async def get_bus_route_list(
         data = await service.list_routes()
     else:
         data = await service.list_routes_filter(name, type_, company)
-    return {
-        "data": map(
-            lambda x: {
-                "id": x["route_id"],
-                "name": x["route_name"],
-                "type": x["route_type_name"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[BusRoute], dict[str, int | str]] = lambda x: {
+        "id": x.id_,
+        "name": x.name,
+        "type": x.type_name,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.get("/route/{route_id}", response_model=BusRouteDetailResponse)
@@ -76,23 +74,23 @@ async def get_bus_route_detail(
     if route is None:
         raise RouteNotFound()
     return {
-        "id": route["route_id"],
-        "name": route["route_name"],
-        "type": route["route_type_name"],
-        "start": route["start_stop_id"],
-        "end": route["end_stop_id"],
+        "id": route.id_,
+        "name": route.name,
+        "type": route.type_name,
+        "start": route.start_stop_id,
+        "end": route.end_stop_id,
         "company": {
-            "id": route["company_id"],
-            "name": route["company_name"],
-            "telephone": route["company_telephone"],
+            "id": route.company_id,
+            "name": route.company_name,
+            "telephone": route.company_telephone,
         },
         "up": {
-            "first": route["up_first_time"],
-            "last": route["up_last_time"],
+            "first": route.up_first_time,
+            "last": route.up_last_time,
         },
         "down": {
-            "first": route["down_first_time"],
-            "last": route["down_last_time"],
+            "first": route.down_first_time,
+            "last": route.down_last_time,
         },
     }
 
@@ -110,23 +108,23 @@ async def create_bus_route(
     if route is None:
         raise DetailedHTTPException()
     return {
-        "id": route["route_id"],
-        "name": route["route_name"],
-        "type": route["route_type_name"],
-        "start": route["start_stop_id"],
-        "end": route["end_stop_id"],
+        "id": route.id_,
+        "name": route.name,
+        "type": route.type_name,
+        "start": route.start_stop_id,
+        "end": route.end_stop_id,
         "company": {
-            "id": route["company_id"],
-            "name": route["company_name"],
-            "telephone": route["company_telephone"],
+            "id": route.company_id,
+            "name": route.company_name,
+            "telephone": route.company_telephone,
         },
         "up": {
-            "first": route["up_first_time"],
-            "last": route["up_last_time"],
+            "first": route.up_first_time,
+            "last": route.up_last_time,
         },
         "down": {
-            "first": route["down_first_time"],
-            "last": route["down_last_time"],
+            "first": route.down_first_time,
+            "last": route.down_last_time,
         },
     }
 
@@ -141,23 +139,23 @@ async def update_bus_route(
     if route is None:
         raise DetailedHTTPException()
     return {
-        "id": route["route_id"],
-        "name": route["route_name"],
-        "type": route["route_type_name"],
-        "start": route["start_stop_id"],
-        "end": route["end_stop_id"],
+        "id": route.id_,
+        "name": route.name,
+        "type": route.type_name,
+        "start": route.start_stop_id,
+        "end": route.end_stop_id,
         "company": {
-            "id": route["company_id"],
-            "name": route["company_name"],
-            "telephone": route["company_telephone"],
+            "id": route.company_id,
+            "name": route.company_name,
+            "telephone": route.company_telephone,
         },
         "up": {
-            "first": route["up_first_time"],
-            "last": route["up_last_time"],
+            "first": route.up_first_time,
+            "last": route.up_last_time,
         },
         "down": {
-            "first": route["down_first_time"],
-            "last": route["down_last_time"],
+            "first": route.down_first_time,
+            "last": route.down_last_time,
         },
     }
 
@@ -180,15 +178,11 @@ async def get_bus_stop_list(
         stops = await service.list_stops()
     else:
         stops = await service.list_stops_filter(name)
-    return {
-        "data": map(
-            lambda stop: {
-                "id": stop["stop_id"],
-                "name": stop["stop_name"],
-            },
-            stops,
-        ),
+    mapping_func: Callable[[BusStop], dict[str, int | str]] = lambda x: {
+        "id": x.id_,
+        "name": x.name,
     }
+    return {"data": map(mapping_func, stops)}
 
 
 @router.get("/stop/{stop_id}", response_model=BusStopDetailResponse)
@@ -200,13 +194,13 @@ async def get_bus_stop_detail(
     if stop is None:
         raise StopNotFound()
     return {
-        "id": stop["stop_id"],
-        "name": stop["stop_name"],
-        "latitude": stop["latitude"],
-        "longitude": stop["longitude"],
-        "district": stop["district_code"],
-        "mobileNumber": stop["mobile_number"],
-        "regionName": stop["region_name"],
+        "id": stop.id_,
+        "name": stop.name,
+        "latitude": stop.latitude,
+        "longitude": stop.longitude,
+        "district": stop.district,
+        "mobileNumber": stop.mobile_no,
+        "regionName": stop.region,
     }
 
 
@@ -223,13 +217,13 @@ async def create_bus_stop(
     if stop is None:
         raise DetailedHTTPException()
     return {
-        "id": stop["stop_id"],
-        "name": stop["stop_name"],
-        "latitude": stop["latitude"],
-        "longitude": stop["longitude"],
-        "district": stop["district_code"],
-        "mobileNumber": stop["mobile_number"],
-        "regionName": stop["region_name"],
+        "id": stop.id_,
+        "name": stop.name,
+        "latitude": stop.latitude,
+        "longitude": stop.longitude,
+        "district": stop.district,
+        "mobileNumber": stop.mobile_no,
+        "regionName": stop.region,
     }
 
 
@@ -243,13 +237,13 @@ async def update_bus_stop(
     if stop is None:
         raise DetailedHTTPException()
     return {
-        "id": stop["stop_id"],
-        "name": stop["stop_name"],
-        "latitude": stop["latitude"],
-        "longitude": stop["longitude"],
-        "district": stop["district_code"],
-        "mobileNumber": stop["mobile_number"],
-        "regionName": stop["region_name"],
+        "id": stop.id_,
+        "name": stop.name,
+        "latitude": stop.latitude,
+        "longitude": stop.longitude,
+        "district": stop.district,
+        "mobileNumber": stop.mobile_no,
+        "regionName": stop.region,
     }
 
 
@@ -268,16 +262,12 @@ async def get_bus_route_stop_list(
     _: str = Depends(parse_jwt_user_data),
 ):
     route_stops = await service.list_route_stops(route_id)
-    return {
-        "data": map(
-            lambda route_stop: {
-                "id": route_stop["stop_id"],
-                "sequence": route_stop["stop_sequence"],
-                "start": route_stop["start_stop_id"],
-            },
-            route_stops,
-        ),
+    mapping_func: Callable[[BusRouteStop], dict[str, int]] = lambda x: {
+        "id": x.stop_id,
+        "sequence": x.sequence,
+        "start": x.start_stop_id,
     }
+    return {"data": map(mapping_func, route_stops)}
 
 
 @router.get(
@@ -293,9 +283,9 @@ async def get_bus_route_stop_detail(
     if route_stop is None:
         raise RouteStopNotFound()
     return {
-        "id": route_stop["stop_id"],
-        "sequence": route_stop["stop_sequence"],
-        "start": route_stop["start_stop_id"],
+        "id": route_stop.stop_id,
+        "sequence": route_stop.sequence,
+        "start": route_stop.start_stop_id,
     }
 
 
@@ -315,9 +305,9 @@ async def create_bus_route_stop(
     if route_stop is None:
         raise DetailedHTTPException()
     return {
-        "id": route_stop["stop_id"],
-        "sequence": route_stop["stop_sequence"],
-        "start": route_stop["start_stop_id"],
+        "id": route_stop.stop_id,
+        "sequence": route_stop.sequence,
+        "start": route_stop.start_stop_id,
     }
 
 
@@ -335,9 +325,9 @@ async def update_bus_route_stop(
     if route_stop is None:
         raise RouteStopNotFound()
     return {
-        "id": route_stop["stop_id"],
-        "sequence": route_stop["stop_sequence"],
-        "start": route_stop["start_stop_id"],
+        "id": route_stop.stop_id,
+        "sequence": route_stop.sequence,
+        "start": route_stop.start_stop_id,
     }
 
 
@@ -381,19 +371,16 @@ async def get_bus_timetable_list(
             start.replace(tzinfo=KST) if start is not None else None,
             end.replace(tzinfo=KST) if end is not None else None,
         )
-    return {
-        "data": map(
-            lambda timetable: {
-                "routeID": timetable["route_id"],
-                "start": timetable["start_stop_id"],
-                "weekdays": timetable["weekday"],
-                "departureTime": timestamp_tz_to_datetime(
-                    timetable["departure_time"],
-                ),
-            },
-            timetables,
-        ),
+    mapping_func: Callable[
+        [BusTimetable],
+        dict[str, int | str | datetime.datetime],
+    ] = lambda x: {
+        "routeID": x.route_id,
+        "start": x.start_stop_id,
+        "weekdays": x.weekday,
+        "departureTime": timestamp_tz_to_datetime(x.departure_time),
     }
+    return {"data": map(mapping_func, timetables)}
 
 
 @router.get(
@@ -418,10 +405,10 @@ async def get_bus_timetable_detail(
     if timetable is None:
         raise TimetableNotFound()
     return {
-        "routeID": timetable["route_id"],
-        "start": timetable["start_stop_id"],
-        "weekdays": timetable["weekday"],
-        "departureTime": timestamp_tz_to_datetime(timetable["departure_time"]),
+        "routeID": timetable.route_id,
+        "start": timetable.start_stop_id,
+        "weekdays": timetable.weekday,
+        "departureTime": timestamp_tz_to_datetime(timetable.departure_time),
     }
 
 
@@ -438,10 +425,10 @@ async def create_bus_timetable(
     if timetable is None:
         raise DetailedHTTPException()
     return {
-        "routeID": timetable["route_id"],
-        "start": timetable["start_stop_id"],
-        "weekdays": timetable["weekday"],
-        "departureTime": timestamp_tz_to_datetime(timetable["departure_time"]),
+        "routeID": timetable.route_id,
+        "start": timetable.start_stop_id,
+        "weekdays": timetable.weekday,
+        "departureTime": timestamp_tz_to_datetime(timetable.departure_time),
     }
 
 
@@ -487,18 +474,17 @@ async def get_bus_realtime_list(
         realtime_list = await service.list_realtime()
     else:
         realtime_list = await service.list_realtime_filter(stop_id, route_id)
-    return {
-        "data": map(
-            lambda realtime: {
-                "stopID": realtime["stop_id"],
-                "routeID": realtime["route_id"],
-                "sequence": realtime["arrival_sequence"],
-                "stop": realtime["remaining_stop_count"],
-                "seat": realtime["remaining_seat_count"],
-                "time": realtime["remaining_time"],
-                "lowFloor": realtime["low_plate"],
-                "updatedAt": realtime["last_updated_time"],
-            },
-            realtime_list,
-        ),
+    mapping_func: Callable[
+        [BusRealtime],
+        dict[str, int | str | datetime.datetime | datetime.timedelta],
+    ] = lambda x: {
+        "stopID": x.stop_id,
+        "routeID": x.route_id,
+        "sequence": x.sequence,
+        "stop": x.stops,
+        "seat": x.seats,
+        "time": x.time,
+        "lowFloor": x.low_floor,
+        "updatedAt": datetime_to_str(x.updated_at),
     }
+    return {"data": map(mapping_func, realtime_list)}

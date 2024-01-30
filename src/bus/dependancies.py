@@ -17,7 +17,7 @@ from utils import KST
 
 
 async def create_valid_route(new_route: CreateBusRouteRequest) -> CreateBusRouteRequest:
-    if await service.get_route(new_route.id):
+    if await service.get_route(new_route.id_):
         raise DuplicateRouteID()
     return new_route
 
@@ -29,7 +29,7 @@ async def get_valid_route(route_id: int) -> int:
 
 
 async def create_valid_stop(new_stop: CreateBusStopRequest) -> CreateBusStopRequest:
-    if await service.get_stop(new_stop.id):
+    if await service.get_stop(new_stop.id_):
         raise DuplicateStopID()
     return new_stop
 

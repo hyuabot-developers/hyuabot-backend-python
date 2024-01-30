@@ -58,7 +58,7 @@ class UpdateNoticeRequest(BaseModel):
 
 
 class NoticeCategoryListItemResponse(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=20, alias="name")]
 
 
@@ -67,12 +67,12 @@ class NoticeCategoryListResponse(BaseModel):
 
 
 class NoticeCategoryDetailResponse(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=20, alias="name")]
 
 
 class NoticeListItemResponse(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     title: Annotated[str, Field(max_length=100, alias="title")]
     url: Annotated[str, Field(max_length=100, alias="url")]
     user_id: Annotated[str, Field(alias="userID")]
@@ -87,7 +87,7 @@ class NoticeListResponse(BaseModel):
 
 
 class NoticeDetailResponse(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     title: Annotated[str, Field(max_length=100, alias="title")]
     url: Annotated[str, Field(max_length=100, alias="url")]
     user_id: Annotated[str, Field(alias="userID")]

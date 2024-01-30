@@ -11,7 +11,7 @@ from model.reading_room import ReadingRoom
 class Campus(Base):
     __tablename__ = "campus"
 
-    id: Mapped[int] = mapped_column("campus_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("campus_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("campus_name", String(30))
 
     cafeteria_list: Mapped[List["Cafeteria"]] = relationship(

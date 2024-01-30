@@ -25,14 +25,14 @@ class SubwayStation(Base):
 class SubwayRoute(Base):
     __tablename__ = "subway_route"
 
-    id: Mapped[int] = mapped_column("route_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("route_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("route_name", String(30))
 
 
 class SubwayRouteStation(Base):
     __tablename__ = "subway_route_station"
 
-    id: Mapped[str] = mapped_column("station_id", String(10), primary_key=True)
+    id_: Mapped[str] = mapped_column("station_id", String(10), primary_key=True)
     route_id: Mapped[int] = mapped_column("route_id", Integer)
     name: Mapped[str] = mapped_column("station_name", String(30))
     sequence: Mapped[int] = mapped_column("station_sequence", Integer)
@@ -45,14 +45,14 @@ class SubwayRouteStation(Base):
         "SubwayTimetable",
         back_populates="station",
         cascade="all, delete-orphan",
-        primaryjoin="SubwayRouteStation.id == SubwayTimetable.station_id",
+        primaryjoin="SubwayRouteStation.id_ == SubwayTimetable.station_id",
         viewonly=True,
     )
     realtime: Mapped[List["SubwayRealtime"]] = relationship(
         "SubwayRealtime",
         back_populates="station",
         cascade="all, delete-orphan",
-        primaryjoin="SubwayRouteStation.id == SubwayRealtime.station_id",
+        primaryjoin="SubwayRouteStation.id_ == SubwayRealtime.station_id",
         viewonly=True,
     )
 
@@ -132,9 +132,9 @@ class SubwayRealtime(Base):
     station: Mapped["SubwayRouteStation"] = relationship(
         "SubwayRouteStation",
         back_populates="realtime",
-        primaryjoin="SubwayRealtime.station_id == SubwayRouteStation.id",
+        primaryjoin="SubwayRealtime.station_id == SubwayRouteStation.id_",
     )
     terminal_station: Mapped["SubwayRouteStation"] = relationship(
         "SubwayRouteStation",
-        primaryjoin="SubwayRealtime.terminal_station_id == SubwayRouteStation.id",
+        primaryjoin="SubwayRealtime.terminal_station_id == SubwayRouteStation.id_",
     )

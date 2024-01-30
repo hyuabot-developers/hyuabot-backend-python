@@ -6,7 +6,7 @@ from reading_room.schemas import CreateReadingRoomRequest
 async def create_valid_reading_room(
     new_reading_room: CreateReadingRoomRequest,
 ) -> CreateReadingRoomRequest:
-    if await service.get_reading_room(new_reading_room.id):
+    if await service.get_reading_room(new_reading_room.id_):
         raise DuplicateReadingRoomID()
 
     return new_reading_room

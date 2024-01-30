@@ -1,6 +1,10 @@
+from datetime import datetime
+from typing import Callable
+
 from fastapi import APIRouter, Depends
 from starlette import status
 
+from model.notice import NoticeCategory, Notice
 from notice import service
 from notice.dependancies import (
     create_valid_category,
@@ -36,15 +40,11 @@ async def get_notice_category_list(
         data = await service.list_notice_category()
     else:
         data = await service.list_notice_category_filter(name)
-    return {
-        "data": map(
-            lambda x: {
-                "id": x["category_id"],
-                "name": x["category_name"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[NoticeCategory], dict[str, int | str]] = lambda x: {
+        "id": x.id_,
+        "name": x.name,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.post(
@@ -60,8 +60,8 @@ async def create_notice_category(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "id": data["category_id"],
-        "name": data["category_name"],
+        "id": data.id_,
+        "name": data.name,
     }
 
 
@@ -74,8 +74,8 @@ async def get_notice_category(
     if data is None:
         raise CategoryNotFound()
     return {
-        "id": data["category_id"],
-        "name": data["category_name"],
+        "id": data.id_,
+        "name": data.name,
     }
 
 
@@ -96,18 +96,14 @@ async def get_notice_list(
     _: str = Depends(parse_jwt_user_data),
 ):
     data = await service.get_notice_list(notice_category_id)
-    return {
-        "data": map(
-            lambda x: {
-                "userID": x["user_id"],
-                "id": x["notice_id"],
-                "title": x["title"],
-                "url": x["url"],
-                "expiredAt": x["expired_at"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[Notice], dict[str, int | str | datetime]] = lambda x: {
+        "userID": x.user_id,
+        "id": x.id_,
+        "title": x.title,
+        "url": x.url,
+        "expiredAt": x.expired_at,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.get(
@@ -123,11 +119,11 @@ async def get_notice(
     if data is None:
         raise NoticeNotFound()
     return {
-        "userID": data["user_id"],
-        "id": data["notice_id"],
-        "title": data["title"],
-        "url": data["url"],
-        "expiredAt": data["expired_at"],
+        "userID": data.user_id,
+        "id": data.id_,
+        "title": data.title,
+        "url": data.url,
+        "expiredAt": data.expired_at,
     }
 
 
@@ -149,11 +145,11 @@ async def create_notice(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "userID": data["user_id"],
-        "id": data["notice_id"],
-        "title": data["title"],
-        "url": data["url"],
-        "expiredAt": data["expired_at"],
+        "userID": data.user_id,
+        "id": data.id_,
+        "title": data.title,
+        "url": data.url,
+        "expiredAt": data.expired_at,
     }
 
 
@@ -176,11 +172,11 @@ async def update_notice(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "userID": data["user_id"],
-        "id": data["notice_id"],
-        "title": data["title"],
-        "url": data["url"],
-        "expiredAt": data["expired_at"],
+        "userID": data.user_id,
+        "id": data.id_,
+        "title": data.title,
+        "url": data.url,
+        "expiredAt": data.expired_at,
     }
 
 

@@ -12,7 +12,7 @@ from campus.service import get_campus
 async def create_valid_cafeteria(
     new_cafeteria: CreateCafeteriaRequest,
 ) -> CreateCafeteriaRequest:
-    if await service.get_cafeteria(new_cafeteria.id):
+    if await service.get_cafeteria(new_cafeteria.id_):
         raise DuplicateCafeteriaID()
     elif await get_campus(new_cafeteria.campus_id) is None:
         raise InvalidCampusID()

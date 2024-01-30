@@ -22,10 +22,10 @@ from model import Base
 class ShuttlePeriodType(Base):
     __tablename__ = "shuttle_period_type"
 
-    type: Mapped[str] = mapped_column("period_type", String(20), primary_key=True)
+    type_: Mapped[str] = mapped_column("period_type", String(20), primary_key=True)
     periods: Mapped["List[ShuttlePeriod]"] = relationship(
         "ShuttlePeriod",
-        back_populates="type",
+        back_populates="type_",
         cascade="all, delete-orphan",
         viewonly=True,
     )
@@ -57,7 +57,7 @@ class ShuttlePeriod(Base):
         DateTime(timezone=True),
     )
 
-    type: Mapped["ShuttlePeriodType"] = relationship(
+    type_: Mapped["ShuttlePeriodType"] = relationship(
         "ShuttlePeriodType",
         back_populates="periods",
     )
@@ -75,7 +75,7 @@ class ShuttleHoliday(Base):
     )
 
     date: Mapped[datetime.date] = mapped_column("holiday_date", Date)
-    type: Mapped[str] = mapped_column("holiday_type", String(15))
+    type_: Mapped[str] = mapped_column("holiday_type", String(15))
     calendar: Mapped[str] = mapped_column("calendar_type", String(15))
 
 
@@ -186,7 +186,7 @@ class ShuttleTimetable(Base):
         ),
     )
 
-    id: Mapped[int] = mapped_column(
+    id_: Mapped[int] = mapped_column(
         "seq",
         Integer,
         Sequence("shuttle_timetable_seq_seq"),
@@ -217,7 +217,7 @@ class ShuttleTimetableView(Base):
         {"info": dict(is_view=True)},
     )
 
-    id: Mapped[int] = mapped_column("seq", Integer)
+    id_: Mapped[int] = mapped_column("seq", Integer)
     period: Mapped[str] = mapped_column("period_type", String(20))
     is_weekdays: Mapped[bool] = mapped_column("weekday", Boolean)
     route_name: Mapped[str] = mapped_column("route_name", String(15))

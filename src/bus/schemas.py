@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class CreateBusRouteRequest(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=30, alias="name")]
     type_code: Annotated[str, Field(alias="typeCode")]
     type_name: Annotated[
@@ -97,7 +97,7 @@ class UpdateBusRouteRequest(BaseModel):
 
 
 class CreateBusStopRequest(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=30, alias="name")]
     district_code: Annotated[int, Field(alias="district", ge=1)]
     mobile_number: Annotated[

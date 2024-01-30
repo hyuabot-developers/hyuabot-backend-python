@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class CreateCampusRequest(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=30, alias="name")]
 
     class Config:

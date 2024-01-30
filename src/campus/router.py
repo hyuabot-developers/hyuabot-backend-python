@@ -1,3 +1,5 @@
+from typing import Callable
+
 from fastapi import APIRouter, Depends
 from starlette import status
 
@@ -11,6 +13,7 @@ from campus.schemas import (
     UpdateCampusRequest,
 )
 from exceptions import DetailedHTTPException
+from model.campus import Campus
 from user.jwt import parse_jwt_user_data
 
 router = APIRouter()
@@ -25,15 +28,11 @@ async def get_campus_list(
         data = await service.list_campus()
     else:
         data = await service.list_campus_filter(name)
-    return {
-        "data": map(
-            lambda x: {
-                "id": x["campus_id"],
-                "name": x["campus_name"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[Campus], dict[str, int | str]] = lambda x: {
+        "id": x.id_,
+        "name": x.name,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.get("/{campus_id}", response_model=CampusDetailResponse)
@@ -45,8 +44,8 @@ async def get_campus(
     if data is None:
         raise CampusNotFound()
     return {
-        "id": data["campus_id"],
-        "name": data["campus_name"],
+        "id": data.id_,
+        "name": data.name,
     }
 
 
@@ -71,12 +70,12 @@ async def create_campus(
     _: str = Depends(parse_jwt_user_data),
     new_campus: CreateCampusRequest = Depends(create_valid_campus),
 ):
-    campus = await service.create_campus(new_campus)
-    if campus is None:
+    data = await service.create_campus(new_campus)
+    if data is None:
         raise DetailedHTTPException()
     return {
-        "id": campus["campus_id"],
-        "name": campus["campus_name"],
+        "id": data.id_,
+        "name": data.name,
     }
 
 
@@ -89,10 +88,10 @@ async def update_campus(
     _: str = Depends(parse_jwt_user_data),
     campus_id: int = Depends(get_valid_campus),
 ):
-    campus = await service.update_campus(campus_id, payload)
-    if campus is None:
+    data = await service.update_campus(campus_id, payload)
+    if data is None:
         raise DetailedHTTPException()
     return {
-        "id": campus["campus_id"],
-        "name": campus["campus_name"],
+        "id": data.id_,
+        "name": data.name,
     }

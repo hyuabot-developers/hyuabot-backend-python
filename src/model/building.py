@@ -49,3 +49,7 @@ class Room(Base):
     building_name: Mapped[str] = mapped_column("building_name", String(15))
     name: Mapped[str] = mapped_column("name", String(30))
     number: Mapped[str] = mapped_column("number", String(10))
+    building: Mapped["Building"] = relationship(
+        "Building",
+        primaryjoin="Room.building_name == Building.name",
+    )

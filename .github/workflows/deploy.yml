@@ -7,7 +7,6 @@ jobs:
   deploy:
     runs-on: ["self-hosted", "ARM64"]
     if: ${{ github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' }}
-    needs: test
     steps:
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx

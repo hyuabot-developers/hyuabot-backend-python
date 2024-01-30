@@ -25,3 +25,7 @@ def remove_timezone(dt: datetime.time) -> datetime.time:
 
 def timestamp_tz_to_datetime(ts: datetime.time) -> str:
     return ts.strftime("%H:%M:%S")
+
+
+def datetime_to_str(dt: datetime.datetime) -> str:
+    return dt.strftime("%Y-%m-%d %H:%M:%S")

@@ -1,5 +1,4 @@
 import datetime
-from typing import Any
 
 from sqlalchemy import select, insert, delete, update
 
@@ -17,7 +16,7 @@ from model.bus import BusRoute, BusStop, BusRouteStop, BusTimetable, BusRealtime
 from utils import KST
 
 
-async def list_routes() -> list[dict[str, Any]]:
+async def list_routes() -> list[BusRoute]:
     select_query = select(BusRoute)
     return await fetch_all(select_query)
 
@@ -26,7 +25,7 @@ async def list_routes_filter(
     name: str | None = None,
     type_: str | None = None,
     company: str | None = None,
-) -> list[dict[str, Any]]:
+) -> list[BusRoute]:
     conditions = []
     if type_ is not None:
         conditions.append(BusRoute.type_name == type_)
@@ -38,12 +37,12 @@ async def list_routes_filter(
     return await fetch_all(select_query)
 
 
-async def get_route(route_id: int) -> dict[str, Any] | None:
+async def get_route(route_id: int) -> BusRoute | None:
     select_query = select(BusRoute).where(BusRoute.id == route_id)
     return await fetch_one(select_query)
 
 
-async def create_route(new_holiday: CreateBusRouteRequest) -> dict[str, Any] | None:
+async def create_route(new_holiday: CreateBusRouteRequest) -> BusRoute | None:
     insert_query = (
         insert(BusRoute)
         .values(
@@ -72,21 +71,19 @@ async def create_route(new_holiday: CreateBusRouteRequest) -> dict[str, Any] | N
 async def update_route(
     route_id: int,
     payload: UpdateBusRouteRequest,
-) -> dict[str, Any] | None:
+) -> BusRoute | None:
     update_query = (
         update(BusRoute)
         .where(BusRoute.id == route_id)
         .values(
             {
-                "route_name": (
-                    payload.name if payload.name is not None else BusRoute.name
-                ),
-                "route_type_code": (
+                "name": (payload.name if payload.name is not None else BusRoute.name),
+                "type_code": (
                     payload.type_code
                     if payload.type_code is not None
                     else BusRoute.type_code
                 ),
-                "route_type_name": (
+                "type_name": (
                     payload.type_name
                     if payload.type_name is not None
                     else BusRoute.type_name
@@ -106,7 +103,7 @@ async def update_route(
                     if payload.company_telephone is not None
                     else BusRoute.company_telephone
                 ),
-                "district_code": (
+                "district": (
                     payload.district_code
                     if payload.district_code is not None
                     else BusRoute.district
@@ -153,22 +150,22 @@ async def delete_route(route_id: int) -> None:
     await execute_query(delete_query)
 
 
-async def list_stops() -> list[dict[str, Any]]:
+async def list_stops() -> list[BusStop]:
     select_query = select(BusStop)
     return await fetch_all(select_query)
 
 
-async def list_stops_filter(name: str) -> list[dict[str, Any]]:
+async def list_stops_filter(name: str) -> list[BusStop]:
     select_query = select(BusStop).where(BusStop.name.like(f"%{name}%"))
     return await fetch_all(select_query)
 
 
-async def get_stop(stop_id: int) -> dict[str, Any] | None:
+async def get_stop(stop_id: int) -> BusStop | None:
     select_query = select(BusStop).where(BusStop.id == stop_id)
     return await fetch_one(select_query)
 
 
-async def create_stop(new_stop: CreateBusStopRequest) -> dict[str, Any] | None:
+async def create_stop(new_stop: CreateBusStopRequest) -> BusStop | None:
     insert_query = (
         insert(BusStop)
         .values(
@@ -190,26 +187,24 @@ async def create_stop(new_stop: CreateBusStopRequest) -> dict[str, Any] | None:
 async def update_stop(
     stop_id: int,
     payload: UpdateBusStopRequest,
-) -> dict[str, Any] | None:
+) -> BusStop | None:
     update_query = (
         update(BusStop)
         .where(BusStop.id == stop_id)
         .values(
             {
-                "stop_name": (
-                    payload.name if payload.name is not None else BusStop.name
-                ),
-                "district_code": (
+                "name": (payload.name if payload.name is not None else BusStop.name),
+                "district": (
                     payload.district_code
                     if payload.district_code is not None
                     else BusStop.district
                 ),
-                "mobile_number": (
+                "mobile_no": (
                     payload.mobile_number
                     if payload.mobile_number is not None
                     else BusStop.mobile_no
                 ),
-                "region_name": (
+                "region": (
                     payload.region_name
                     if payload.region_name is not None
                     else BusStop.region
@@ -236,12 +231,12 @@ async def delete_stop(stop_id: int) -> None:
     await execute_query(delete_query)
 
 
-async def list_route_stops(route_id: int) -> list[dict[str, Any]]:
+async def list_route_stops(route_id: int) -> list[BusRouteStop]:
     select_query = select(BusRouteStop).where(BusRouteStop.route_id == route_id)
     return await fetch_all(select_query)
 
 
-async def get_route_stop(route_id: int, stop_id: int) -> dict[str, Any] | None:
+async def get_route_stop(route_id: int, stop_id: int) -> BusRouteStop | None:
     select_query = select(BusRouteStop).where(
         BusRouteStop.route_id == route_id,
         BusRouteStop.stop_id == stop_id,
@@ -252,7 +247,7 @@ async def get_route_stop(route_id: int, stop_id: int) -> dict[str, Any] | None:
 async def create_route_stop(
     route_id: int,
     new_route_stop: CreateBusRouteStopRequest,
-) -> dict[str, Any] | None:
+) -> BusRouteStop | None:
     insert_query = (
         insert(BusRouteStop)
         .values(
@@ -272,7 +267,7 @@ async def update_route_stop(
     route_id: int,
     stop_id: int,
     payload: UpdateBusRouteStopRequest,
-) -> dict[str, Any] | None:
+) -> BusRouteStop | None:
     update_query = (
         update(BusRouteStop)
         .where(
@@ -281,7 +276,7 @@ async def update_route_stop(
         )
         .values(
             {
-                "stop_sequence": (
+                "sequence": (
                     payload.sequence
                     if payload.sequence is not None
                     else BusRouteStop.sequence
@@ -306,7 +301,7 @@ async def delete_route_stop(route_id: int, stop_id: int) -> None:
     await execute_query(delete_query)
 
 
-async def list_timetable() -> list[dict[str, Any]]:
+async def list_timetable() -> list[BusTimetable]:
     select_query = select(BusTimetable)
     return await fetch_all(select_query)
 
@@ -317,7 +312,7 @@ async def list_timetable_filter(
     weekday: str | None = None,
     start: datetime.time | None = None,
     end: datetime.time | None = None,
-) -> list[dict[str, Any]]:
+) -> list[BusTimetable]:
     conditions = []
     if route_id is not None:
         conditions.append(BusTimetable.route_id == route_id)
@@ -338,7 +333,7 @@ async def get_timetable(
     start_stop_id: int,
     weekday: str,
     departure_time: datetime.time,
-) -> dict[str, Any] | None:
+) -> BusTimetable | None:
     select_query = select(BusTimetable).where(
         BusTimetable.route_id == route_id,
         BusTimetable.start_stop_id == start_stop_id,
@@ -350,7 +345,7 @@ async def get_timetable(
 
 async def create_timetable(
     new_timetable: CreateBusTimetableRequest,
-) -> dict[str, Any] | None:
+) -> BusTimetable | None:
     insert_query = (
         insert(BusTimetable)
         .values(
@@ -381,7 +376,7 @@ async def delete_timetable(
     await execute_query(delete_query)
 
 
-async def list_realtime() -> list[dict[str, Any]]:
+async def list_realtime() -> list[BusRealtime]:
     select_query = select(BusRealtime)
     return await fetch_all(select_query)
 
@@ -389,7 +384,7 @@ async def list_realtime() -> list[dict[str, Any]]:
 async def list_realtime_filter(
     route_id: int | None = None,
     stop_id: int | None = None,
-) -> list[dict[str, Any]]:
+) -> list[BusRealtime]:
     conditions = []
     if route_id is not None:
         conditions.append(BusRealtime.route_id == route_id)

@@ -5,17 +5,17 @@ from database import fetch_one, fetch_all, execute_query
 from model.campus import Campus
 
 
-async def get_campus(campus_id: int) -> dict[str, str] | None:
+async def get_campus(campus_id: int) -> Campus | None:
     select_query = select(Campus).where(Campus.id == campus_id)
     return await fetch_one(select_query)
 
 
-async def list_campus() -> list[dict[str, str]]:
+async def list_campus() -> list[Campus]:
     select_query = select(Campus)
     return await fetch_all(select_query)
 
 
-async def list_campus_filter(campus_name: str) -> list[dict[str, str]]:
+async def list_campus_filter(campus_name: str) -> list[Campus]:
     select_query = select(Campus).filter(
         Campus.name.like(f"%{campus_name}%"),
     )
@@ -25,13 +25,13 @@ async def list_campus_filter(campus_name: str) -> list[dict[str, str]]:
 async def update_campus(
     campus_id: int,
     new_campus: UpdateCampusRequest,
-) -> dict[str, str] | None:
+) -> Campus | None:
     update_query = (
         update(Campus)
         .where(Campus.id == campus_id)
         .values(
             {
-                "campus_name": new_campus.name,
+                "name": new_campus.name,
             },
         )
         .returning(Campus)
@@ -47,7 +47,7 @@ async def delete_campus(campus_id: int) -> None:
 
 async def create_campus(
     new_campus: CreateCampusRequest,
-) -> dict[str, str] | None:
+) -> Campus | None:
     insert_query = (
         insert(Campus)
         .values(

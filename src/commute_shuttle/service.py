@@ -1,3 +1,5 @@
+from datetime import time
+
 from sqlalchemy import select, insert, update, delete
 
 from commute_shuttle.schemas import (
@@ -17,12 +19,12 @@ from model.commute_shuttle import (
 from utils import KST
 
 
-async def list_route() -> list[dict[str, str]]:
+async def list_route() -> list[CommuteShuttleRoute]:
     select_query = select(CommuteShuttleRoute)
     return await fetch_all(select_query)
 
 
-async def get_route(route_name: str) -> dict[str, str] | None:
+async def get_route(route_name: str) -> CommuteShuttleRoute | None:
     select_query = select(CommuteShuttleRoute).where(
         CommuteShuttleRoute.name == route_name,
     )
@@ -31,7 +33,7 @@ async def get_route(route_name: str) -> dict[str, str] | None:
 
 async def create_route(
     new_route: CreateCommuteShuttleRouteRequest,
-) -> dict[str, str] | None:
+) -> CommuteShuttleRoute | None:
     insert_query = (
         insert(CommuteShuttleRoute)
         .values(
@@ -49,14 +51,14 @@ async def create_route(
 async def update_route(
     route_name: str,
     new_route: UpdateCommuteShuttleRouteRequest,
-) -> dict[str, str] | None:
+) -> CommuteShuttleRoute | None:
     update_query = (
         update(CommuteShuttleRoute)
         .where(CommuteShuttleRoute.name == route_name)
         .values(
             {
-                "route_description_korean": new_route.route_description_korean,
-                "route_description_english": new_route.route_description_english,
+                "korean": new_route.route_description_korean,
+                "english": new_route.route_description_english,
             },
         )
         .returning(CommuteShuttleRoute)
@@ -71,12 +73,12 @@ async def delete_route(route_name: str) -> None:
     await execute_query(delete_query)
 
 
-async def list_stop() -> list[dict[str, str]]:
+async def list_stop() -> list[CommuteShuttleStop]:
     select_query = select(CommuteShuttleStop)
     return await fetch_all(select_query)
 
 
-async def get_stop(stop_name: str) -> dict[str, str] | None:
+async def get_stop(stop_name: str) -> CommuteShuttleStop | None:
     select_query = select(CommuteShuttleStop).where(
         CommuteShuttleStop.name == stop_name,
     )
@@ -85,7 +87,7 @@ async def get_stop(stop_name: str) -> dict[str, str] | None:
 
 async def create_stop(
     new_stop: CreateCommuteShuttleStopRequest,
-) -> dict[str, str] | None:
+) -> CommuteShuttleStop | None:
     insert_query = (
         insert(CommuteShuttleStop)
         .values(
@@ -104,7 +106,7 @@ async def create_stop(
 async def update_stop(
     stop_name: str,
     new_stop: UpdateCommuteShuttleStopRequest,
-) -> dict[str, str] | None:
+) -> CommuteShuttleStop | None:
     update_query = (
         update(CommuteShuttleStop)
         .where(CommuteShuttleStop.name == stop_name)
@@ -127,12 +129,12 @@ async def delete_stop(stop_name: str) -> None:
     await execute_query(delete_query)
 
 
-async def list_timetable() -> list[dict[str, str]]:
+async def list_timetable() -> list[CommuteShuttleTimetable]:
     select_query = select(CommuteShuttleTimetable)
     return await fetch_all(select_query)
 
 
-async def list_timetable_filter(route_name: str) -> list[dict[str, str]]:
+async def list_timetable_filter(route_name: str) -> list[CommuteShuttleTimetable]:
     select_query = select(CommuteShuttleTimetable).where(
         CommuteShuttleTimetable.route_name == route_name,
     )
@@ -142,7 +144,7 @@ async def list_timetable_filter(route_name: str) -> list[dict[str, str]]:
 async def get_timetable(
     route_name: str,
     stop_name: str,
-) -> dict[str, str] | None:
+) -> CommuteShuttleTimetable | None:
     select_query = select(CommuteShuttleTimetable).where(
         CommuteShuttleTimetable.route_name == route_name,
         CommuteShuttleTimetable.stop_name == stop_name,
@@ -153,7 +155,7 @@ async def get_timetable(
 async def get_timetable_filter(
     route_name: str,
     sequence: int,
-) -> dict[str, str] | None:
+) -> CommuteShuttleTimetable | None:
     select_query = select(CommuteShuttleTimetable).where(
         CommuteShuttleTimetable.route_name == route_name,
         CommuteShuttleTimetable.sequence == sequence,
@@ -163,7 +165,7 @@ async def get_timetable_filter(
 
 async def create_timetable(
     new_timetable: CreateCommuteShuttleTimetableRequest,
-) -> dict[str, str] | None:
+) -> CommuteShuttleTimetable | None:
     insert_query = (
         insert(CommuteShuttleTimetable)
         .values(
@@ -183,21 +185,19 @@ async def update_timetable(
     route_name: str,
     stop_name: str,
     new_timetable: UpdateCommuteShuttleTimetableRequest,
-) -> dict[str, str] | None:
+) -> CommuteShuttleTimetable | None:
+    payload: dict[str, int | time] = {}
+    if new_timetable.sequence is not None:
+        payload["sequence"] = new_timetable.sequence
+    if new_timetable.departure_time is not None:
+        payload["time"] = new_timetable.departure_time.replace(tzinfo=KST)
     update_query = (
         update(CommuteShuttleTimetable)
         .where(
             CommuteShuttleTimetable.route_name == route_name,
             CommuteShuttleTimetable.stop_name == stop_name,
         )
-        .values(
-            {
-                "stop_order": new_timetable.sequence,
-                "departure_time": new_timetable.departure_time.replace(tzinfo=KST)
-                if new_timetable.departure_time
-                else None,
-            },
-        )
+        .values(payload)
         .returning(CommuteShuttleTimetable)
     )
     return await fetch_one(update_query)

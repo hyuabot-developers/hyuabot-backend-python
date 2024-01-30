@@ -1,3 +1,6 @@
+from datetime import time
+from typing import Callable
+
 from fastapi import APIRouter, Depends
 from starlette import status
 
@@ -29,6 +32,11 @@ from commute_shuttle.schemas import (
     UpdateCommuteShuttleTimetableRequest,
 )
 from exceptions import DetailedHTTPException
+from model.commute_shuttle import (
+    CommuteShuttleRoute,
+    CommuteShuttleStop,
+    CommuteShuttleTimetable,
+)
 from user.jwt import parse_jwt_user_data
 
 router = APIRouter()
@@ -39,16 +47,12 @@ async def get_route_list(
     _: str = Depends(parse_jwt_user_data),
 ):
     data = await service.list_route()
-    return {
-        "data": map(
-            lambda x: {
-                "name": x["route_name"],
-                "korean": x["route_description_korean"],
-                "english": x["route_description_english"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[CommuteShuttleRoute], dict[str, str]] = lambda x: {
+        "name": x.name,
+        "korean": x.korean,
+        "english": x.english,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.get("/route/{route_name}", response_model=CommuteShuttleRouteDetailResponse)
@@ -60,9 +64,9 @@ async def get_route(
     if data is None:
         raise RouteNotFound()
     return {
-        "name": data["route_name"],
-        "korean": data["route_description_korean"],
-        "english": data["route_description_english"],
+        "name": data.name,
+        "korean": data.korean,
+        "english": data.english,
     }
 
 
@@ -79,9 +83,9 @@ async def create_route(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["route_name"],
-        "korean": data["route_description_korean"],
-        "english": data["route_description_english"],
+        "name": data.name,
+        "korean": data.korean,
+        "english": data.english,
     }
 
 
@@ -98,9 +102,9 @@ async def update_route(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["route_name"],
-        "korean": data["route_description_korean"],
-        "english": data["route_description_english"],
+        "name": data.name,
+        "korean": data.korean,
+        "english": data.english,
     }
 
 
@@ -117,17 +121,13 @@ async def get_stop_list(
     _: str = Depends(parse_jwt_user_data),
 ):
     data = await service.list_stop()
-    return {
-        "data": map(
-            lambda x: {
-                "name": x["stop_name"],
-                "description": x["description"],
-                "latitude": x["latitude"],
-                "longitude": x["longitude"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[CommuteShuttleStop], dict[str, str | float]] = lambda x: {
+        "name": x.name,
+        "description": x.description,
+        "latitude": x.latitude,
+        "longitude": x.longitude,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.get("/stop/{stop_name}", response_model=CommuteShuttleStopDetailResponse)
@@ -139,10 +139,10 @@ async def get_stop(
     if data is None:
         raise StopNotFound()
     return {
-        "name": data["stop_name"],
-        "description": data["description"],
-        "latitude": data["latitude"],
-        "longitude": data["longitude"],
+        "name": data.name,
+        "description": data.description,
+        "latitude": data.latitude,
+        "longitude": data.longitude,
     }
 
 
@@ -159,10 +159,10 @@ async def create_stop(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["stop_name"],
-        "description": data["description"],
-        "latitude": data["latitude"],
-        "longitude": data["longitude"],
+        "name": data.name,
+        "description": data.description,
+        "latitude": data.latitude,
+        "longitude": data.longitude,
     }
 
 
@@ -179,10 +179,10 @@ async def update_stop(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["stop_name"],
-        "description": data["description"],
-        "latitude": data["latitude"],
-        "longitude": data["longitude"],
+        "name": data.name,
+        "description": data.description,
+        "latitude": data.latitude,
+        "longitude": data.longitude,
     }
 
 
@@ -203,17 +203,16 @@ async def get_timetable_list(
         data = await service.list_timetable()
     else:
         data = await service.list_timetable_filter(route)
-    return {
-        "data": map(
-            lambda x: {
-                "name": x["route_name"],
-                "stop": x["stop_name"],
-                "sequence": x["stop_order"],
-                "time": x["departure_time"],
-            },
-            data,
-        ),
+    mapping_func: Callable[
+        [CommuteShuttleTimetable],
+        dict[str, str | int | time],
+    ] = lambda x: {
+        "name": x.route_name,
+        "stop": x.stop_name,
+        "sequence": x.sequence,
+        "time": x.time,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.get(
@@ -229,10 +228,10 @@ async def get_timetable(
     if data is None:
         raise TimetableNotFound()
     return {
-        "name": data["route_name"],
-        "stop": data["stop_name"],
-        "sequence": data["stop_order"],
-        "time": data["departure_time"],
+        "name": data.route_name,
+        "stop": data.stop_name,
+        "sequence": data.sequence,
+        "time": data.time,
     }
 
 
@@ -251,10 +250,10 @@ async def create_timetable(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["route_name"],
-        "stop": data["stop_name"],
-        "sequence": data["stop_order"],
-        "time": data["departure_time"],
+        "name": data.route_name,
+        "stop": data.stop_name,
+        "sequence": data.sequence,
+        "time": data.time,
     }
 
 
@@ -275,10 +274,10 @@ async def update_timetable(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["route_name"],
-        "stop": data["stop_name"],
-        "sequence": data["stop_order"],
-        "time": data["departure_time"],
+        "name": data.route_name,
+        "stop": data.stop_name,
+        "sequence": data.sequence,
+        "time": data.time,
     }
 
 

@@ -1,10 +1,10 @@
 # Get database engine.
 import datetime
-from typing import AsyncGenerator, Optional, Any
+from typing import AsyncGenerator, Optional
 
 from pydantic import BaseModel
 from redis.asyncio import Redis
-from sqlalchemy import Select, Insert, Update, CursorResult, Delete
+from sqlalchemy import Select, Insert, Update, Delete
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from config import settings
@@ -26,24 +26,25 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
         await session.close()
 
 
-async def fetch_one(select_query: Select | Insert | Update) -> dict[str, Any] | None:
-    async with engine.begin() as conn:
-        cursor: CursorResult = await conn.execute(select_query)
-        first_row = cursor.first()
-        if first_row is None:
-            return None
-        return first_row._asdict()
+async def fetch_one(select_query: Select | Insert | Update):
+    async with AsyncSession(engine) as session:
+        query = await session.execute(select_query)
+        result = query.one_or_none()
+        if result:
+            return result[0]
+        return None
 
 
-async def fetch_all(select_query: Select | Insert | Update) -> list[dict[str, Any]]:
-    async with engine.begin() as conn:
-        cursor: CursorResult = await conn.execute(select_query)
-        return [row._asdict() for row in cursor.all()]
+async def fetch_all(select_query: Select | Insert | Update):
+    async with AsyncSession(engine) as session:
+        query = await session.execute(select_query)
+        return [item[0] for item in query.all()]
 
 
-async def execute_query(query: Select | Insert | Update | Delete) -> None:
-    async with engine.begin() as conn:
-        await conn.execute(query)
+async def execute_query(query: Select | Insert | Update | Delete):
+    async with AsyncSession(engine) as session:
+        await session.execute(query)
+        await session.commit()
 
 
 # Redis database engine.

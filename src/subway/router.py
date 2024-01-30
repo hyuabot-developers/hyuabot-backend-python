@@ -1,10 +1,10 @@
 import datetime
-from typing import Any
 
 from fastapi import APIRouter, Depends
 from starlette import status
 
 from exceptions import DetailedHTTPException
+from model.subway import SubwayRealtime, SubwayRoute
 from subway import service
 from subway.dependancies import (
     create_valid_station,
@@ -54,7 +54,7 @@ async def get_station_name_list(
         data = await service.list_station_name()
     else:
         data = await service.list_station_name_filter(name)
-    return {"data": map(lambda x: {"name": x["station_name"]}, data)}
+    return {"data": map(lambda x: {"name": x.name}, data)}
 
 
 @router.post(
@@ -69,7 +69,7 @@ async def create_station_name(
     station = await service.create_station_name(payload)
     if station is None:
         raise DetailedHTTPException()
-    return {"name": station["station_name"]}
+    return {"name": station.name}
 
 
 @router.get(
@@ -84,7 +84,7 @@ async def get_station_name(
     station = await service.get_station_name(station_name)
     if station is None:
         raise StationNameNotFound()
-    return {"name": station["station_name"]}
+    return {"name": station.name}
 
 
 @router.delete(
@@ -114,8 +114,8 @@ async def get_route_list(
     return {
         "data": map(
             lambda x: {
-                "name": x["route_name"],
-                "id": x["route_id"],
+                "name": x.name,
+                "id": x.id_,
             },
             data,
         ),
@@ -135,8 +135,8 @@ async def create_route(
     if route is None:
         raise DetailedHTTPException()
     return {
-        "name": route["route_name"],
-        "id": route["route_id"],
+        "name": route.name,
+        "id": route.id_,
     }
 
 
@@ -149,8 +149,8 @@ async def get_route(
     route_id: int = Depends(get_valid_route),
     _: str = Depends(parse_jwt_user_data),
 ):
-    route: dict[str, Any] = await service.get_route(route_id)  # type: ignore
-    return {"name": route["route_name"], "id": route["route_id"]}
+    route: SubwayRoute = await service.get_route(route_id)
+    return {"name": route.name, "id": route.id_}
 
 
 @router.patch(
@@ -192,12 +192,12 @@ async def get_route_station_list(
     return {
         "data": map(
             lambda x: {
-                "id": x["station_id"],
-                "name": x["station_name"],
-                "routeID": x["route_id"],
-                "sequence": x["station_sequence"],
+                "id": x.id_,
+                "name": x.name,
+                "routeID": x.route_id,
+                "sequence": x.sequence,
                 "cumulativeTime": timedelta_to_str(
-                    x["cumulative_time"],
+                    x.cumulative_time,
                 ),
             },
             data,
@@ -214,14 +214,14 @@ async def get_route_station(
     station_id: str = Depends(get_valid_route_station),
     _: str = Depends(parse_jwt_user_data),
 ):
-    station: dict[str, Any] = await service.get_route_station(station_id)  # type: ignore
+    station = await service.get_route_station(station_id)
     return {
-        "id": station["station_id"],
-        "name": station["station_name"],
-        "routeID": station["route_id"],
-        "sequence": station["station_sequence"],
+        "id": station.id_,
+        "name": station.name,
+        "routeID": station.route_id,
+        "sequence": station.sequence,
         "cumulativeTime": timedelta_to_str(
-            station["cumulative_time"],
+            station.cumulative_time,
         ),
     }
 
@@ -239,12 +239,12 @@ async def create_route_station(
     if station is None:
         raise DetailedHTTPException()
     return {
-        "id": station["station_id"],
-        "name": station["station_name"],
-        "routeID": station["route_id"],
-        "sequence": station["station_sequence"],
+        "id": station.id_,
+        "name": station.name,
+        "routeID": station.route_id,
+        "sequence": station.sequence,
         "cumulativeTime": timedelta_to_str(
-            station["cumulative_time"],
+            station.cumulative_time,
         ),
     }
 
@@ -285,12 +285,12 @@ async def get_route_station_timetable_list(
     return {
         "data": map(
             lambda x: {
-                "stationID": x["station_id"],
-                "startStationID": x["start_station_id"],
-                "terminalStationID": x["terminal_station_id"],
-                "departureTime": remove_timezone(x["departure_time"]),
-                "weekday": x["weekday"],
-                "heading": x["up_down_type"],
+                "stationID": x.station_id,
+                "startStationID": x.start_station_id,
+                "terminalStationID": x.terminal_station_id,
+                "departureTime": remove_timezone(x.departure_time),
+                "weekday": x.is_weekdays,
+                "heading": x.heading,
             },
             timetable,
         ),
@@ -311,12 +311,12 @@ async def create_route_station_timetable(
     if timetable is None:
         raise DetailedHTTPException()
     return {
-        "stationID": timetable["station_id"],
-        "startStationID": timetable["start_station_id"],
-        "terminalStationID": timetable["terminal_station_id"],
-        "departureTime": remove_timezone(timetable["departure_time"]),
-        "weekday": timetable["weekday"],
-        "heading": timetable["up_down_type"],
+        "stationID": timetable.station_id,
+        "startStationID": timetable.start_station_id,
+        "terminalStationID": timetable.terminal_station_id,
+        "departureTime": remove_timezone(timetable.departure_time),
+        "weekday": timetable.is_weekdays,
+        "heading": timetable.heading,
     }
 
 
@@ -341,12 +341,12 @@ async def get_route_station_timetable(
     if data is None:
         raise TimetableNotFound()
     return {
-        "stationID": data["station_id"],
-        "startStationID": data["start_station_id"],
-        "terminalStationID": data["terminal_station_id"],
-        "departureTime": remove_timezone(data["departure_time"]),
-        "weekday": data["weekday"],
-        "heading": data["up_down_type"],
+        "stationID": data.station_id,
+        "startStationID": data.start_station_id,
+        "terminalStationID": data.terminal_station_id,
+        "departureTime": remove_timezone(data.departure_time),
+        "weekday": data.is_weekdays,
+        "heading": data.heading,
     }
 
 
@@ -379,21 +379,21 @@ async def get_route_station_realtime(
     station_id: str,
     _: str = Depends(parse_jwt_user_data),
 ):
-    realtime = await service.get_realtime(station_id)
+    realtime: list[SubwayRealtime] = await service.get_realtime(station_id)
     return {
         "data": map(
             lambda x: {
-                "stationID": x["station_id"],
-                "sequence": x["arrival_sequence"],
-                "current": x["current_station_name"],
-                "heading": x["up_down_type"],
-                "station": x["remaining_stop_count"],
-                "time": timedelta_to_str(x["remaining_time"]),
-                "trainNumber": x["train_number"],
-                "express": x["is_express_train"],
-                "last": x["is_last_train"],
-                "terminalStationID": x["terminal_station_id"],
-                "status": x["status_code"],
+                "stationID": x.station_id,
+                "sequence": x.sequence,
+                "current": x.location,
+                "heading": x.heading,
+                "station": x.stop,
+                "time": timedelta_to_str(x.time),
+                "trainNumber": x.train_number,
+                "express": x.is_express,
+                "last": x.is_last,
+                "terminalStationID": x.terminal_station_id,
+                "status": x.status,
             },
             realtime,
         ),

@@ -6,7 +6,7 @@ from campus.schemas import CreateCampusRequest
 async def create_valid_campus(
     new_campus: CreateCampusRequest,
 ) -> CreateCampusRequest:
-    if await service.get_campus(new_campus.id):
+    if await service.get_campus(new_campus.id_):
         raise DuplicateCampusID()
 
     return new_campus

@@ -1,11 +1,9 @@
-from typing import Any
-from uuid import UUID
-
 from fastapi import APIRouter, Depends, Response, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
 from exceptions import DetailedHTTPException
+from model.user import User, RefreshToken
 from user import service, utils, jwt
 from user.dependancies import (
     create_valid_user,
@@ -31,11 +29,11 @@ async def register_user(
     if user is None:
         raise DetailedHTTPException()
     return {
-        "username": user["user_id"],
-        "nickname": user["name"],
-        "email": user["email"],
-        "phone": user["phone"],
-        "active": user["active"],
+        "username": user.id_,
+        "nickname": user.name,
+        "email": user.email,
+        "phone": user.phone,
+        "active": user.active,
     }
 
 
@@ -50,11 +48,11 @@ async def get_my_info(
     if user is None:
         raise InvalidCredentials()
     return {
-        "username": user["user_id"],
-        "nickname": user["name"],
-        "email": user["email"],
-        "phone": user["phone"],
-        "active": user["active"],
+        "username": user.id_,
+        "nickname": user.name,
+        "email": user.email,
+        "phone": user.phone,
+        "active": user.active,
     }
 
 
@@ -67,7 +65,7 @@ async def auth_user(
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
     user = await service.authenticate_user(form_data.username, form_data.password)
-    refresh_token = await service.create_refresh_token(user_id=user["user_id"])
+    refresh_token = await service.create_refresh_token(user_id=user.id_)
     response.set_cookie(
         **utils.get_refresh_token_settings(refresh_token),
     )
@@ -84,16 +82,16 @@ async def auth_user(
 async def refresh_tokens(
     worker: BackgroundTasks,
     response: Response,
-    refresh_token: dict[str, Any] = Depends(validate_refresh_token),
-    user: dict[str, Any] = Depends(validate_refresh_token_user),
+    refresh_token: RefreshToken = Depends(validate_refresh_token),
+    user: User = Depends(validate_refresh_token_user),
 ):
     refresh_token_value = await service.create_refresh_token(
-        user_id=str(user["user_id"]),
+        user_id=str(user.id_),
     )
     response.set_cookie(
         **utils.get_refresh_token_settings(refresh_token_value),
     )
-    worker.add_task(service.expire_refresh_token, UUID(f'{refresh_token["uuid"]}'))
+    worker.add_task(service.expire_refresh_token, f"{refresh_token.uuid}")
     return {
         "access_token": jwt.create_access_token(user=user),
         "refresh_token": refresh_token_value,
@@ -103,12 +101,12 @@ async def refresh_tokens(
 @router.delete("/users/token")
 async def logout(
     response: Response,
-    refresh_token: dict[str, Any] = Depends(validate_refresh_token),
+    refresh_token: RefreshToken = Depends(validate_refresh_token),
 ):
-    await service.expire_refresh_token(refresh_token["uuid"])
+    await service.expire_refresh_token(refresh_token.uuid)
     response.delete_cookie(
         **utils.get_refresh_token_settings(
-            refresh_token["refresh_token"],
+            refresh_token.refresh_token,
             expired=True,
         ),
     )

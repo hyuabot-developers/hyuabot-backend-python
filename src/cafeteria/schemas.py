@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class CreateCafeteriaRequest(BaseModel):
-    id: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=50, alias="name")]
     campus_id: Annotated[int, Field(alias="campusID", ge=1)]
     latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class ReadingRoom(Base):
     __tablename__ = "reading_room"
 
-    id: Mapped[int] = mapped_column("room_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("room_id", Integer, primary_key=True)
     campus_id: Mapped[int] = mapped_column(
         "campus_id",
         Integer,

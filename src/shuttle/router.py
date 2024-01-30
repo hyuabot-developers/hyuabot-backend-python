@@ -1,9 +1,19 @@
 import datetime
+from typing import Callable, Any
 
 from fastapi import APIRouter, Depends
 from starlette import status
 
 from exceptions import DetailedHTTPException
+from model.shuttle import (
+    ShuttlePeriod,
+    ShuttleRoute,
+    ShuttleStop,
+    ShuttleRouteStop,
+    ShuttleTimetable,
+    ShuttleTimetableView,
+    ShuttleHoliday,
+)
 from shuttle import service
 from shuttle.dependancies import (
     create_valid_route,
@@ -72,16 +82,12 @@ async def get_holiday_list(
         )
     else:
         data = await service.list_holiday()
-    return {
-        "data": map(
-            lambda x: {
-                "date": x["holiday_date"],
-                "type": x["holiday_type"],
-                "calendar": x["calendar_type"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[ShuttleHoliday], dict[str, Any]] = lambda x: {
+        "date": x.date,
+        "type": x.type_,
+        "calendar": x.calendar,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.post(
@@ -97,9 +103,9 @@ async def create_holiday(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "date": data["holiday_date"],
-        "type": data["holiday_type"],
-        "calendar": data["calendar_type"],
+        "date": data.date,
+        "type": data.type_,
+        "calendar": data.calendar,
     }
 
 
@@ -113,9 +119,9 @@ async def get_holiday(
     if data is None:
         raise HolidayNotFound()
     return {
-        "date": data["holiday_date"],
-        "type": data["holiday_type"],
-        "calendar": data["calendar_type"],
+        "date": data.date,
+        "type": data.type_,
+        "calendar": data.calendar,
     }
 
 
@@ -140,16 +146,12 @@ async def get_period_list(
         data = await service.list_period_filter(period_type=period, date=date)
     else:
         data = await service.list_period()
-    return {
-        "data": map(
-            lambda x: {
-                "type": x["period_type"],
-                "start": x["period_start"],
-                "end": x["period_end"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[ShuttlePeriod], dict[str, Any]] = lambda x: {
+        "type": x.type_id,
+        "start": x.start,
+        "end": x.end,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.post(
@@ -165,9 +167,9 @@ async def create_period(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "type": data["period_type"],
-        "start": data["period_start"],
-        "end": data["period_end"],
+        "type": data.type_id,
+        "start": data.start,
+        "end": data.end,
     }
 
 
@@ -195,9 +197,9 @@ async def get_period(
     if data is None:
         raise PeriodNotFound()
     return {
-        "type": data["period_type"],
-        "start": data["period_start"],
-        "end": data["period_end"],
+        "type": data.type_id,
+        "start": data.start,
+        "end": data.end,
     }
 
 
@@ -239,17 +241,13 @@ async def get_route_list(
         data = await service.list_route_filter(name=name, tag=tag)
     else:
         data = await service.list_route()
-    return {
-        "data": map(
-            lambda x: {
-                "name": x["route_name"],
-                "tag": x["route_tag"],
-                "korean": x["route_description_korean"],
-                "english": x["route_description_english"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[ShuttleRoute], dict[str, Any]] = lambda x: {
+        "name": x.name,
+        "tag": x.tag,
+        "korean": x.korean,
+        "english": x.english,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.post(
@@ -265,12 +263,12 @@ async def create_route(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["route_name"],
-        "tag": data["route_tag"],
-        "korean": data["route_description_korean"],
-        "english": data["route_description_english"],
-        "start": data["start_stop"],
-        "end": data["end_stop"],
+        "name": data.name,
+        "tag": data.tag,
+        "korean": data.korean,
+        "english": data.english,
+        "start": data.start_stop_id,
+        "end": data.end_stop_id,
     }
 
 
@@ -283,12 +281,12 @@ async def get_route(
     if data is None:
         raise RouteNotFound()
     return {
-        "name": data["route_name"],
-        "tag": data["route_tag"],
-        "korean": data["route_description_korean"],
-        "english": data["route_description_english"],
-        "start": data["start_stop"],
-        "end": data["end_stop"],
+        "name": data.name,
+        "tag": data.tag,
+        "korean": data.korean,
+        "english": data.english,
+        "start": data.start_stop_id,
+        "end": data.end_stop_id,
     }
 
 
@@ -305,12 +303,12 @@ async def update_route(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["route_name"],
-        "tag": data["route_tag"],
-        "korean": data["route_description_korean"],
-        "english": data["route_description_english"],
-        "start": data["start_stop"],
-        "end": data["end_stop"],
+        "name": data.name,
+        "tag": data.tag,
+        "korean": data.korean,
+        "english": data.english,
+        "start": data.start_stop_id,
+        "end": data.end_stop_id,
     }
 
 
@@ -331,16 +329,12 @@ async def get_stop_list(
         data = await service.list_stop_filter(name=name)
     else:
         data = await service.list_stop()
-    return {
-        "data": map(
-            lambda x: {
-                "name": x["stop_name"],
-                "latitude": x["latitude"],
-                "longitude": x["longitude"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[ShuttleStop], dict[str, Any]] = lambda x: {
+        "name": x.name,
+        "latitude": x.latitude,
+        "longitude": x.longitude,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.post(
@@ -356,9 +350,9 @@ async def create_stop(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["stop_name"],
-        "latitude": data["latitude"],
-        "longitude": data["longitude"],
+        "name": data.name,
+        "latitude": data.latitude,
+        "longitude": data.longitude,
     }
 
 
@@ -371,9 +365,9 @@ async def get_stop(
     if data is None:
         raise StopNotFound()
     return {
-        "name": data["stop_name"],
-        "latitude": data["latitude"],
-        "longitude": data["longitude"],
+        "name": data.name,
+        "latitude": data.latitude,
+        "longitude": data.longitude,
     }
 
 
@@ -390,9 +384,9 @@ async def update_stop(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "name": data["stop_name"],
-        "latitude": data["latitude"],
-        "longitude": data["longitude"],
+        "name": data.name,
+        "latitude": data.latitude,
+        "longitude": data.longitude,
     }
 
 
@@ -410,17 +404,13 @@ async def get_route_stop_list(
     _: str = Depends(parse_jwt_user_data),
 ):
     data = await service.list_route_stop_filter(route_name)
-    return {
-        "data": map(
-            lambda x: {
-                "route": x["route_name"],
-                "stop": x["stop_name"],
-                "sequence": x["stop_order"],
-                "cumulativeTime": timedelta_to_str(x["cumulative_time"]),
-            },
-            data,
-        ),
+    mapping_func: Callable[[ShuttleRouteStop], dict[str, Any]] = lambda x: {
+        "route": x.route_name,
+        "stop": x.stop_name,
+        "sequence": x.sequence,
+        "cumulativeTime": timedelta_to_str(x.cumulative_time),
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.post(
@@ -438,10 +428,10 @@ async def create_route_stop(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "route": data["route_name"],
-        "stop": data["stop_name"],
-        "sequence": data["stop_order"],
-        "cumulativeTime": timedelta_to_str(data["cumulative_time"]),
+        "route": data.route_name,
+        "stop": data.stop_name,
+        "sequence": data.sequence,
+        "cumulativeTime": timedelta_to_str(data.cumulative_time),
     }
 
 
@@ -458,10 +448,10 @@ async def get_route_stop(
     if data is None:
         raise RouteStopNotFound()
     return {
-        "route": data["route_name"],
-        "stop": data["stop_name"],
-        "sequence": data["stop_order"],
-        "cumulativeTime": timedelta_to_str(data["cumulative_time"]),
+        "route": data.route_name,
+        "stop": data.stop_name,
+        "sequence": data.sequence,
+        "cumulativeTime": timedelta_to_str(data.cumulative_time),
     }
 
 
@@ -482,10 +472,10 @@ async def update_route_stop(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "route": data["route_name"],
-        "stop": data["stop_name"],
-        "sequence": data["stop_order"],
-        "cumulativeTime": timedelta_to_str(data["cumulative_time"]),
+        "route": data.route_name,
+        "stop": data.stop_name,
+        "sequence": data.sequence,
+        "cumulativeTime": timedelta_to_str(data.cumulative_time),
     }
 
 
@@ -520,18 +510,14 @@ async def get_timetable_list(
         )
     else:
         data = await service.list_timetable()
-    return {
-        "data": map(
-            lambda x: {
-                "sequence": x["seq"],
-                "period": x["period_type"],
-                "weekdays": x["weekday"],
-                "route": x["route_name"],
-                "time": timestamp_tz_to_datetime(x["departure_time"]),
-            },
-            data,
-        ),
+    mapping_func: Callable[[ShuttleTimetable], dict[str, Any]] = lambda x: {
+        "sequence": x.id_,
+        "period": x.period,
+        "weekdays": x.is_weekdays,
+        "route": x.route_name,
+        "time": timestamp_tz_to_datetime(x.departure_time),
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.post(
@@ -547,13 +533,11 @@ async def create_timetable(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "sequence": data["seq"],
-        "period": data["period_type"],
-        "weekdays": data["weekday"],
-        "route": data["route_name"],
-        "time": timestamp_tz_to_datetime(
-            data["departure_time"],
-        ),
+        "sequence": data.id_,
+        "period": data.period,
+        "weekdays": data.is_weekdays,
+        "route": data.route_name,
+        "time": timestamp_tz_to_datetime(data.departure_time),
     }
 
 
@@ -569,11 +553,11 @@ async def get_timetable(
     if data is None:
         raise TimetableNotFound()
     return {
-        "sequence": data["seq"],
-        "period": data["period_type"],
-        "weekdays": data["weekday"],
-        "route": data["route_name"],
-        "time": data["departure_time"],
+        "sequence": data.id_,
+        "period": data.period,
+        "weekdays": data.is_weekdays,
+        "route": data.route_name,
+        "time": timestamp_tz_to_datetime(data.departure_time),
     }
 
 
@@ -590,11 +574,11 @@ async def update_timetable(
     if data is None:
         raise DetailedHTTPException()
     return {
-        "sequence": data["seq"],
-        "period": data["period_type"],
-        "weekdays": data["weekday"],
-        "route": data["route_name"],
-        "time": data["departure_time"],
+        "sequence": data.id_,
+        "period": data.period,
+        "weekdays": data.is_weekdays,
+        "route": data.route_name,
+        "time": timestamp_tz_to_datetime(data.departure_time),
     }
 
 
@@ -625,16 +609,12 @@ async def get_timetable_view(
         )
     else:
         data = await service.list_timetable_view()
-    return {
-        "data": map(
-            lambda x: {
-                "sequence": x["seq"],
-                "period": x["period_type"],
-                "weekdays": x["weekday"],
-                "route": x["route_name"],
-                "stop": x["stop_name"],
-                "time": x["departure_time"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[ShuttleTimetableView], dict[str, Any]] = lambda x: {
+        "sequence": x.id_,
+        "period": x.period,
+        "weekdays": x.is_weekdays,
+        "route": x.route_name,
+        "stop": x.stop_name,
+        "time": timestamp_tz_to_datetime(x.departure_time),
     }
+    return {"data": map(mapping_func, data)}

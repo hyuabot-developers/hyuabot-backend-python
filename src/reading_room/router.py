@@ -1,6 +1,9 @@
+from typing import Callable
+
 from fastapi import APIRouter, Depends
 from starlette import status
 
+from model.reading_room import ReadingRoom
 from reading_room import service
 from reading_room.dependancies import (
     create_valid_reading_room,
@@ -28,15 +31,11 @@ async def get_reading_room_list(
         data = await service.list_reading_room()
     else:
         data = await service.list_reading_room_filter(campus)
-    return {
-        "data": map(
-            lambda x: {
-                "id": x["room_id"],
-                "name": x["room_name"],
-            },
-            data,
-        ),
+    mapping_func: Callable[[ReadingRoom], dict[str, int | str]] = lambda x: {
+        "id": x.id_,
+        "name": x.name,
     }
+    return {"data": map(mapping_func, data)}
 
 
 @router.get("/{reading_room_id}", response_model=ReadingRoomDetailResponse)
@@ -48,13 +47,13 @@ async def get_reading_room(
     if data is None:
         raise ReadingRoomNotFound()
     return {
-        "id": data["room_id"],
-        "name": data["room_name"],
-        "total": data["total"],
-        "active": data["active_total"],
-        "available": data["available"],
-        "updatedAt": data["last_updated_time"],
-        "occupied": data["occupied"],
+        "id": data.id_,
+        "name": data.name,
+        "total": data.total_seats,
+        "active": data.active_total_seats,
+        "available": data.available_seats,
+        "occupied": data.occupied_seats,
+        "updatedAt": data.updated_at,
     }
 
 
@@ -79,17 +78,17 @@ async def create_reading_room(
     _: str = Depends(parse_jwt_user_data),
     new_reading_room: CreateReadingRoomRequest = Depends(create_valid_reading_room),
 ):
-    reading_room = await service.create_reading_room(new_reading_room)
-    if reading_room is None:
+    data = await service.create_reading_room(new_reading_room)
+    if data is None:
         raise DetailedHTTPException()
     return {
-        "id": reading_room["room_id"],
-        "name": reading_room["room_name"],
-        "total": reading_room["total"],
-        "active": reading_room["active_total"],
-        "available": reading_room["available"],
-        "updatedAt": reading_room["last_updated_time"],
-        "occupied": reading_room["occupied"],
+        "id": data.id_,
+        "name": data.name,
+        "total": data.total_seats,
+        "active": data.active_total_seats,
+        "available": data.available_seats,
+        "occupied": data.occupied_seats,
+        "updatedAt": data.updated_at,
     }
 
 
@@ -102,15 +101,15 @@ async def update_reading_room(
     _: str = Depends(parse_jwt_user_data),
     reading_room_id: int = Depends(get_valid_reading_room),
 ):
-    reading_room = await service.update_reading_room(reading_room_id, payload)
-    if reading_room is None:
+    data = await service.update_reading_room(reading_room_id, payload)
+    if data is None:
         raise DetailedHTTPException()
     return {
-        "id": reading_room["room_id"],
-        "name": reading_room["room_name"],
-        "total": reading_room["total"],
-        "active": reading_room["active_total"],
-        "available": reading_room["available"],
-        "updatedAt": reading_room["last_updated_time"],
-        "occupied": reading_room["occupied"],
+        "id": data.id_,
+        "name": data.name,
+        "total": data.total_seats,
+        "active": data.active_total_seats,
+        "available": data.available_seats,
+        "occupied": data.occupied_seats,
+        "updatedAt": data.updated_at,
     }

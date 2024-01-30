@@ -123,12 +123,12 @@ class BusRouteStop(Base):
     )
     stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        primaryjoin="BusRouteStop.stop_id == BusStop.id",
+        primaryjoin="BusRouteStop.stop_id == BusStop.id_",
     )
     start_stop: Mapped["BusStop"] = relationship(
         "BusStop",
         back_populates="start_routes",
-        primaryjoin="BusRouteStop.start_stop_id == BusStop.id",
+        primaryjoin="BusRouteStop.start_stop_id == BusStop.id_",
     )
     timetable: Mapped[List["BusTimetable"]] = relationship(
         "BusTimetable",
@@ -165,7 +165,7 @@ class BusRoute(Base):
         ),
     )
 
-    id: Mapped[int] = mapped_column("route_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("route_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("route_name", String(30))
     type_code: Mapped[str] = mapped_column("route_type_code", String(10))
     type_name: Mapped[str] = mapped_column("route_type_name", String(10))
@@ -206,18 +206,18 @@ class BusRoute(Base):
     )
     start_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        primaryjoin="BusRoute.start_stop_id == BusStop.id",
+        primaryjoin="BusRoute.start_stop_id == BusStop.id_",
     )
     end_stop: Mapped["BusStop"] = relationship(
         "BusStop",
-        primaryjoin="BusRoute.end_stop_id == BusStop.id",
+        primaryjoin="BusRoute.end_stop_id == BusStop.id_",
     )
 
 
 class BusStop(Base):
     __tablename__ = "bus_stop"
 
-    id: Mapped[int] = mapped_column("stop_id", Integer, primary_key=True)
+    id_: Mapped[int] = mapped_column("stop_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("stop_name", String(30))
     district: Mapped[int] = mapped_column("district_code", Integer)
     mobile_no: Mapped[str] = mapped_column("mobile_number", String(15))
@@ -229,6 +229,6 @@ class BusStop(Base):
         "BusRouteStop",
         back_populates="start_stop",
         cascade="all, delete-orphan",
-        primaryjoin="BusStop.id == BusRouteStop.start_stop_id",
+        primaryjoin="BusStop.id_ == BusRouteStop.start_stop_id",
         viewonly=True,
     )

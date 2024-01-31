@@ -9,6 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=utf-8
 
+COPY .env /.env
 COPY . /
 
 RUN pip install -U pip && \

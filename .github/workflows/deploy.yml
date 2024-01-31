@@ -9,13 +9,13 @@ jobs:
     if: ${{ github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' }}
     env:
       IMAGE_NAME: localhost:32000/hyuabot/hyuabot-api-server-python:latest
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      REDIS_URL: ${{ secrets.REDIS_URL }}
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+      REDIS_URL: ${{ secrets.PROD_REDIS_URL }}
+      POSTGRES_USER: ${{ secrets.PROD_POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.PROD_POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.PROD_POSTGRES_DB }}
+      POSTGRES_HOST: ${{ secrets.PROD_POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.PROD_POSTGRES_PORT }}
     steps:
     - name: Env setup
       run: |

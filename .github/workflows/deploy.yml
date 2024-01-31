@@ -19,7 +19,7 @@ jobs:
     steps:
     - name: Env setup
       run: |
-        echo "JWT_ALGORITHM=HS256" >> .env
+        echo "JWT_ALGORITHM=HS256" > .env
         echo "JWT_EXPIRATION=21000" >> .env
         echo "JWT_SECRET_KEY=SECRET" >> .env
         echo "SITE_DOMAIN=api.hyuabot.app" >> .env

@@ -9,9 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=utf-8
 
-COPY setup.cfg setup.py /
 COPY . /
-COPY .env /src/.env
 
 RUN pip install -U pip && \
     pip install --no-cache-dir -e /

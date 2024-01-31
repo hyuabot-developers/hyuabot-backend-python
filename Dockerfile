@@ -9,10 +9,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=utf-8
 
-COPY .env /.env
 COPY . /
+COPY .env /src/.env
 
 RUN pip install -U pip && \
     pip install --no-cache-dir -e /
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "38000", "--env-file", ".env"]
+WORKDIR /src
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "38000", "--env-file", ".env"]

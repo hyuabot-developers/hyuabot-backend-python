@@ -106,7 +106,7 @@ jobs:
         echo "SITE_DOMAIN=127.0.0.1" >> .env
         echo "ENVIRONMENT=testing" >> .env
         echo "CORS_HEADERS=[\"*\"]" >> .env
-        echo "CORS_ORIGINS=[\"http://localhost:3000\"]" >> .env
+        echo "CORS_ORIGINS=[\"http://localhost:3000\", \"https://map.hyuabot.app\"]" >> .env
         echo "POSTGRES_USER=${{ secrets.DB_USER }}" >> .env
         echo "POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
         echo "POSTGRES_DB=${{ secrets.DB_NAME }}" >> .env

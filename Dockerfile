@@ -9,17 +9,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=utf-8
 
-COPY setup.cfg setup.py /tmp/
+COPY . /
 
 RUN pip install -U pip && \
-    pip install --no-cache-dir -e /tmp/
-
-COPY . /src
-ENV PATH "$PATH:/src/scripts"
-
-RUN useradd -m -d /src -s /bin/bash app \
-    && chown -R app:app /src/* && chmod +x /src/scripts/*
+    pip install --no-cache-dir -e /
 
 WORKDIR /src
-
-CMD ["./scripts/start-prod.sh"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "38000"]

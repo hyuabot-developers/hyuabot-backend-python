@@ -7,17 +7,27 @@ jobs:
   deploy:
     runs-on: ["self-hosted", "ARM64"]
     if: ${{ github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' }}
-    needs: test
+    env:
+      IMAGE_NAME: localhost:32000/hyuabot/hyuabot-api-server-python:latest
+      DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+      REDIS_URL: ${{ secrets.PROD_REDIS_URL }}
+      POSTGRES_USER: ${{ secrets.PROD_POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.PROD_POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.PROD_POSTGRES_DB }}
+      POSTGRES_HOST: ${{ secrets.PROD_POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.PROD_POSTGRES_PORT }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-    - name: Build docker image
+    - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        push: false
+        context: .
+        file: ./Dockerfile
         load: true
-        tags: hyuabot-api-server-python:latest
-    - name: Rollout dev python backend pod
+        tags: ${{ env.IMAGE_NAME }}
+        no-cache: true
+    - name: Push docker image
       run: |
-        kubectl -n hyuabot-prod rollout restart deployment/hyuabot-api-python-development
+        docker push ${{ env.IMAGE_NAME }}

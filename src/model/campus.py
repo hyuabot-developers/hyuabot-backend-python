@@ -15,12 +15,14 @@ class Campus(Base):
     name: Mapped[str] = mapped_column("campus_name", String(30))
 
     cafeteria_list: Mapped[List["Cafeteria"]] = relationship(
-        back_populates="campus",
+        primaryjoin="Cafeteria.campus_id == Campus.id_",
+        uselist=True,
         cascade="all, delete-orphan",
         viewonly=True,
     )
     reading_room_list: Mapped[List["ReadingRoom"]] = relationship(
-        back_populates="campus",
+        primaryjoin="ReadingRoom.campus_id == Campus.id_",
+        uselist=True,
         cascade="all, delete-orphan",
         viewonly=True,
     )

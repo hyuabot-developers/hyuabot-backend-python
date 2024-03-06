@@ -1,6 +1,7 @@
 import strawberry
 
 from building.query import BuildingQuery, resolve_building, RoomQuery, resolve_room
+from cafeteria.query import CafeteriaQuery, resolve_menu
 
 
 @strawberry.type
@@ -16,4 +17,8 @@ class Query:
     room: list[RoomQuery] = strawberry.field(
         resolver=resolve_room,
         description="Room query",
+    )
+    menu: list[CafeteriaQuery] = strawberry.field(
+        resolver=resolve_menu,
+        description="Cafeteria query",
     )

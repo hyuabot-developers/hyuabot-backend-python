@@ -10,7 +10,11 @@ class CreateBusRouteRequest(BaseModel):
     type_code: Annotated[str, Field(alias="typeCode")]
     type_name: Annotated[
         str,
-        Field(alias="typeName", max_length=10, pattern=r"^(일반형|직행좌석형)시내버스$"),
+        Field(
+            alias="typeName",
+            max_length=10,
+            pattern=r"^(일반형|직행좌석형)시내버스$",
+        ),
     ]
     start_stop_id: Annotated[int, Field(alias="start", ge=1)]
     end_stop_id: Annotated[int, Field(alias="end", ge=1)]
@@ -56,7 +60,11 @@ class UpdateBusRouteRequest(BaseModel):
     type_code: Annotated[Optional[str], Field(alias="typeCode")]
     type_name: Annotated[
         Optional[str],
-        Field(alias="typeName", max_length=10, pattern=r"^(일반형|직행좌석형)시내버스$"),
+        Field(
+            alias="typeName",
+            max_length=10,
+            pattern=r"^(일반형|직행좌석형)시내버스$",
+        ),
     ]
     start_stop_id: Annotated[Optional[int], Field(alias="start", ge=1)]
     end_stop_id: Annotated[Optional[int], Field(alias="end", ge=1)]

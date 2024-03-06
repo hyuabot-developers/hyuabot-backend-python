@@ -29,6 +29,9 @@ class Building(Base):
     rooms: Mapped[list["Room"]] = relationship(
         "Room",
         primaryjoin="Building.name == Room.building_name",
+        uselist=True,
+        cascade="all, delete-orphan",
+        viewonly=True,
     )
 
 
@@ -52,4 +55,6 @@ class Room(Base):
     building: Mapped["Building"] = relationship(
         "Building",
         primaryjoin="Room.building_name == Building.name",
+        uselist=False,
+        viewonly=True,
     )

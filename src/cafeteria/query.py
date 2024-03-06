@@ -53,14 +53,14 @@ async def resolve_menu(
         Menu.restaurant_id.in_([cafeteria.id_ for cafeteria in cafeteria_list]),
     ]
     if date is not None:
-        menu_conditions.append(Menu.feed_date == date)
+        menu_conditions.append(Menu.feed_date.in_([date]))
     if type_ is not None:
         menu_conditions.append(Menu.time_type.in_(type_))
     menu_select_query = (
         select(Menu).where(*menu_conditions).options(joinedload(Menu.restaurant))
     )
     menu_list: list[Menu] = await fetch_all(menu_select_query)
-    menu_group_dict = {}
+    menu_group_dict: dict[int, list[MenuQuery]] = {}
     for menu in menu_list:
         if menu.restaurant_id not in menu_group_dict:
             menu_group_dict[menu.restaurant_id] = []

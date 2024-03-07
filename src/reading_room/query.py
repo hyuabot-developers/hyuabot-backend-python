@@ -9,7 +9,10 @@ from model.reading_room import ReadingRoom
 
 @strawberry.type
 class ReadingRoomQuery:
-    id_: int = strawberry.field(description="Reading room ID")
+    id_: int = strawberry.field(
+        description="Reading room ID",
+        name="id",
+    )
     name: str = strawberry.field(description="Reading room name")
     is_active: bool = strawberry.field(
         description="Is reading room active",

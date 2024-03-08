@@ -2,6 +2,7 @@ import strawberry
 
 from building.query import BuildingQuery, resolve_building, RoomQuery, resolve_room
 from cafeteria.query import CafeteriaQuery, resolve_menu
+from subway.query import StationQuery, resolve_subway
 from reading_room.query import ReadingRoomQuery, resolve_reading_room
 
 
@@ -27,4 +28,8 @@ class Query:
         resolver=resolve_reading_room,
         description="Reading room query",
         name="readingRoom",
+    )
+    subway: list[StationQuery] = strawberry.field(
+        resolver=resolve_subway,
+        description="Subway query",
     )

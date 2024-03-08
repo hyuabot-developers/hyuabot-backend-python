@@ -32,13 +32,6 @@ repos:
     types: [python]
     args: [--in-place, --remove-duplicate-keys]
 
-  - id: black
-    name: Format with Black
-    entry: python -m black
-    language: system
-    types: [python]
-    args: [src, tests]
-
   - id: flake8
     name: Check with Flake8
     entry: python -m flake8 src tests

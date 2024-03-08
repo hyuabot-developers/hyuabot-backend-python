@@ -257,9 +257,14 @@ async def create_test_reading_room(create_test_campus) -> None:
     values = ""
     for i in range(1, 10):
         values += (
-            f"({i % 2 + 1}, {i}, 'test_reading_room{i}', true, true, 100, 100, 0),"
+            f"({i % 2 + 1}, {i}, 'test_reading_room{i}', "
+            f"true, true, 100, 100, 0, '2023-12-01 23:59:59 +09:00'),"
         )
-    insert_sql = f"INSERT INTO reading_room VALUES {values}"[:-1]
+    insert_sql = (
+        "INSERT INTO reading_room (campus_id, room_id, room_name, "
+        "is_active, is_reservable, total, active_total, occupied, "
+        f"last_updated_time) VALUES {values}"
+    )[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
 

@@ -134,8 +134,18 @@ async def resolve_subway(
     now = datetime.datetime.now(tz=KST)
     timetable_filter: Callable[[SubwayTimetable], bool] = lambda x: (
         ((x.is_weekdays == "weekdays") == weekdays if weekdays is not None else True)
-        and (start is None or x.departure_time >= start if start is not None else True)
-        and (end is None or x.departure_time <= end if end is not None else True)
+        and (
+            start is None
+            or (x.departure_time.replace(tzinfo=KST) >= start.replace(tzinfo=KST))
+            if start is not None
+            else True
+        )
+        and (
+            end is None
+            or (x.departure_time.replace(tzinfo=KST) <= end.replace(tzinfo=KST))
+            if end is not None
+            else True
+        )
     )
     realtime_filter: Callable[[SubwayRealtime], bool] = lambda x: (
         x.updated_at.astimezone(timezone("Asia/Seoul")) >= now - x.time
@@ -170,7 +180,8 @@ async def resolve_subway(
                             ),
                         )
                         for timetable in sorted(
-                            up_timetable, key=lambda x: x.departure_time,
+                            up_timetable,
+                            key=lambda x: x.departure_time,
                         )
                     ],
                     down=[
@@ -189,7 +200,8 @@ async def resolve_subway(
                             ),
                         )
                         for timetable in sorted(
-                            down_timetable, key=lambda x: x.departure_time,
+                            down_timetable,
+                            key=lambda x: x.departure_time,
                         )
                     ],
                 ),
@@ -200,7 +212,8 @@ async def resolve_subway(
                             location=realtime.location,
                             stop=realtime.stop,
                             time=calculate_remaining_time(
-                                realtime.updated_at, realtime.time,
+                                realtime.updated_at,
+                                realtime.time,
                             ),
                             train_no=realtime.train_number,
                             is_express=realtime.is_express,
@@ -222,7 +235,8 @@ async def resolve_subway(
                             location=realtime.location,
                             stop=realtime.stop,
                             time=calculate_remaining_time(
-                                realtime.updated_at, realtime.time,
+                                realtime.updated_at,
+                                realtime.time,
                             ),
                             train_no=realtime.train_number,
                             is_express=realtime.is_express,

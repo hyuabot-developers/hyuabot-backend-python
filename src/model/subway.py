@@ -93,7 +93,16 @@ class SubwayTimetable(Base):
 
     station: Mapped["SubwayRouteStation"] = relationship(
         "SubwayRouteStation",
+        primaryjoin="SubwayTimetable.station_id == SubwayRouteStation.id_",
         back_populates="timetable",
+    )
+    start_station: Mapped["SubwayRouteStation"] = relationship(
+        "SubwayRouteStation",
+        primaryjoin="SubwayTimetable.start_station_id == SubwayRouteStation.id_",
+    )
+    terminal_station: Mapped["SubwayRouteStation"] = relationship(
+        "SubwayRouteStation",
+        primaryjoin="SubwayTimetable.terminal_station_id == SubwayRouteStation.id_",
     )
 
 

@@ -52,6 +52,10 @@ class BusTimetable(Base):
         Time(timezone=True),
     )
 
+    start_stop: Mapped["BusStop"] = relationship(
+        "BusStop",
+        primaryjoin="BusTimetable.start_stop_id == BusStop.id_",
+    )
     route: Mapped["BusRoute"] = relationship(
         "BusRoute",
         back_populates="timetable",
@@ -230,5 +234,12 @@ class BusStop(Base):
         back_populates="start_stop",
         cascade="all, delete-orphan",
         primaryjoin="BusStop.id_ == BusRouteStop.start_stop_id",
+        viewonly=True,
+    )
+    routes: Mapped[List["BusRouteStop"]] = relationship(
+        "BusRouteStop",
+        back_populates="stop",
+        cascade="all, delete-orphan",
+        primaryjoin="BusStop.id_ == BusRouteStop.stop_id",
         viewonly=True,
     )

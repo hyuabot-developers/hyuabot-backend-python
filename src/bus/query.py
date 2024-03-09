@@ -13,7 +13,7 @@ from utils import KST
 
 @strawberry.type
 class BusStopItem:
-    id_: str = strawberry.field(description="Stop ID", name="id")
+    id_: int = strawberry.field(description="Stop ID", name="id")
     name: str = strawberry.field(description="Stop name")
     district_code: int = strawberry.field(
         description="District code", name="districtCode",
@@ -38,7 +38,7 @@ class BusRealtimeQuery:
     stop: int = strawberry.field(description="Stop")
     time: float = strawberry.field(description="Time")
     seat: int = strawberry.field(description="Seat")
-    low_floor: int = strawberry.field(description="Low floor", name="lowFloor")
+    low_floor: bool = strawberry.field(description="Low floor", name="lowFloor")
     updated_at: datetime.datetime = strawberry.field(
         description="Updated at", name="updatedAt",
     )
@@ -71,7 +71,7 @@ class BusRunningListQuery:
 
 @strawberry.type
 class BusRouteQuery:
-    id_: str = strawberry.field(description="Route ID", name="id")
+    id_: int = strawberry.field(description="Route ID", name="id")
     name: str = strawberry.field(description="Route name")
     type_: BusRouteTypeQuery = strawberry.field(description="Type", name="type")
     company: BusRouteCompanyQuery = strawberry.field(description="Company")
@@ -99,7 +99,7 @@ class StopQuery(BusStopItem):
 
 
 async def resolve_bus(
-    id_: list[str] | None = None,
+    id_: list[int] | None = None,
     name: str | None = None,
     route: str | None = None,
     weekdays: str | None = None,
@@ -175,8 +175,7 @@ async def resolve_bus(
     result: list[StopQuery] = []
     now = datetime.datetime.now(tz=KST)
     timetable_filter: Callable[[BusTimetable], bool] = lambda x: (
-        weekdays is None
-        or x.weekday == weekdays
+        (weekdays is None or x.weekday == weekdays)
         and (
             start is None
             or (x.departure_time.replace(tzinfo=KST) >= start.replace(tzinfo=KST))
@@ -269,11 +268,11 @@ async def resolve_bus(
                         realtime=[
                             BusRealtimeQuery(
                                 sequence=realtime.sequence,
-                                stop=realtime.stop,
+                                stop=realtime.stops,
                                 time=calculate_remaining_time(
                                     realtime.updated_at, realtime.time,
                                 ),
-                                seat=realtime.seat,
+                                seat=realtime.seats,
                                 low_floor=realtime.low_floor,
                                 updated_at=realtime.updated_at.astimezone(
                                     timezone("Asia/Seoul"),

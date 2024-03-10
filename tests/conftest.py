@@ -6,6 +6,7 @@ from typing import AsyncGenerator
 import pytest
 import pytest_asyncio
 from async_asgi_testclient import TestClient
+from pytz import timezone
 from sqlalchemy import text
 
 from database import engine
@@ -152,9 +153,12 @@ async def create_test_bus_timetable(create_test_bus_route_stop) -> None:
 @pytest_asyncio.fixture
 async def create_test_bus_realtime(create_test_bus_route_stop) -> None:
     values = ""
+    current_time = datetime.datetime.now().astimezone(timezone("Asia/Seoul")).strftime(
+        "%Y-%m-%dT%H:%M:%S%z",
+    )
     for i in range(1, 10):
         values += (
-            f"(1, 1, {i}, {i}, 41, '00:0{i}:00', false, '2023-12-01T23:59:59+09:00'),"
+            f"(1, 1, {i}, {i}, 41, '00:0{i}:00', false, '{current_time}'),"
         )
     insert_sql = f"INSERT INTO bus_realtime VALUES {values}"[:-1]
     async with engine.begin() as conn:

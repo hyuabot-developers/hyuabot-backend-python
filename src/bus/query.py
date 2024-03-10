@@ -1,0 +1,308 @@
+import datetime
+from typing import Callable
+
+import strawberry
+from pytz import timezone
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload, load_only, joinedload
+
+from database import fetch_all
+from model.bus import BusStop, BusRouteStop, BusTimetable, BusRealtime, BusRoute
+from utils import KST
+
+
+@strawberry.type
+class BusStopItem:
+    id_: int = strawberry.field(description="Stop ID", name="id")
+    name: str = strawberry.field(description="Stop name")
+    district_code: int = strawberry.field(
+        description="District code", name="districtCode",
+    )
+    region_name: str = strawberry.field(description="Region name", name="region")
+    mobile_number: str = strawberry.field(
+        description="Mobile number", name="mobileNumber",
+    )
+    latitude: float = strawberry.field(description="Latitude")
+    longitude: float = strawberry.field(description="Longitude")
+
+
+@strawberry.type
+class BusTimetableQuery:
+    weekdays: str = strawberry.field(description="Is weekdays", name="weekdays")
+    departure_time: str = strawberry.field(description="Departure time", name="time")
+
+
+@strawberry.type
+class BusRealtimeQuery:
+    sequence: int = strawberry.field(description="Sequence")
+    stop: int = strawberry.field(description="Stop")
+    time: float = strawberry.field(description="Time")
+    seat: int = strawberry.field(description="Seat")
+    low_floor: bool = strawberry.field(description="Low floor", name="lowFloor")
+    updated_at: datetime.datetime = strawberry.field(
+        description="Updated at", name="updatedAt",
+    )
+
+
+@strawberry.type
+class BusRouteCompanyQuery:
+    id_: int = strawberry.field(description="Company ID", name="id")
+    name: str = strawberry.field(description="Company name")
+    telephone: str = strawberry.field(description="Company telephone")
+
+
+@strawberry.type
+class BusRouteTypeQuery:
+    code: str = strawberry.field(description="Type code", name="code")
+    name: str = strawberry.field(description="Type name")
+
+
+@strawberry.type
+class BusRunningTimeQuery:
+    first: str = strawberry.field(description="First time", name="first")
+    last: str = strawberry.field(description="Last time", name="last")
+
+
+@strawberry.type
+class BusRunningListQuery:
+    up: BusRunningTimeQuery = strawberry.field(description="Up")
+    down: BusRunningTimeQuery = strawberry.field(description="Down")
+
+
+@strawberry.type
+class BusRouteQuery:
+    id_: int = strawberry.field(description="Route ID", name="id")
+    name: str = strawberry.field(description="Route name")
+    type_: BusRouteTypeQuery = strawberry.field(description="Type", name="type")
+    company: BusRouteCompanyQuery = strawberry.field(description="Company")
+    district_code: int = strawberry.field(
+        description="District code", name="districtCode",
+    )
+    running_time: BusRunningListQuery = strawberry.field(
+        description="Running time", name="runningTime",
+    )
+    start_stop: BusStopItem = strawberry.field(description="Start stop", name="start")
+    end_stop: BusStopItem = strawberry.field(description="End stop", name="end")
+
+
+@strawberry.type
+class BusStopRouteQuery:
+    sequence: int = strawberry.field(description="Sequence")
+    info: BusRouteQuery = strawberry.field(description="Info")
+    timetable: list[BusTimetableQuery] = strawberry.field(description="Timetable")
+    realtime: list[BusRealtimeQuery] = strawberry.field(description="Realtime")
+
+
+@strawberry.type
+class StopQuery(BusStopItem):
+    routes: list[BusStopRouteQuery] = strawberry.field(description="Routes")
+
+
+async def resolve_bus(
+    id_: list[int] | None = None,
+    name: str | None = None,
+    route: str | None = None,
+    weekdays: str | None = None,
+    start: datetime.time | None = None,
+    end: datetime.time | None = None,
+) -> list[StopQuery]:
+    stop_conditions = []
+    if id_:
+        stop_conditions.append(BusStop.id_.in_(id_))
+    if name:
+        stop_conditions.append(BusStop.name.like(f"%{name}%"))
+
+    stop_query = (
+        select(BusStop)
+        .options(
+            selectinload(BusStop.routes).options(
+                selectinload(BusRouteStop.timetable).options(
+                    load_only(BusTimetable.weekday, BusTimetable.departure_time),
+                ),
+                selectinload(BusRouteStop.realtime).options(
+                    load_only(
+                        BusRealtime.sequence,
+                        BusRealtime.stops,
+                        BusRealtime.time,
+                        BusRealtime.seats,
+                        BusRealtime.low_floor,
+                        BusRealtime.updated_at,
+                    ),
+                ),
+                joinedload(BusRouteStop.route).options(
+                    load_only(
+                        BusRoute.company_id,
+                        BusRoute.company_name,
+                        BusRoute.company_telephone,
+                        BusRoute.district,
+                        BusRoute.up_first_time,
+                        BusRoute.up_last_time,
+                        BusRoute.down_first_time,
+                        BusRoute.down_last_time,
+                        BusRoute.id_,
+                        BusRoute.name,
+                        BusRoute.type_code,
+                        BusRoute.type_name,
+                    ),
+                    joinedload(BusRoute.start_stop).options(
+                        load_only(
+                            BusStop.id_,
+                            BusStop.name,
+                            BusStop.district,
+                            BusStop.region,
+                            BusStop.mobile_no,
+                            BusStop.latitude,
+                            BusStop.longitude,
+                        ),
+                    ),
+                    joinedload(BusRoute.end_stop).options(
+                        load_only(
+                            BusStop.id_,
+                            BusStop.name,
+                            BusStop.district,
+                            BusStop.region,
+                            BusStop.mobile_no,
+                            BusStop.latitude,
+                            BusStop.longitude,
+                        ),
+                    ),
+                ),
+            ),
+        )
+        .filter(*stop_conditions)
+    )
+    stops = await fetch_all(stop_query)
+    result: list[StopQuery] = []
+    now = datetime.datetime.now(tz=KST)
+    timetable_filter: Callable[[BusTimetable], bool] = lambda x: (
+        (weekdays is None or x.weekday == weekdays)
+        and (
+            start is None
+            or (x.departure_time.replace(tzinfo=KST) >= start.replace(tzinfo=KST))
+            if start is not None
+            else True
+        )
+        and (
+            end is None
+            or (x.departure_time.replace(tzinfo=KST) <= end.replace(tzinfo=KST))
+            if end is not None
+            else True
+        )
+    )
+    realtime_filter: Callable[[BusRealtime], bool] = lambda x: (
+        x.updated_at.astimezone(timezone("Asia/Seoul")) >= now - x.time
+    )
+    for stop in stops:
+        result.append(
+            StopQuery(
+                id_=stop.id_,
+                name=stop.name,
+                district_code=stop.district,
+                region_name=stop.region,
+                mobile_number=stop.mobile_no,
+                latitude=stop.latitude,
+                longitude=stop.longitude,
+                routes=[
+                    BusStopRouteQuery(
+                        sequence=route.sequence,
+                        info=BusRouteQuery(
+                            id_=route.route.id_,
+                            name=route.route.name,
+                            type_=BusRouteTypeQuery(
+                                code=route.route.type_code,
+                                name=route.route.type_name,
+                            ),
+                            company=BusRouteCompanyQuery(
+                                id_=route.route.company_id,
+                                name=route.route.company_name,
+                                telephone=route.route.company_telephone,
+                            ),
+                            district_code=route.route.district,
+                            running_time=BusRunningListQuery(
+                                up=BusRunningTimeQuery(
+                                    first=route.route.up_first_time.strftime(
+                                        "%H:%M:%S",
+                                    ),
+                                    last=route.route.up_last_time.strftime("%H:%M:%S"),
+                                ),
+                                down=BusRunningTimeQuery(
+                                    first=route.route.down_first_time.strftime(
+                                        "%H:%M:%S",
+                                    ),
+                                    last=route.route.down_last_time.strftime(
+                                        "%H:%M:%S",
+                                    ),
+                                ),
+                            ),
+                            start_stop=BusStopItem(
+                                id_=route.route.start_stop.id_,
+                                name=route.route.start_stop.name,
+                                district_code=route.route.start_stop.district,
+                                region_name=route.route.start_stop.region,
+                                mobile_number=route.route.start_stop.mobile_no,
+                                latitude=route.route.start_stop.latitude,
+                                longitude=route.route.start_stop.longitude,
+                            ),
+                            end_stop=BusStopItem(
+                                id_=route.route.end_stop.id_,
+                                name=route.route.end_stop.name,
+                                district_code=route.route.end_stop.district,
+                                region_name=route.route.end_stop.region,
+                                mobile_number=route.route.end_stop.mobile_no,
+                                latitude=route.route.end_stop.latitude,
+                                longitude=route.route.end_stop.longitude,
+                            ),
+                        ),
+                        timetable=[
+                            BusTimetableQuery(
+                                weekdays=timetable.weekday,
+                                departure_time=timetable.departure_time.strftime(
+                                    "%H:%M:%S",
+                                ),
+                            )
+                            for timetable in sorted(
+                                list(filter(timetable_filter, route.timetable)),
+                                key=lambda x: x.departure_time,
+                            )
+                        ],
+                        realtime=[
+                            BusRealtimeQuery(
+                                sequence=realtime.sequence,
+                                stop=realtime.stops,
+                                time=calculate_remaining_time(
+                                    realtime.updated_at, realtime.time,
+                                ),
+                                seat=realtime.seats,
+                                low_floor=realtime.low_floor,
+                                updated_at=realtime.updated_at.astimezone(
+                                    timezone("Asia/Seoul"),
+                                ),
+                            )
+                            for realtime in sorted(
+                                list(filter(realtime_filter, route.realtime)),
+                                key=lambda x: x.sequence,
+                            )
+                        ],
+                    )
+                    for route in sorted(
+                        list(
+                            filter(
+                                lambda x: route is None or route in x.route.name,
+                                stop.routes,
+                            ),
+                        ),
+                        key=lambda x: x.sequence,
+                    )
+                ],
+            ),
+        )
+    return result
+
+
+def calculate_remaining_time(
+    updated_at: datetime.datetime,
+    time: datetime.timedelta,
+) -> float:
+    now = datetime.datetime.now(tz=KST)
+    remaining_secs = (updated_at + time - now).total_seconds()
+    return round(remaining_secs / 60, 1)

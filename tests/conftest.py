@@ -153,13 +153,15 @@ async def create_test_bus_timetable(create_test_bus_route_stop) -> None:
 @pytest_asyncio.fixture
 async def create_test_bus_realtime(create_test_bus_route_stop) -> None:
     values = ""
-    current_time = datetime.datetime.now().astimezone(timezone("Asia/Seoul")).strftime(
-        "%Y-%m-%dT%H:%M:%S%z",
+    current_time = (
+        datetime.datetime.now()
+        .astimezone(timezone("Asia/Seoul"))
+        .strftime(
+            "%Y-%m-%dT%H:%M:%S%z",
+        )
     )
     for i in range(1, 10):
-        values += (
-            f"(1, 1, {i}, {i}, 41, '00:0{i}:00', false, '{current_time}'),"
-        )
+        values += f"(1, 1, {i}, {i}, 41, '00:0{i}:00', false, '{current_time}'),"
     insert_sql = f"INSERT INTO bus_realtime VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
@@ -289,10 +291,10 @@ async def create_test_shuttle_period_type() -> None:
 async def create_test_shuttle_period(create_test_shuttle_period_type) -> None:
     types = ["semester", "vacation", "vacation_session"]
     start = datetime.datetime.combine(
-        datetime.datetime.now() - datetime.timedelta(days=365),
+        datetime.datetime.now().astimezone(timezone("Asia/Seoul")).date(),
         datetime.datetime.min.time(),
     )
-    values = "('semester', '2021-12-01 00:00:00+09:00', '2022-12-01 23:59:59+09:00'),"
+    values = "('semester', '2024-01-01 00:00:00+09:00', '2024-02-01 23:59:59+09:00'),"
     for i in range(1, 10):
         end = datetime.datetime.combine(
             start + datetime.timedelta(days=random.randint(1, 30)),
@@ -314,6 +316,8 @@ async def create_test_shuttle_holiday() -> None:
     start_date = datetime.datetime.now().date()
     types = ["weekends", "halt"]
     values = ""
+    values += "('2024-01-01', 'weekends', 'solar'),"
+    values += "('2024-01-02', 'halt', 'solar'),"
     for i in range(1, 10):
         values += f"('{start_date}', '{random.choice(types)}', 'solar'),"
         start_date += datetime.timedelta(days=random.randint(1, 30))
@@ -366,6 +370,9 @@ async def create_test_shuttle_timetable(
     insert_sql = f"INSERT INTO shuttle_timetable VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
+        await conn.execute(
+            text("refresh materialized view shuttle_timetable_view"),
+        )
 
 
 # Subway Datas

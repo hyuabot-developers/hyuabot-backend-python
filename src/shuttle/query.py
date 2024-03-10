@@ -17,7 +17,7 @@ from model.shuttle import (
     ShuttleRoute,
 )
 from shuttle.exceptions import PeriodNotFound
-
+from utils import KST
 
 lunar_calendar = KoreanLunarCalendar()
 kr_holidays = holidays.country_holidays("KR")
@@ -217,9 +217,17 @@ async def resolve_shuttle_timetable(
     if stop_name:
         timetable_condition.append(ShuttleTimetableView.stop_name.in_(stop_name))
     if start:
-        timetable_condition.append(ShuttleTimetableView.departure_time >= start)
+        timetable_condition.append(
+            ShuttleTimetableView.departure_time >= start.replace(
+                tzinfo=KST,
+            ),
+        )
     if end:
-        timetable_condition.append(ShuttleTimetableView.departure_time <= end)
+        timetable_condition.append(
+            ShuttleTimetableView.departure_time <= end.replace(
+                tzinfo=KST,
+            ),
+        )
     select_query = (
         select(ShuttleTimetableView)
         .options(
@@ -267,7 +275,10 @@ async def resolve_shuttle_period(
         if end:
             period_condition.append(ShuttlePeriod.end >= end)
 
-    select_query = select(ShuttlePeriod).where(and_(*period_condition))
+    if period_condition:
+        select_query = select(ShuttlePeriod).where(and_(*period_condition))
+    else:
+        select_query = select(ShuttlePeriod)
     period_list = await fetch_all(select_query)
     return [
         ShuttlePeriodQuery(
@@ -295,9 +306,6 @@ async def resolve_shuttle_holiday() -> list[ShuttleHolidayQuery]:
 async def resolve_shuttle_stop(
     stop_name: list[str] | None = None,
 ) -> list[ShuttleStopQuery]:
-    stop_condition = []
-    if stop_name:
-        stop_condition.append(ShuttleStop.name.in_(stop_name))
     select_query = (
         select(ShuttleStop)
         .options(
@@ -319,8 +327,9 @@ async def resolve_shuttle_stop(
                 ),
             ),
         )
-        .where(and_(*stop_condition))
     )
+    if stop_name:
+        select_query = select_query.where(ShuttleStop.name.in_(stop_name))
     stop_list = await fetch_all(select_query)
     return [
         ShuttleStopQuery(
@@ -376,8 +385,9 @@ async def resolve_shuttle_route(
                 ),
             ),
         )
-        .where(and_(*route_condition))
     )
+    if route_condition:
+        select_query = select_query.where(and_(*route_condition))
     route_list = await fetch_all(select_query)
     return [
         ShuttleRouteQuery(

@@ -3,6 +3,7 @@ import strawberry
 from building.query import BuildingQuery, resolve_building, RoomQuery, resolve_room
 from bus.query import StopQuery, resolve_bus
 from cafeteria.query import CafeteriaQuery, resolve_menu
+from shuttle.query import ShuttleQuery, resolve_shuttle
 from subway.query import StationQuery, resolve_subway
 from reading_room.query import ReadingRoomQuery, resolve_reading_room
 
@@ -37,4 +38,8 @@ class Query:
     bus: list[StopQuery] = strawberry.field(
         resolver=resolve_bus,
         description="Bus stop query",
+    )
+    shuttle: ShuttleQuery = strawberry.field(
+        resolver=resolve_shuttle,
+        description="Shuttle query",
     )

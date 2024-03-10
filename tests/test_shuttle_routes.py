@@ -307,7 +307,7 @@ async def test_get_shuttle_period_filter_date(
 ):
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/shuttle/period?date=2022-03-01",
+        "/api/shuttle/period?date=2024-01-15",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -315,8 +315,8 @@ async def test_get_shuttle_period_filter_date(
     assert len(response_json.get("data")) > 0
     for period in response_json.get("data"):
         assert period.get("type") == "semester"
-        assert period.get("start") <= "2022-03-01"
-        assert period.get("end") >= "2022-03-01"
+        assert period.get("start") <= "2024-01-15"
+        assert period.get("end") >= "2024-01-15"
 
 
 @pytest.mark.asyncio
@@ -356,8 +356,8 @@ async def test_create_shuttle_period_duplicate(
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "type": "semester",
-            "start": "2021-12-01",
-            "end": "2022-12-01",
+            "start": "2024-01-01",
+            "end": "2024-02-01",
         },
     )
     assert response.status_code == 409
@@ -403,7 +403,7 @@ async def test_get_shuttle_period_item(
 ):
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/shuttle/period/semester/2021-12-01/2022-12-01",
+        "/api/shuttle/period/semester/2024-01-01/2024-02-01",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -439,7 +439,7 @@ async def test_delete_shuttle_period_item(
 ):
     access_token = await get_access_token(client)
     response = await client.delete(
-        "/api/shuttle/period/semester/2021-12-01/2022-12-01",
+        "/api/shuttle/period/semester/2024-01-01/2024-02-01",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 204

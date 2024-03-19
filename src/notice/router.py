@@ -101,6 +101,7 @@ async def get_notice_list(
         "id": x.id_,
         "title": x.title,
         "url": x.url,
+        "language": x.language,
         "expiredAt": x.expired_at,
     }
     return {"data": map(mapping_func, data)}
@@ -123,6 +124,7 @@ async def get_notice(
         "id": data.id_,
         "title": data.title,
         "url": data.url,
+        "language": data.language,
         "expiredAt": data.expired_at,
     }
 
@@ -149,6 +151,7 @@ async def create_notice(
         "id": data.id_,
         "title": data.title,
         "url": data.url,
+        "language": data.language,
         "expiredAt": data.expired_at,
     }
 
@@ -176,6 +179,7 @@ async def update_notice(
         "id": data.id_,
         "title": data.title,
         "url": data.url,
+        "language": data.language,
         "expiredAt": data.expired_at,
     }
 

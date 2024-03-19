@@ -18,6 +18,7 @@ class CreateNoticeCategoryRequest(BaseModel):
 class CreateNoticeReqeust(BaseModel):
     title: Annotated[str, Field(max_length=100, alias="title")]
     url: Annotated[str, Field(max_length=100, alias="url")]
+    language: Annotated[str, Field(max_length=10, alias="language", default="korean")]
     expired_at: Annotated[
         Optional[datetime.datetime],
         Field(alias="expired", default=None),
@@ -28,6 +29,7 @@ class CreateNoticeReqeust(BaseModel):
             "example": {
                 "title": "공지사항",
                 "url": "https://www.google.com",
+                "language": "korean",
                 "expired": "2021-07-31T00:00:00+09:00",
             },
         }
@@ -46,12 +48,17 @@ class UpdateNoticeRequest(BaseModel):
         Optional[datetime.datetime],
         Field(alias="expired", default=None),
     ]
+    language: Annotated[
+        Optional[str],
+        Field(max_length=10, alias="language", default=None),
+    ]
 
     class Config:
         json_schema_extra = {
             "example": {
                 "title": "공지사항",
                 "url": "https://www.google.com",
+                "language": "korean",
                 "expired": "2021-07-31T00:00:00+09:00",
             },
         }
@@ -76,6 +83,7 @@ class NoticeListItemResponse(BaseModel):
     title: Annotated[str, Field(max_length=100, alias="title")]
     url: Annotated[str, Field(max_length=100, alias="url")]
     user_id: Annotated[str, Field(alias="userID")]
+    language: Annotated[str, Field(max_length=10, alias="language")]
     expired_at: Annotated[
         Optional[datetime.datetime],
         Field(alias="expiredAt"),
@@ -91,6 +99,7 @@ class NoticeDetailResponse(BaseModel):
     title: Annotated[str, Field(max_length=100, alias="title")]
     url: Annotated[str, Field(max_length=100, alias="url")]
     user_id: Annotated[str, Field(alias="userID")]
+    language: Annotated[str, Field(max_length=10, alias="language")]
     expired_at: Annotated[
         Optional[datetime.datetime],
         Field(alias="expiredAt"),

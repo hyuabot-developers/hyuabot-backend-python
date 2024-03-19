@@ -87,6 +87,7 @@ create table if not exists notices (
     expired_at timestamptz,
     category_id int not null,
     user_id varchar(20) not null,
+    language varchar(10) not null default 'korean',
     constraint fk_category_id
         foreign key (category_id)
         references notice_category(category_id),
@@ -395,6 +396,9 @@ create table if not exists restaurant(
     restaurant_name varchar(50) not null, -- 식당 이름
     latitude double precision not null, -- 식당 위도
     longitude double precision not null, -- 식당 경도
+    breakfast_time varchar(40), -- 아침 식사 시간
+    lunch_time varchar(40), -- 점심 식사 시간
+    dinner_time varchar(40), -- 저녁 식사 시간
     constraint fk_campus_id
         foreign key (campus_id)
         references campus(campus_id)

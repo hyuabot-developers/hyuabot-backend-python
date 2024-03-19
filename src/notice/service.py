@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import select, insert, delete, update
 
 from database import fetch_all, fetch_one, execute_query
@@ -112,20 +114,22 @@ async def update_notice(
     notice_id: int,
     new_notice: UpdateNoticeRequest,
 ) -> Notice | None:
+    update_data: dict[str, str | datetime.datetime] = {}
+    if new_notice.title:
+        update_data["title"] = new_notice.title
+    if new_notice.url:
+        update_data["url"] = new_notice.url
+    if new_notice.expired_at:
+        update_data["expired_at"] = new_notice.expired_at
+    if new_notice.language:
+        update_data["language"] = new_notice.language
     update_query = (
         update(Notice)
         .where(
             Notice.category_id == notice_category_id,
             Notice.id_ == notice_id,
         )
-        .values(
-            {
-                "user_id": user_id,
-                "title": new_notice.title,
-                "url": new_notice.url,
-                "expired_at": new_notice.expired_at,
-            },
-        )
+        .values(update_data)
         .returning(Notice)
     )
 

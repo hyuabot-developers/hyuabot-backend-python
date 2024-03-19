@@ -48,6 +48,11 @@ class Notice(Base):
     user_id: Mapped[str] = mapped_column("user_id", String(20))
     title: Mapped[str] = mapped_column("title", String(100))
     url: Mapped[str] = mapped_column("url", String(200))
+    language: Mapped[str] = mapped_column(
+        "language",
+        String(10),
+        default="korean",
+    )
     expired_at: Mapped[datetime.datetime] = mapped_column(
         "expired_at",
         DateTime(timezone=True),

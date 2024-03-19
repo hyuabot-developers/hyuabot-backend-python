@@ -251,7 +251,8 @@ async def create_test_notice_category() -> None:
 async def create_test_notice(create_test_notice_category, create_test_user) -> None:
     values = ""
     for i in range(9999, 10000):
-        values += f"({i}, 'test_title{i}', 'test_url', '2023-12-01T23:59:59', 100, 'test_id'),"
+        language = random.choice(["korean", "english"])
+        values += f"({i}, 'test_title{i}', 'test_url', '2023-12-01T23:59:59', 100, 'test_id', '{language}'),"
     insert_sql = f"INSERT INTO notices VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))

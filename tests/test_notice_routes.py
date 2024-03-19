@@ -194,6 +194,7 @@ async def test_get_notice_list(
         assert notice.get("title") is not None
         assert notice.get("userID") is not None
         assert notice.get("expiredAt") is not None
+        assert notice.get("language") is not None
         assert notice.get("url") is not None
 
 
@@ -233,6 +234,7 @@ async def test_get_notice(
     assert response_json.get("title") == "test_title9999"
     assert response_json.get("userID") == "test_id"
     assert response_json.get("expiredAt") is not None
+    assert response_json.get("language") in ["korean", "english"]
     assert response_json.get("url") == "test_url"
 
 
@@ -267,6 +269,7 @@ async def test_create_notice(
             "title": "test_title",
             "url": "test_url",
             "expired": "2021-07-31T00:00:00+09:00",
+            "language": "korean",
         },
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -276,6 +279,7 @@ async def test_create_notice(
     assert response_json.get("title") == "test_title"
     assert response_json.get("userID") == "test_id"
     assert response_json.get("expiredAt") is not None
+    assert response_json.get("language") == "korean"
     assert response_json.get("url") == "test_url"
 
 
@@ -293,6 +297,7 @@ async def test_create_notice_category_not_found(
             "title": "test_title",
             "url": "test_url",
             "expired": "2021-07-31T00:00:00+09:00",
+            "language": "korean",
         },
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -322,6 +327,7 @@ async def test_create_notice_internal_server_error(
             "title": "test_title",
             "url": "test_url",
             "expired": "2021-07-31T00:00:00+09:00",
+            "language": "korean",
         },
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -360,6 +366,7 @@ async def test_update_notice(
             "title": "test_title",
             "url": "test_url",
             "expired": "2021-07-31T00:00:00+09:00",
+            "language": "korean",
         },
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -369,6 +376,7 @@ async def test_update_notice(
     assert response_json.get("title") == "test_title"
     assert response_json.get("userID") == "test_id"
     assert response_json.get("expiredAt") is not None
+    assert response_json.get("language") == "korean"
     assert response_json.get("url") == "test_url"
 
 

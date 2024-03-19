@@ -250,9 +250,11 @@ async def create_test_notice_category() -> None:
 @pytest_asyncio.fixture
 async def create_test_notice(create_test_notice_category, create_test_user) -> None:
     values = ""
+    now = datetime.datetime.now().astimezone(timezone("Asia/Seoul"))
     for i in range(9999, 10000):
-        language = random.choice(["korean", "english"])
-        values += f"({i}, 'test_title{i}', 'test_url', '2023-12-01T23:59:59', 100, 'test_id', '{language}'),"
+        expired_at = now + datetime.timedelta(days=random.randint(1, 30))
+        expired_at_str = expired_at.strftime("%Y-%m-%dT%H:%M:%S%z")
+        values += f"({i}, 'test_title{i}', 'test_url', '{expired_at_str}', 100, 'test_id', 'korean'),"
     insert_sql = f"INSERT INTO notices VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))

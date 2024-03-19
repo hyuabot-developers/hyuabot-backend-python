@@ -3,6 +3,7 @@ import strawberry
 from building.query import BuildingQuery, resolve_building, RoomQuery, resolve_room
 from bus.query import StopQuery, resolve_bus
 from cafeteria.query import CafeteriaQuery, resolve_menu
+from notice.query import NoticeQuery, resolve_notice
 from shuttle.query import ShuttleQuery, resolve_shuttle
 from subway.query import StationQuery, resolve_subway
 from reading_room.query import ReadingRoomQuery, resolve_reading_room
@@ -42,4 +43,8 @@ class Query:
     shuttle: ShuttleQuery = strawberry.field(
         resolver=resolve_shuttle,
         description="Shuttle query",
+    )
+    notice: list[NoticeQuery] = strawberry.field(
+        resolver=resolve_notice,
+        description="Notice query",
     )

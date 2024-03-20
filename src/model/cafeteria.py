@@ -30,6 +30,9 @@ class Cafeteria(Base):
     name: Mapped[str] = mapped_column("restaurant_name", String(50))
     latitude: Mapped[float] = mapped_column("latitude", Float)
     longitude: Mapped[float] = mapped_column("longitude", Float)
+    breakfast_running_time: Mapped[str] = mapped_column("breakfast_time", String(40))
+    lunch_running_time: Mapped[str] = mapped_column("lunch_time", String(40))
+    dinner_running_time: Mapped[str] = mapped_column("dinner_time", String(40))
 
     campus: Mapped["Campus"] = relationship(back_populates="cafeteria_list")
     menu_list: Mapped[List["Menu"]] = relationship(

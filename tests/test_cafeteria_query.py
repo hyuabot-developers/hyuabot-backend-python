@@ -16,7 +16,8 @@ async def test_get_cafeteria_query(
                 id, name, latitude, longitude,
                 menu {
                     date, type, menu, price
-                }
+                },
+                runningTime { breakfast, lunch, dinner }
             }
         }
     """
@@ -35,6 +36,10 @@ async def test_get_cafeteria_query(
             assert "type" in menu.keys()
             assert "menu" in menu.keys()
             assert "price" in menu.keys()
+        assert "runningTime" in cafeteria.keys()
+        assert "breakfast" in cafeteria["runningTime"].keys()
+        assert "lunch" in cafeteria["runningTime"].keys()
+        assert "dinner" in cafeteria["runningTime"].keys()
 
 
 @pytest.mark.asyncio
@@ -49,7 +54,8 @@ async def test_get_cafeteria_query_campus_filter(
                 id, name, latitude, longitude,
                 menu {
                     date, type, menu, price
-                }
+                },
+                runningTime { breakfast, lunch, dinner }
             }
         }
     """
@@ -68,6 +74,10 @@ async def test_get_cafeteria_query_campus_filter(
             assert "type" in menu.keys()
             assert "menu" in menu.keys()
             assert "price" in menu.keys()
+        assert "runningTime" in cafeteria.keys()
+        assert "breakfast" in cafeteria["runningTime"].keys()
+        assert "lunch" in cafeteria["runningTime"].keys()
+        assert "dinner" in cafeteria["runningTime"].keys()
 
 
 @pytest.mark.asyncio
@@ -82,7 +92,8 @@ async def test_get_cafeteria_query_name_filter(
                 id, name, latitude, longitude,
                 menu {
                     date, type, menu, price
-                }
+                },
+                runningTime { breakfast, lunch, dinner }
             }
         }
     """

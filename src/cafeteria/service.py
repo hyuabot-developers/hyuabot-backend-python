@@ -36,6 +36,9 @@ async def create_cafeteria(
                 "campus_id": new_cafeteria.campus_id,
                 "latitude": new_cafeteria.latitude,
                 "longitude": new_cafeteria.longitude,
+                "breakfast_running_time": new_cafeteria.breakfast_running_time,
+                "lunch_running_time": new_cafeteria.lunch_running_time,
+                "dinner_running_time": new_cafeteria.dinner_running_time,
             },
         )
         .returning(Cafeteria)
@@ -52,16 +55,23 @@ async def update_cafeteria(
     cafeteria_id: int,
     new_cafeteria: UpdateCafeteriaRequest,
 ) -> Cafeteria | None:
+    update_data: dict[str, str | float] = {}
+    if new_cafeteria.name is not None:
+        update_data["name"] = new_cafeteria.name
+    if new_cafeteria.latitude is not None:
+        update_data["latitude"] = new_cafeteria.latitude
+    if new_cafeteria.longitude is not None:
+        update_data["longitude"] = new_cafeteria.longitude
+    if new_cafeteria.breakfast_running_time is not None:
+        update_data["breakfast_running_time"] = new_cafeteria.breakfast_running_time
+    if new_cafeteria.lunch_running_time is not None:
+        update_data["lunch_running_time"] = new_cafeteria.lunch_running_time
+    if new_cafeteria.dinner_running_time is not None:
+        update_data["dinner_running_time"] = new_cafeteria.dinner_running_time
     update_query = (
         update(Cafeteria)
         .where(Cafeteria.id_ == cafeteria_id)
-        .values(
-            {
-                "name": new_cafeteria.name,
-                "latitude": new_cafeteria.latitude,
-                "longitude": new_cafeteria.longitude,
-            },
-        )
+        .values(update_data)
         .returning(Cafeteria)
     )
 

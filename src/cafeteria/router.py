@@ -61,6 +61,11 @@ async def get_cafeteria(
         "campusID": data.campus_id,
         "latitude": data.latitude,
         "longitude": data.longitude,
+        "runningTime": {
+            "breakfast": data.breakfast_running_time,
+            "lunch": data.lunch_running_time,
+            "dinner": data.dinner_running_time,
+        },
     }
 
 
@@ -83,6 +88,11 @@ async def create_cafeteria(
         "campusID": data.campus_id,
         "latitude": data.latitude,
         "longitude": data.longitude,
+        "runningTime": {
+            "breakfast": data.breakfast_running_time,
+            "lunch": data.lunch_running_time,
+            "dinner": data.dinner_running_time,
+        },
     }
 
 
@@ -101,6 +111,11 @@ async def update_cafeteria(
         "campusID": data.campus_id,
         "latitude": data.latitude,
         "longitude": data.longitude,
+        "runningTime": {
+            "breakfast": data.breakfast_running_time,
+            "lunch": data.lunch_running_time,
+            "dinner": data.dinner_running_time,
+        },
     }
 
 

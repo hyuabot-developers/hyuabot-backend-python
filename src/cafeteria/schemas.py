@@ -1,5 +1,5 @@
 import datetime
-from typing import Annotated
+from typing import Annotated, Optional
 
 from pydantic import BaseModel, Field
 
@@ -10,6 +10,9 @@ class CreateCafeteriaRequest(BaseModel):
     campus_id: Annotated[int, Field(alias="campusID", ge=1)]
     latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
+    breakfast_running_time: Annotated[Optional[str], Field(alias="breakfast", default=None, max_length=40)]
+    lunch_running_time: Annotated[Optional[str], Field(alias="lunch", default=None, max_length=40)]
+    dinner_running_time: Annotated[Optional[str], Field(alias="dinner", default=None, max_length=40)]
 
     class Config:
         json_schema_extra = {
@@ -19,6 +22,9 @@ class CreateCafeteriaRequest(BaseModel):
                 "campusID": 1,
                 "latitude": 37.123456,
                 "longitude": 127.123456,
+                "breakfast": "08:00 ~ 10:00",
+                "lunch": "12:00 ~ 14:00",
+                "dinner": "18:00 ~ 20:00",
             },
         }
 
@@ -27,6 +33,9 @@ class UpdateCafeteriaRequest(BaseModel):
     name: Annotated[str, Field(max_length=50, alias="name")]
     latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
+    breakfast_running_time: Annotated[Optional[str], Field(alias="breakfast", default=None, max_length=40)]
+    lunch_running_time: Annotated[Optional[str], Field(alias="lunch", default=None, max_length=40)]
+    dinner_running_time: Annotated[Optional[str], Field(alias="dinner", default=None, max_length=40)]
 
     class Config:
         json_schema_extra = {
@@ -34,6 +43,9 @@ class UpdateCafeteriaRequest(BaseModel):
                 "name": "학생식당",
                 "latitude": 37.123456,
                 "longitude": 127.123456,
+                "breakfast": "08:00 ~ 10:00",
+                "lunch": "12:00 ~ 14:00",
+                "dinner": "18:00 ~ 20:00",
             },
         }
 
@@ -75,12 +87,19 @@ class CafeteriaListResponse(BaseModel):
     data: Annotated[list["CafeteriaListItemResponse"], Field(alias="data")]
 
 
+class CafeteriaRunningTimeResponse(BaseModel):
+    breakfast: Annotated[Optional[str], Field(alias="breakfast", default=None)]
+    lunch: Annotated[Optional[str], Field(alias="lunch", default=None)]
+    dinner: Annotated[Optional[str], Field(alias="dinner", default=None)]
+
+
 class CafeteriaDetailResponse(BaseModel):
     cafeteria_id: Annotated[int, Field(alias="id", ge=1)]
     cafeteria_name: Annotated[str, Field(max_length=50, alias="name")]
     campus_id: Annotated[int, Field(alias="campusID", ge=1)]
     latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
+    running_time: Annotated[CafeteriaRunningTimeResponse, Field(alias="runningTime")]
 
 
 class CafeteriaMenuResponse(BaseModel):

@@ -73,6 +73,11 @@ async def test_get_cafeteria(
     assert response_json.get("campusID") is not None
     assert response_json.get("latitude") is not None
     assert response_json.get("longitude") is not None
+    assert response_json.get("runningTime") is not None
+    running_time = response_json.get("runningTime")
+    assert "breakfast" in running_time.keys()
+    assert "lunch" in running_time.keys()
+    assert "dinner" in running_time.keys()
 
 
 @pytest.mark.asyncio
@@ -121,6 +126,11 @@ async def test_create_cafeteria(
     assert response_json.get("campusID") is not None
     assert response_json.get("latitude") is not None
     assert response_json.get("longitude") is not None
+    assert response_json.get("runningTime") is not None
+    running_time = response_json.get("runningTime")
+    assert "breakfast" in running_time.keys()
+    assert "lunch" in running_time.keys()
+    assert "dinner" in running_time.keys()
 
 
 @pytest.mark.asyncio
@@ -223,6 +233,9 @@ async def test_update_cafeteria(
             "name": "test_cafeteria",
             "latitude": 89.0,
             "longitude": 89.0,
+            "breakfast": "08:00-09:00",
+            "lunch": "12:00-13:00",
+            "dinner": "18:00-19:00",
         },
     )
     assert response.status_code == 200
@@ -233,6 +246,11 @@ async def test_update_cafeteria(
     assert response_json.get("campusID") is not None
     assert response_json.get("latitude") is not None
     assert response_json.get("longitude") is not None
+    assert response_json.get("runningTime") is not None
+    running_time = response_json.get("runningTime")
+    assert "breakfast" in running_time.keys()
+    assert "lunch" in running_time.keys()
+    assert "dinner" in running_time.keys()
 
 
 @pytest.mark.asyncio

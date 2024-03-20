@@ -24,11 +24,22 @@ class MenuQuery:
 
 
 @strawberry.type
+class CafeteriaRunningTimeQuery:
+    breakfast: str | None = strawberry.field(description="Breakfast running time", default=None)
+    lunch: str | None = strawberry.field(description="Lunch running time", default=None)
+    dinner: str | None = strawberry.field(description="Dinner running time", default=None)
+
+
+@strawberry.type
 class CafeteriaQuery:
     id_: int = strawberry.field(description="Cafeteria ID", name="id")
     name: str = strawberry.field(description="Cafeteria name")
     latitude: float = strawberry.field(description="Cafeteria latitude")
     longitude: float = strawberry.field(description="Cafeteria longitude")
+    running_time: CafeteriaRunningTimeQuery = strawberry.field(
+        description="Cafeteria running time",
+        name="runningTime",
+    )
     menu_list: list[MenuQuery] = strawberry.field(
         description="Menu list",
         name="menu",
@@ -80,6 +91,11 @@ async def resolve_menu(
             latitude=cafeteria.latitude,
             longitude=cafeteria.longitude,
             menu_list=menu_group_dict.get(cafeteria.id_, []),
+            running_time=CafeteriaRunningTimeQuery(
+                breakfast=cafeteria.breakfast_running_time,
+                lunch=cafeteria.lunch_running_time,
+                dinner=cafeteria.dinner_running_time,
+            ),
         )
     )
     return list(map(cafeteria_mapping_func, cafeteria_list))

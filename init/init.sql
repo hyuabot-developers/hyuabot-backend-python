@@ -47,6 +47,17 @@ drop table if exists reading_room cascade;
 drop table if exists room cascade;
 drop table if exists building cascade;
 
+-- 전화부 테이블 삭제
+drop table if exists phonebook cascade;
+drop table if exists phonebook_category cascade;
+drop table if exists phonebook_version cascade;
+
+
+-- 학사력 테이블 삭제
+drop table if exists academic_calendar cascade;
+drop table if exists academic_calendar_category cascade;
+drop table if exists academic_calendar_version cascade;
+
 -- 캠퍼스 테이블 삭제
 drop table if exists campus cascade;
 
@@ -388,6 +399,61 @@ create table if not exists campus(
     campus_id int primary key, -- 캠퍼스 ID
     campus_name varchar(30) not null -- 캠퍼스 이름
 );
+
+-- 전화부 카테고리
+create table if not exists phonebook_category(
+    category_id serial primary key, -- 카테고리 ID
+    category_name varchar(30) not null -- 카테고리 이름
+);
+
+-- 전화부 버전
+create table if not exists phonebook_version(
+    version_id serial primary key, -- 버전 ID
+    version_name varchar(30) not null, -- 버전 이름
+    created_at timestamptz not null -- 생성 시간
+);
+
+-- 전화부
+create table if not exists phonebook(
+    phonebook_id serial primary key, -- 전화부 ID
+    campus_id int not null, -- 캠퍼스 ID
+    category_id int not null, -- 카테고리 ID
+    name text not null, -- 이름
+    phone varchar(30) not null, -- 전화번호
+    constraint fk_category_id
+        foreign key (category_id)
+        references phonebook_category(category_id),
+    constraint fk_campus_id
+        foreign key (campus_id)
+        references campus(campus_id)
+);
+
+-- 학사력 카테고리
+create table if not exists academic_calendar_category(
+    category_id serial primary key, -- 카테고리 ID
+    category_name varchar(30) not null -- 카테고리 이름
+);
+
+-- 학사력 버전
+create table if not exists academic_calendar_version(
+    version_id serial primary key, -- 버전 ID
+    version_name varchar(30) not null, -- 버전 이름
+    created_at timestamptz not null -- 생성 시간
+);
+
+-- 학사력
+create table if not exists academic_calendar(
+    academic_calendar_id serial primary key, -- 학사력 ID
+    category_id int not null, -- 카테고리 ID
+    title varchar(100) not null, -- 제목
+    description text not null, -- 설명
+    start_date date not null, -- 시작 날짜
+    end_date date not null, -- 종료 날짜
+    constraint fk_category_id
+        foreign key (category_id)
+        references academic_calendar_category(category_id)
+);
+
 
 -- 학식을 제공하는 식당
 create table if not exists restaurant(

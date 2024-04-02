@@ -33,13 +33,13 @@ class ContactQuery:
 
 async def resolve_contacts(
     category_id: Optional[int] = None,
-    title: Optional[str] = None,
+    name: Optional[str] = None,
 ) -> list[ContactItemQuery]:
     contact_conditions = []
     if category_id is not None:
         contact_conditions.append(PhoneBook.category_id == category_id)
-    if title is not None:
-        contact_conditions.append(PhoneBook.name.like(f"%{title}%"))
+    if name is not None:
+        contact_conditions.append(PhoneBook.name.like(f"%{name}%"))
     select_query = (
         select(PhoneBook)
         .where(*contact_conditions)
@@ -70,7 +70,7 @@ async def resolve_contacts(
 
 async def resolve_contact(
     category_id: Optional[int] = None,
-    title: Optional[str] = None,
+    name: Optional[str] = None,
 ) -> ContactQuery:
     version_select_statement = (
         select(PhoneBookVersion)
@@ -80,5 +80,5 @@ async def resolve_contact(
         .limit(1)
     )
     version = (await fetch_all(version_select_statement))[0].name
-    events = await resolve_contacts(category_id, title)
+    events = await resolve_contacts(category_id, name)
     return ContactQuery(version=version, data=events)

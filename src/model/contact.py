@@ -60,7 +60,7 @@ class PhoneBook(Base):
 
 
 class PhoneBookVersion(Base):
-    __tablename__ = "academic_calendar_version"
+    __tablename__ = "phonebook_version"
 
     id_: Mapped[int] = mapped_column("version_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("version_name", String(30))

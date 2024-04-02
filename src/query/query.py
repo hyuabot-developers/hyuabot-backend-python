@@ -3,6 +3,7 @@ import strawberry
 from building.query import BuildingQuery, resolve_building, RoomQuery, resolve_room
 from bus.query import StopQuery, resolve_bus
 from cafeteria.query import CafeteriaQuery, resolve_menu
+from event.query import CalendarQuery, resolve_calendar
 from notice.query import NoticeQuery, resolve_notice
 from shuttle.query import ShuttleQuery, resolve_shuttle
 from subway.query import StationQuery, resolve_subway
@@ -47,4 +48,8 @@ class Query:
     notice: list[NoticeQuery] = strawberry.field(
         resolver=resolve_notice,
         description="Notice query",
+    )
+    calendar: CalendarQuery = strawberry.field(
+        resolver=resolve_calendar,
+        description="Calendar query",
     )

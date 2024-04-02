@@ -55,6 +55,9 @@ async def clean_db() -> None:
         await conn.execute(text("DELETE FROM commute_shuttle_route"))
         await conn.execute(text("DELETE FROM notices"))
         await conn.execute(text("DELETE FROM notice_category"))
+        await conn.execute(text("DELETE FROM academic_calendar"))
+        await conn.execute(text("DELETE FROM academic_calendar_category"))
+        await conn.execute(text("DELETE FROM academic_calendar_version"))
         await conn.execute(text("DELETE FROM menu"))
         await conn.execute(text("DELETE FROM restaurant"))
         await conn.execute(text("DELETE FROM reading_room"))
@@ -256,6 +259,39 @@ async def create_test_notice(create_test_notice_category, create_test_user) -> N
         expired_at_str = expired_at.strftime("%Y-%m-%dT%H:%M:%S%z")
         values += f"({i}, 'test_title{i}', 'test_url', '{expired_at_str}', 100, 'test_id', 'korean'),"
     insert_sql = f"INSERT INTO notices VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+# Calendar Datas
+@pytest_asyncio.fixture
+async def create_test_calendar_category() -> None:
+    values = ""
+    for i in range(100, 110):
+        values += f"({i}, 'test_category{i}'),"
+    insert_sql = f"INSERT INTO academic_calendar_category VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_calendar(create_test_calendar_category) -> None:
+    values = ""
+    now = datetime.datetime.now().astimezone(timezone("Asia/Seoul"))
+    for i in range(9999, 10000):
+        start_date = now + datetime.timedelta(days=random.randint(1, 30))
+        end_date = start_date + datetime.timedelta(days=random.randint(1, 30))
+        values += f"({i}, 100, 'test_title{i}', 'test_description', '{start_date}', '{end_date}'),"
+    insert_sql = f"INSERT INTO academic_calendar VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_calendar_version(create_test_calendar_category) -> None:
+    now = datetime.datetime.now().astimezone(timezone("Asia/Seoul"))
+    values = f"(1, '{now.strftime('%Y%m%dT%H%M%S%')}', '{now}'),"
+    insert_sql = f"INSERT INTO academic_calendar_version VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
 

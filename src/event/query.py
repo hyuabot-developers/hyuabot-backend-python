@@ -6,8 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload, load_only
 
 from database import fetch_all
-from model.calendar import Calendar, CalendarVersion
-from model.notice import NoticeCategory
+from model.calendar import Calendar, CalendarVersion, CalendarCategory
 
 
 @strawberry.type
@@ -25,10 +24,12 @@ class EventQuery:
     title: str = strawberry.field(description="Calendar title")
     description: str = strawberry.field(description="Calendar description")
     start_date: datetime.date = strawberry.field(
-        description="Calendar start date", name="start",
+        description="Calendar start date",
+        name="start",
     )
     end_date: datetime.date = strawberry.field(
-        description="Calendar end date", name="end",
+        description="Calendar end date",
+        name="end",
     )
 
 
@@ -53,7 +54,7 @@ async def resolve_events(
         .order_by(Calendar.id_)
         .options(
             joinedload(Calendar.category).options(
-                load_only(NoticeCategory.id_, NoticeCategory.name),
+                load_only(CalendarCategory.id_, CalendarCategory.name),
             ),
         )
     )
@@ -76,13 +77,17 @@ async def resolve_events(
     return result
 
 
-async def resolve_calendars(
+async def resolve_calendar(
     category_id: Optional[int] = None,
     title: Optional[str] = None,
 ) -> CalendarQuery:
-    version_select_statement = select(CalendarVersion).order_by(
-        CalendarVersion.created_at.desc(),
-    ).limit(1)
+    version_select_statement = (
+        select(CalendarVersion)
+        .order_by(
+            CalendarVersion.created_at.desc(),
+        )
+        .limit(1)
+    )
     version = (await fetch_all(version_select_statement))[0].name
     events = await resolve_events(category_id, title)
     return CalendarQuery(version=version, data=events)

@@ -1,9 +1,10 @@
 import datetime
 
+import pytz
 from sqlalchemy import select, insert, delete, update
 
 from database import fetch_all, fetch_one, execute_query
-from model.calendar import CalendarCategory, Calendar
+from model.calendar import CalendarCategory, Calendar, CalendarVersion
 from event.schemas import (
     CreateCalendarCategoryRequest,
     CreateCalendarReqeust,
@@ -93,6 +94,21 @@ async def create_calendar(
         )
         .returning(Calendar)
     )
+    delete_version_query = delete(CalendarVersion)
+    await execute_query(delete_version_query)
+    now = datetime.datetime.now(tz=pytz.timezone("Asia/Seoul"))
+    insert_version_query = (
+        insert(CalendarVersion)
+        .values(
+            {
+                "version_id": 1,
+                "version_name": now.strftime("%Y-%m-%d %H:%M:%S"),
+                "created_at": now,
+            },
+        )
+        .returning(CalendarVersion)
+    )
+    await execute_query(insert_version_query)
     return await fetch_one(insert_query)
 
 
@@ -105,6 +121,21 @@ async def delete_calendar(
         Calendar.id_ == calendar_id,
     )
     await execute_query(delete_query)
+    delete_version_query = delete(CalendarVersion)
+    await execute_query(delete_version_query)
+    now = datetime.datetime.now(tz=pytz.timezone("Asia/Seoul"))
+    insert_version_query = (
+        insert(CalendarVersion)
+        .values(
+            {
+                "version_id": 1,
+                "version_name": now.strftime("%Y-%m-%d %H:%M:%S"),
+                "created_at": now,
+            },
+        )
+        .returning(CalendarVersion)
+    )
+    await execute_query(insert_version_query)
 
 
 async def update_calendar(
@@ -130,5 +161,19 @@ async def update_calendar(
         .values(update_data)
         .returning(Calendar)
     )
-
+    delete_version_query = delete(CalendarVersion)
+    await execute_query(delete_version_query)
+    now = datetime.datetime.now(tz=pytz.timezone("Asia/Seoul"))
+    insert_version_query = (
+        insert(CalendarVersion)
+        .values(
+            {
+                "version_id": 1,
+                "version_name": now.strftime("%Y-%m-%d %H:%M:%S"),
+                "created_at": now,
+            },
+        )
+        .returning(CalendarVersion)
+    )
+    await execute_query(insert_version_query)
     return await fetch_one(update_query)

@@ -13,6 +13,7 @@ from cafeteria.router import router as cafeteria_router
 from campus.router import router as campus_router
 from commute_shuttle.router import router as commute_shuttle_router
 from config import app_configs, settings
+from contact.router import router as contact_router
 from event.router import router as calendar_router
 from notice.router import router as notice_router
 from reading_room.router import router as reading_room_router
@@ -61,6 +62,7 @@ api.include_router(reading_room_router, prefix="/library", tags=["reading-room"]
 api.include_router(shuttle_router, prefix="/shuttle", tags=["shuttle"])
 api.include_router(subway_router, prefix="/subway", tags=["subway"])
 api.include_router(calendar_router, prefix="/calendar", tags=["calendar"])
+api.include_router(contact_router, prefix="/contact", tags=["contact"])
 api.include_router(auth_router, prefix="/auth")
 app.include_router(api, prefix="/api")
 app.include_router(graphql_router, prefix="/query")

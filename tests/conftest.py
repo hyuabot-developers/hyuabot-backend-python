@@ -58,6 +58,9 @@ async def clean_db() -> None:
         await conn.execute(text("DELETE FROM academic_calendar"))
         await conn.execute(text("DELETE FROM academic_calendar_category"))
         await conn.execute(text("DELETE FROM academic_calendar_version"))
+        await conn.execute(text("DELETE FROM phonebook"))
+        await conn.execute(text("DELETE FROM phonebook_category"))
+        await conn.execute(text("DELETE FROM phonebook_version"))
         await conn.execute(text("DELETE FROM menu"))
         await conn.execute(text("DELETE FROM restaurant"))
         await conn.execute(text("DELETE FROM reading_room"))
@@ -292,6 +295,37 @@ async def create_test_calendar_version(create_test_calendar_category) -> None:
     now = datetime.datetime.now().astimezone(timezone("Asia/Seoul"))
     values = f"(1, '{now.strftime('%Y%m%dT%H%M%S%')}', '{now}'),"
     insert_sql = f"INSERT INTO academic_calendar_version VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+# Contact Datas
+@pytest_asyncio.fixture
+async def create_test_contact_category(create_test_campus) -> None:
+    values = ""
+    for i in range(100, 110):
+        values += f"({i}, 'test_category{i}'),"
+    insert_sql = f"INSERT INTO phonebook_category VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_contact(create_test_contact_category) -> None:
+    values = ""
+    for i in range(9999, 10000):
+        phone = f"010-{random.randint(1000, 9999)}-{random.randint(1000, 9999)}"
+        values += f"({i}, 1, 100, 'test_title{i}', '{phone}'),"
+    insert_sql = f"INSERT INTO phonebook VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_contact_version(create_test_contact) -> None:
+    now = datetime.datetime.now().astimezone(timezone("Asia/Seoul"))
+    values = f"(1, '{now.strftime('%Y%m%dT%H%M%S%')}', '{now}'),"
+    insert_sql = f"INSERT INTO phonebook_version VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
 

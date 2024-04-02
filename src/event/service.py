@@ -4,7 +4,7 @@ from sqlalchemy import select, insert, delete, update
 
 from database import fetch_all, fetch_one, execute_query
 from model.calendar import CalendarCategory, Calendar
-from calendar.schemas import (
+from event.schemas import (
     CreateCalendarCategoryRequest,
     CreateCalendarReqeust,
     UpdateCalendarRequest,

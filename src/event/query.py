@@ -19,7 +19,7 @@ class CalendarCategoryQuery:
 @strawberry.type
 class EventQuery:
     category: CalendarCategoryQuery = strawberry.field(
-        description="Category of calendar",
+        description="Category of event",
     )
     id_: int = strawberry.field(description="Calendar ID", name="id")
     title: str = strawberry.field(description="Calendar title")
@@ -34,7 +34,7 @@ class EventQuery:
 
 @strawberry.type
 class CalendarQuery:
-    version: str = strawberry.field(description="Version of calendar")
+    version: str = strawberry.field(description="Version of event")
     data: list[EventQuery] = strawberry.field(description="List of events")
 
 

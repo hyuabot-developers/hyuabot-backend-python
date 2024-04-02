@@ -1,6 +1,6 @@
-from calendar import service
-from calendar.exceptions import DuplicateCategoryName, CategoryNotFound, CalendarNotFound
-from calendar.schemas import CreateCalendarCategoryRequest, CreateCalendarReqeust
+from event import service
+from event.exceptions import DuplicateCategoryName, CategoryNotFound, CalendarNotFound
+from event.schemas import CreateCalendarCategoryRequest, CreateCalendarReqeust
 
 
 async def create_valid_category(

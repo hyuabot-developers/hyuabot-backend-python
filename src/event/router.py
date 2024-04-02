@@ -4,18 +4,18 @@ from typing import Callable
 from fastapi import APIRouter, Depends
 from starlette import status
 
-from calendar import service
-from calendar.dependancies import (
+from event import service
+from event.dependancies import (
     create_valid_category,
     get_valid_category,
     create_valid_calendar,
     get_valid_calendar,
 )
-from calendar.exceptions import (
+from event.exceptions import (
     CategoryNotFound,
     CalendarNotFound,
 )
-from calendar.schemas import (
+from event.schemas import (
     CalendarListResponse,
     CalendarDetailResponse,
     CreateCalendarCategoryRequest,

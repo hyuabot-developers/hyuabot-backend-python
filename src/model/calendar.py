@@ -54,4 +54,4 @@ class CalendarVersion(Base):
 
     id_: Mapped[int] = mapped_column("version_id", Integer, primary_key=True)
     name: Mapped[str] = mapped_column("version_name", String(30))
-    created_at: Mapped[datetime.datetime] = mapped_column("created_at", DateTime)
+    created_at: Mapped[datetime.datetime] = mapped_column("created_at", DateTime(timezone=True))

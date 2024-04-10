@@ -1,18 +1,18 @@
-FROM python:3.12-bookworm
+FROM python:3.12-alpine AS build
+RUN python3.12 -m pip install --upgrade pip setuptools wheel
 
-RUN apt-get update && \
-    apt-get install -y gcc libpq-dev && \
-    apt clean && \
-    rm -rf /var/cache/apt/*
+WORKDIR /app
+COPY setup.cfg setup.py ./
+COPY src ./src
+RUN apk add --no-cache --virtual .build-deps gcc libc-dev libxslt-dev libpq-dev && \
+    apk add --no-cache libxslt && \
+    python3.12 -m pip install --disable-pip-version-check -e . && \
+    apk del .build-deps
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PYTHONIOENCODING=utf-8
+FROM python:3.12-alpine AS runtime
 
-COPY . /
+COPY --from=build /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=build /app /app
+WORKDIR /app/src
 
-RUN pip install -U pip && \
-    pip install --no-cache-dir -e /
-
-WORKDIR /src
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "38000"]

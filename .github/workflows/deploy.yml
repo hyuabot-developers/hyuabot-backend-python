@@ -13,7 +13,7 @@ jobs:
     runs-on: ["self-hosted", "ARM64"]
     if: ${{ github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch' }}
     env:
-      IMAGE_NAME: localhost:32000/hyuabot/hyuabot-api-server-python:latest
+      IMAGE_NAME: localhost:5000/hyuabot-api-server-python:latest
       DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
       REDIS_URL: ${{ secrets.PROD_REDIS_URL }}
       POSTGRES_USER: ${{ secrets.PROD_POSTGRES_USER }}

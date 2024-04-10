@@ -68,6 +68,10 @@ def validate_response(response: dict) -> None:
             assert isinstance(item["seat"], int)
             assert isinstance(item["lowFloor"], bool)
             assert isinstance(item["updatedAt"], str)
+        for item in route["log"]:
+            assert isinstance(item["departureDate"], str)
+            assert isinstance(item["departureTime"], str)
+            assert isinstance(item["vehicleId"], str)
 
 
 @pytest.mark.asyncio
@@ -76,6 +80,7 @@ async def test_get_bus_query(
     clean_db,
     create_test_bus_realtime,
     create_test_bus_timetable,
+    create_test_bus_departure_log,
 ) -> None:
     query = """
         query {
@@ -97,7 +102,8 @@ async def test_get_bus_query(
                         runningTime { up { first, last }, down { first, last } }
                     }
                 timetable { weekdays, time },
-                realtime { sequence, stop, time, seat, lowFloor, updatedAt }
+                realtime { sequence, stop, time, seat, lowFloor, updatedAt },
+                log { departureDate, departureTime, vehicleId }
             }
         }
     }
@@ -137,7 +143,8 @@ async def test_get_bus_query_filter_stop_id(
                         runningTime { up { first, last }, down { first, last } }
                     }
                 timetable { weekdays, time },
-                realtime { sequence, stop, time, seat, lowFloor, updatedAt }
+                realtime { sequence, stop, time, seat, lowFloor, updatedAt },
+                log { departureDate, departureTime, vehicleId }
             }
         }
     }
@@ -178,7 +185,8 @@ async def test_get_bus_query_filter_stop_name(
                         runningTime { up { first, last }, down { first, last } }
                     }
                 timetable { weekdays, time },
-                realtime { sequence, stop, time, seat, lowFloor, updatedAt }
+                realtime { sequence, stop, time, seat, lowFloor, updatedAt },
+                log { departureDate, departureTime, vehicleId }
             }
         }
     }
@@ -219,7 +227,8 @@ async def test_get_bus_query_filter_start_time(
                         runningTime { up { first, last }, down { first, last } }
                     }
                 timetable { weekdays, time },
-                realtime { sequence, stop, time, seat, lowFloor, updatedAt }
+                realtime { sequence, stop, time, seat, lowFloor, updatedAt },
+                log { departureDate, departureTime, vehicleId }
             }
         }
     }
@@ -264,7 +273,8 @@ async def test_get_bus_query_filter_end_time(
                         runningTime { up { first, last }, down { first, last } }
                     }
                 timetable { weekdays, time },
-                realtime { sequence, stop, time, seat, lowFloor, updatedAt }
+                realtime { sequence, stop, time, seat, lowFloor, updatedAt },
+                log { departureDate, departureTime, vehicleId }
             }
         }
     }
@@ -309,7 +319,8 @@ async def test_get_bus_query_filter_weekdays(
                         runningTime { up { first, last }, down { first, last } }
                     }
                 timetable { weekdays, time },
-                realtime { sequence, stop, time, seat, lowFloor, updatedAt }
+                realtime { sequence, stop, time, seat, lowFloor, updatedAt },
+                log { departureDate, departureTime, vehicleId }
             }
         }
     }

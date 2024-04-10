@@ -35,6 +35,7 @@ async def client() -> AsyncGenerator[TestClient, None]:
 @pytest_asyncio.fixture
 async def clean_db() -> None:
     async with engine.begin() as conn:
+        await conn.execute(text("DELETE FROM bus_departure_log"))
         await conn.execute(text("DELETE FROM bus_realtime"))
         await conn.execute(text("DELETE FROM bus_timetable"))
         await conn.execute(text("DELETE FROM bus_route_stop"))
@@ -169,6 +170,17 @@ async def create_test_bus_realtime(create_test_bus_route_stop) -> None:
     for i in range(1, 10):
         values += f"(1, 1, {i}, {i}, 41, '00:0{i}:00', false, '{current_time}'),"
     insert_sql = f"INSERT INTO bus_realtime VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
+@pytest_asyncio.fixture
+async def create_test_bus_departure_log(create_test_bus_route_stop) -> None:
+    values = ""
+    for i in range(1, 10):
+        date = datetime.datetime.now().date()
+        values += f"(1, 1, '{date}', '00:0{i}:00', '2000001'),"
+    insert_sql = f"INSERT INTO bus_departure_log VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))
 

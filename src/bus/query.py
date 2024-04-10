@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload, load_only, joinedload
 
 from database import fetch_all
-from model.bus import BusStop, BusRouteStop, BusTimetable, BusRealtime, BusRoute
+from model.bus import BusStop, BusRouteStop, BusTimetable, BusRealtime, BusRoute, BusDepartureLog
 from utils import KST
 
 
@@ -86,11 +86,19 @@ class BusRouteQuery:
 
 
 @strawberry.type
+class BusDepartureLogQuery:
+    departure_date: datetime.date = strawberry.field(description="Departure date")
+    departure_time: datetime.time = strawberry.field(description="Departure time")
+    vehicle_id: str = strawberry.field(description="Vehicle ID", name="vehicleId")
+
+
+@strawberry.type
 class BusStopRouteQuery:
     sequence: int = strawberry.field(description="Sequence")
     info: BusRouteQuery = strawberry.field(description="Info")
     timetable: list[BusTimetableQuery] = strawberry.field(description="Timetable")
     realtime: list[BusRealtimeQuery] = strawberry.field(description="Realtime")
+    log: list[BusDepartureLogQuery] = strawberry.field(description="Log")
 
 
 @strawberry.type
@@ -103,6 +111,7 @@ async def resolve_bus(
     name: str | None = None,
     route: str | None = None,
     weekdays: str | None = None,
+    log_date: list[datetime.date] | None = None,
     start: datetime.time | None = None,
     end: datetime.time | None = None,
 ) -> list[StopQuery]:
@@ -127,6 +136,13 @@ async def resolve_bus(
                         BusRealtime.seats,
                         BusRealtime.low_floor,
                         BusRealtime.updated_at,
+                    ),
+                ),
+                selectinload(BusRouteStop.log).options(
+                    load_only(
+                        BusDepartureLog.date,
+                        BusDepartureLog.time,
+                        BusDepartureLog.vehicle_id,
                     ),
                 ),
                 joinedload(BusRouteStop.route).options(
@@ -282,6 +298,19 @@ async def resolve_bus(
                                 list(filter(realtime_filter, route.realtime)),
                                 key=lambda x: x.sequence,
                             )
+                        ],
+                        log=[
+                            BusDepartureLogQuery(
+                                departure_date=log.date,
+                                departure_time=log.time,
+                                vehicle_id=log.vehicle_id,
+                            )
+                            for log in sorted(list(
+                                filter(
+                                    lambda x: log_date is None or x.date in log_date,
+                                    route.log,
+                                ),
+                            ), key=lambda x: x.date)
                         ],
                     )
                     for route in sorted(

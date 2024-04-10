@@ -17,6 +17,35 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from model import Base
 
 
+class BusDepartureLog(Base):
+    __tablename__ = "bus_departure_log"
+    __table_args__ = (
+        PrimaryKeyConstraint(
+            "route_id",
+            "stop_id",
+            "departure_time",
+            "departure_date",
+            name="pk_bus_departure_log",
+        ),
+        ForeignKeyConstraint(
+            ["route_id"],
+            ["bus_route_stop.route_id"],
+            name="fk_bus_departure_log_route_id",
+        ),
+        ForeignKeyConstraint(
+            ["stop_id"],
+            ["bus_route_stop.stop_id"],
+            name="fk_bus_departure_log_stop_id",
+        ),
+    )
+
+    route_id: Mapped[int] = mapped_column("route_id", Integer)
+    stop_id: Mapped[int] = mapped_column("stop_id", Integer)
+    time: Mapped[datetime.time] = mapped_column("departure_time", Time(timezone=True))
+    date: Mapped[datetime.date] = mapped_column("departure_date", DateTime(timezone=True))
+    vehicle_id: Mapped[str] = mapped_column("vehicle_id", String(20))
+
+
 class BusTimetable(Base):
     __tablename__ = "bus_timetable"
     __table_args__ = (
@@ -149,6 +178,15 @@ class BusRouteStop(Base):
         primaryjoin=(
             "and_(BusRouteStop.route_id == BusRealtime.route_id, "
             "BusRouteStop.stop_id == BusRealtime.stop_id)"
+        ),
+        viewonly=True,
+    )
+    log: Mapped[List["BusDepartureLog"]] = relationship(
+        "BusDepartureLog",
+        cascade="all, delete-orphan",
+        primaryjoin=(
+            "and_(BusRouteStop.route_id == BusDepartureLog.route_id, "
+            "BusRouteStop.stop_id == BusDepartureLog.stop_id)"
         ),
         viewonly=True,
     )

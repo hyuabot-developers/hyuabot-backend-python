@@ -68,7 +68,7 @@ def validate_response(response: dict) -> None:
             assert isinstance(item["seat"], int)
             assert isinstance(item["lowFloor"], bool)
             assert isinstance(item["updatedAt"], str)
-        for item in response["log"]:
+        for item in route["log"]:
             assert isinstance(item["departureDate"], str)
             assert isinstance(item["departureTime"], str)
             assert isinstance(item["vehicleId"], str)

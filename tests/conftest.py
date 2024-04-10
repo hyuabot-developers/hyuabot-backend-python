@@ -173,6 +173,23 @@ async def create_test_bus_realtime(create_test_bus_route_stop) -> None:
         await conn.execute(text(insert_sql))
 
 
+@pytest_asyncio.fixture
+async def create_test_bus_departure_log(create_test_bus_route_stop) -> None:
+    values = ""
+    current_time = (
+        datetime.datetime.now()
+        .astimezone(timezone("Asia/Seoul"))
+        .strftime(
+            "%Y-%m-%dT%H:%M:%S%z",
+        )
+    )
+    for i in range(1, 10):
+        values += f"(1, 1, {current_time.split('T')}, '00:0{i}:00', '2000001'),"
+    insert_sql = f"INSERT INTO bus_departure_log VALUES {values}"[:-1]
+    async with engine.begin() as conn:
+        await conn.execute(text(insert_sql))
+
+
 # Campus Datas
 @pytest_asyncio.fixture
 async def create_test_campus() -> None:

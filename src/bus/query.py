@@ -111,6 +111,7 @@ async def resolve_bus(
     name: str | None = None,
     route: str | None = None,
     weekdays: str | None = None,
+    log_date: list[datetime.date] | None = None,
     start: datetime.time | None = None,
     end: datetime.time | None = None,
 ) -> list[StopQuery]:
@@ -304,7 +305,12 @@ async def resolve_bus(
                                 departure_time=log.time,
                                 vehicle_id=log.vehicle_id,
                             )
-                            for log in sorted(route.log, key=lambda x: x.date)
+                            for log in sorted(list(
+                                filter(
+                                    lambda x: log_date is None or x.date in log_date,
+                                    route.log,
+                                ),
+                            ), key=lambda x: x.date)
                         ],
                     )
                     for route in sorted(

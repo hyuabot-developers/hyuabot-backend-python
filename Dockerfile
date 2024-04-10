@@ -15,4 +15,4 @@ COPY --from=build /usr/local/lib/python3.12/site-packages /usr/local/lib/python3
 COPY --from=build /app /app
 WORKDIR /app/src
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "38000"]
+ENTRYPOINT ["python3.12", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "38000"]

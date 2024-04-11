@@ -210,6 +210,11 @@ async def resolve_shuttle_timetable(
                 )
             elif holiday.type_ == "halt":
                 return []
+        else:
+            if timestamp.weekday() >= 5:
+                timetable_condition.append(ShuttleTimetableView.is_weekdays.is_(false()))
+            else:
+                timetable_condition.append(ShuttleTimetableView.is_weekdays.is_(true()))
     if route_name:
         timetable_condition.append(ShuttleTimetableView.route_name.in_(route_name))
     if route_tag:

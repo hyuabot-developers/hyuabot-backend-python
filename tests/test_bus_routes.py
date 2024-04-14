@@ -717,6 +717,7 @@ async def test_bus_route_stop_list(
         assert stop.get("id") is not None
         assert stop.get("sequence") is not None
         assert stop.get("start") is not None
+        assert stop.get("minuteFromStart") is not None
 
 
 @pytest.mark.asyncio
@@ -751,6 +752,7 @@ async def test_bus_route_stop_detail(
     assert response.json().get("id") is not None
     assert response.json().get("sequence") is not None
     assert response.json().get("start") is not None
+    assert response.json().get("minuteFromStart") is not None
 
 
 @pytest.mark.asyncio
@@ -814,6 +816,7 @@ async def test_create_bus_route_stop(
         "stopID": 9,
         "sequence": 1,
         "start": 1,
+        "minuteFromStart": 1,
     }
     response = await client.post(
         "/api/bus/route/1/stop",
@@ -824,6 +827,7 @@ async def test_create_bus_route_stop(
     assert response.json().get("id") is not None
     assert response.json().get("sequence") is not None
     assert response.json().get("start") is not None
+    assert response.json().get("minuteFromStart") is not None
 
 
 @pytest.mark.asyncio
@@ -839,6 +843,7 @@ async def test_create_bus_route_stop_duplicate(
         "stopID": 7,
         "sequence": 1,
         "start": 1,
+        "minuteFromStart": 1,
     }
     response = await client.post(
         "/api/bus/route/1/stop",
@@ -862,6 +867,7 @@ async def test_create_bus_route_stop_not_found_route(
         "stopID": 9,
         "sequence": 1,
         "start": 1,
+        "minuteFromStart": 1,
     }
     response = await client.post(
         "/api/bus/route/20/stop",
@@ -885,6 +891,7 @@ async def test_create_bus_route_stop_not_found_stop(
         "stopID": 20,
         "sequence": 1,
         "start": 1,
+        "minuteFromStart": 1,
     }
     response = await client.post(
         "/api/bus/route/1/stop",
@@ -915,6 +922,7 @@ async def test_create_bus_route_stop_internal_server_error(
         "stopID": 9,
         "sequence": 1,
         "start": 1,
+        "minuteFromStart": 1,
     }
     response = await client.post(
         "/api/bus/route/1/stop",
@@ -936,6 +944,7 @@ async def test_update_bus_route_stop(
     update_route_stop = {
         "sequence": 1,
         "start": 1,
+        "minuteFromStart": 1,
     }
     response = await client.patch(
         "/api/bus/route/1/stop/1",
@@ -946,6 +955,7 @@ async def test_update_bus_route_stop(
     assert response.json().get("id") is not None
     assert response.json().get("sequence") is not None
     assert response.json().get("start") is not None
+    assert response.json().get("minuteFromStart") is not None
 
 
 @pytest.mark.asyncio
@@ -959,6 +969,7 @@ async def test_update_bus_route_stop_not_found_route(
     update_route_stop = {
         "sequence": 1,
         "start": 1,
+        "minuteFromStart": 1,
     }
     response = await client.patch(
         "/api/bus/route/20/stop/1",
@@ -980,6 +991,7 @@ async def test_update_bus_route_stop_not_found_stop(
     update_route_stop = {
         "sequence": 1,
         "start": 1,
+        "minuteFromStart": 1,
     }
     response = await client.patch(
         "/api/bus/route/1/stop/20",
@@ -1001,6 +1013,7 @@ async def test_update_bus_route_stop_not_found_route_stop(
     update_route_stop = {
         "sequence": 1,
         "start": 1,
+        "minuteFromStart": 1,
     }
     response = await client.patch(
         "/api/bus/route/1/stop/9",

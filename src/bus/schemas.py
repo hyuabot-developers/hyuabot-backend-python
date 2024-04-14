@@ -159,6 +159,7 @@ class CreateBusRouteStopRequest(BaseModel):
     stop_id: Annotated[int, Field(alias="stopID", ge=1)]
     sequence: Annotated[int, Field(alias="sequence", ge=1)]
     start_stop_id: Annotated[int, Field(alias="start", ge=1)]
+    minute_from_start: Annotated[int, Field(alias="minuteFromStart", ge=0)]
 
     class Config:
         json_schema_extra = {
@@ -167,6 +168,7 @@ class CreateBusRouteStopRequest(BaseModel):
                 "stopID": 1,
                 "sequence": 1,
                 "start": 1,
+                "minuteFromStart": 0,
             },
         }
 
@@ -174,12 +176,14 @@ class CreateBusRouteStopRequest(BaseModel):
 class UpdateBusRouteStopRequest(BaseModel):
     sequence: Annotated[Optional[int], Field(alias="sequence", ge=1)]
     start_stop_id: Annotated[Optional[int], Field(alias="start", ge=1)]
+    minute_from_start: Annotated[Optional[int], Field(alias="minuteFromStart", ge=0)]
 
     class Config:
         json_schema_extra = {
             "example": {
                 "sequence": 1,
                 "start": 1,
+                "minuteFromStart": 0,
             },
         }
 
@@ -256,6 +260,7 @@ class BusRouteStopListItemResponse(BaseModel):
     stop_id: Annotated[int, Field(alias="id", ge=1)]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
     start_stop_id: Annotated[int, Field(alias="start", ge=1)]
+    minute_from_start: Annotated[int, Field(alias="minuteFromStart", ge=0)]
 
 
 class BusRouteStopListResponse(BaseModel):
@@ -266,6 +271,7 @@ class BusRouteStopDetailResponse(BaseModel):
     stop_id: Annotated[int, Field(alias="id", ge=1)]
     sequence: Annotated[int, Field(alias="sequence", ge=1)]
     start_stop_id: Annotated[int, Field(alias="start", ge=1)]
+    minute_from_start: Annotated[int, Field(alias="minuteFromStart", ge=0)]
 
 
 class BusTimetableListItemResponse(BaseModel):

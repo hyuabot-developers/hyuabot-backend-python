@@ -96,6 +96,9 @@ class BusDepartureLogQuery:
 class BusStopRouteQuery:
     sequence: int = strawberry.field(description="Sequence")
     info: BusRouteQuery = strawberry.field(description="Info")
+    minute_from_start: int = strawberry.field(
+        description="Minute from start stop", name="minuteFromStart",
+    )
     timetable: list[BusTimetableQuery] = strawberry.field(description="Timetable")
     realtime: list[BusRealtimeQuery] = strawberry.field(description="Realtime")
     log: list[BusDepartureLogQuery] = strawberry.field(description="Log")
@@ -125,6 +128,7 @@ async def resolve_bus(
         select(BusStop)
         .options(
             selectinload(BusStop.routes).options(
+                load_only(BusRouteStop.sequence, BusRouteStop.minute_from_start),
                 selectinload(BusRouteStop.timetable).options(
                     load_only(BusTimetable.weekday, BusTimetable.departure_time),
                 ),
@@ -221,6 +225,7 @@ async def resolve_bus(
                 routes=[
                     BusStopRouteQuery(
                         sequence=route.sequence,
+                        minute_from_start=route.minute_from_start,
                         info=BusRouteQuery(
                             id_=route.route.id_,
                             name=route.route.name,

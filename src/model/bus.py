@@ -149,6 +149,7 @@ class BusRouteStop(Base):
     stop_id: Mapped[int] = mapped_column("stop_id", Integer)
     sequence: Mapped[int] = mapped_column("stop_sequence", Integer)
     start_stop_id: Mapped[int] = mapped_column("start_stop_id", Integer)
+    minute_from_start: Mapped[int] = mapped_column("minute_from_start", Integer)
 
     route: Mapped["BusRoute"] = relationship(
         "BusRoute",

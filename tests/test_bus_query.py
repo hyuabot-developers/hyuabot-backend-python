@@ -15,6 +15,7 @@ def validate_response(response: dict) -> None:
     assert isinstance(response["routes"], list)
     routes = response["routes"]
     for route in routes:
+        assert isinstance(route["minuteFromStart"], int)
         assert isinstance(route["sequence"], int)
         assert isinstance(route["info"], dict)
         assert isinstance(route["timetable"], list)
@@ -88,6 +89,7 @@ async def test_get_bus_query(
                 id, name, districtCode, region, mobileNumber, latitude, longitude,
                 routes {
                     sequence,
+                    minuteFromStart,
                     info {
                         id, name,
                         company { id, name, telephone }, type { code, name },
@@ -129,6 +131,7 @@ async def test_get_bus_query_filter_stop_id(
                 id, name, districtCode, region, mobileNumber, latitude, longitude,
                 routes {
                     sequence,
+                    minuteFromStart,
                     info {
                         id, name,
                         company { id, name, telephone }, type { code, name },
@@ -171,6 +174,7 @@ async def test_get_bus_query_filter_stop_name(
                 id, name, districtCode, region, mobileNumber, latitude, longitude,
                 routes {
                     sequence,
+                    minuteFromStart,
                     info {
                         id, name,
                         company { id, name, telephone }, type { code, name },
@@ -213,6 +217,7 @@ async def test_get_bus_query_filter_start_time(
                 id, name, districtCode, region, mobileNumber, latitude, longitude,
                 routes {
                     sequence,
+                    minuteFromStart,
                     info {
                         id, name,
                         company { id, name, telephone }, type { code, name },
@@ -259,6 +264,7 @@ async def test_get_bus_query_filter_end_time(
                 id, name, districtCode, region, mobileNumber, latitude, longitude,
                 routes {
                     sequence,
+                    minuteFromStart,
                     info {
                         id, name,
                         company { id, name, telephone }, type { code, name },
@@ -305,6 +311,7 @@ async def test_get_bus_query_filter_weekdays(
                 id, name, districtCode, region, mobileNumber, latitude, longitude,
                 routes {
                     sequence,
+                    minuteFromStart,
                     info {
                         id, name,
                         company { id, name, telephone }, type { code, name },

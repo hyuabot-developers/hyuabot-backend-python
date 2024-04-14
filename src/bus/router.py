@@ -266,6 +266,7 @@ async def get_bus_route_stop_list(
         "id": x.stop_id,
         "sequence": x.sequence,
         "start": x.start_stop_id,
+        "minuteFromStart": x.minute_from_start,
     }
     return {"data": map(mapping_func, route_stops)}
 
@@ -286,6 +287,7 @@ async def get_bus_route_stop_detail(
         "id": route_stop.stop_id,
         "sequence": route_stop.sequence,
         "start": route_stop.start_stop_id,
+        "minuteFromStart": route_stop.minute_from_start,
     }
 
 
@@ -308,6 +310,7 @@ async def create_bus_route_stop(
         "id": route_stop.stop_id,
         "sequence": route_stop.sequence,
         "start": route_stop.start_stop_id,
+        "minuteFromStart": route_stop.minute_from_start,
     }
 
 
@@ -328,6 +331,7 @@ async def update_bus_route_stop(
         "id": route_stop.stop_id,
         "sequence": route_stop.sequence,
         "start": route_stop.start_stop_id,
+        "minuteFromStart": route_stop.minute_from_start,
     }
 
 

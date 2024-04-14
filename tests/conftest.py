@@ -139,7 +139,7 @@ async def create_test_bus_route(create_test_bus_stop) -> None:
 async def create_test_bus_route_stop(create_test_bus_route) -> None:
     values = ""
     for i in range(1, 8):
-        values += f"(1, {i}, {i}, 1),"
+        values += f"(1, {i}, {i}, 1, 1),"
     insert_sql = f"INSERT INTO bus_route_stop VALUES {values}"[:-1]
     async with engine.begin() as conn:
         await conn.execute(text(insert_sql))

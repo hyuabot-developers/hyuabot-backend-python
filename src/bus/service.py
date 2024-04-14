@@ -256,6 +256,7 @@ async def create_route_stop(
                 "stop_id": new_route_stop.stop_id,
                 "stop_sequence": new_route_stop.sequence,
                 "start_stop_id": new_route_stop.start_stop_id,
+                "minute_from_start": new_route_stop.minute_from_start,
             },
         )
         .returning(BusRouteStop)
@@ -285,6 +286,11 @@ async def update_route_stop(
                     payload.start_stop_id
                     if payload.start_stop_id is not None
                     else BusRouteStop.start_stop_id
+                ),
+                "minute_from_start": (
+                    payload.minute_from_start
+                    if payload.minute_from_start is not None
+                    else BusRouteStop.minute_from_start
                 ),
             },
         )

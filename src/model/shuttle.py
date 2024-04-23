@@ -214,6 +214,11 @@ class ShuttleTimetableView(Base):
             "stop_name",
             name="pk_shuttle_timetable_view",
         ),
+        ForeignKeyConstraint(
+            ["seq"],
+            ["shuttle_timetable_view.seq"],
+            name="fk_shuttle_timetable_view_timetable",
+        ),
         {"info": dict(is_view=True)},
     )
 
@@ -226,4 +231,9 @@ class ShuttleTimetableView(Base):
     departure_time: Mapped[datetime.time] = mapped_column(
         "departure_time",
         Time(timezone=True),
+    )
+    via: Mapped[list["ShuttleTimetableView"]] = relationship(
+        "ShuttleTimetableView",
+        remote_side=[id_],
+        viewonly=True,
     )

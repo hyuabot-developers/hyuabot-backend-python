@@ -407,7 +407,9 @@ async def test_get_shuttle_timetable(
         query {
             shuttle {
                 timetable {
-                    id, period, weekdays, route, tag, stop, time
+                    id, period, weekdays, route, tag, stop, time, via {
+                        stop, time
+                    }
                 }
             }
         }
@@ -426,6 +428,7 @@ async def test_get_shuttle_timetable(
         assert "tag" in item
         assert "stop" in item
         assert "time" in item
+        assert "via" in item
 
 
 @pytest.mark.asyncio
@@ -440,7 +443,9 @@ async def test_get_shuttle_timetable_weekdays_filter(
         query {
             shuttle (weekdays: [true]) {
                 timetable {
-                    id, period, weekdays, route, tag, stop, time
+                    id, period, weekdays, route, tag, stop, time, via {
+                        stop, time
+                    }
                 }
             }
         }
@@ -459,6 +464,7 @@ async def test_get_shuttle_timetable_weekdays_filter(
         assert "tag" in item
         assert "stop" in item
         assert "time" in item
+        assert "via" in item
 
 
 @pytest.mark.asyncio
@@ -473,7 +479,9 @@ async def test_get_shuttle_timetable_weekends_filter(
         query {
             shuttle (weekdays: [false]) {
                 timetable {
-                    id, period, weekdays, route, tag, stop, time
+                    id, period, weekdays, route, tag, stop, time, via {
+                        stop, time
+                    }
                 }
             }
         }
@@ -492,6 +500,7 @@ async def test_get_shuttle_timetable_weekends_filter(
         assert "tag" in item
         assert "stop" in item
         assert "time" in item
+        assert "via" in item
 
 
 @pytest.mark.asyncio
@@ -506,7 +515,9 @@ async def test_get_shuttle_timetable_period_filter(
         query {
             shuttle (period: ["semester"]) {
                 timetable {
-                    id, period, weekdays, route, tag, stop, time
+                    id, period, weekdays, route, tag, stop, time, via {
+                        stop, time
+                    }
                 }
             }
         }
@@ -525,6 +536,7 @@ async def test_get_shuttle_timetable_period_filter(
         assert "tag" in item
         assert "stop" in item
         assert "time" in item
+        assert "via" in item
 
 
 @pytest.mark.asyncio
@@ -539,7 +551,9 @@ async def test_get_shuttle_timetable_period_not_found(
         query {
             shuttle (timestamp: "2021-01-01T00:00:00+09:00") {
                 timetable {
-                    id, period, weekdays, route, tag, stop, time
+                    id, period, weekdays, route, tag, stop, time, via {
+                        stop, time
+                    }
                 }
             }
         }
@@ -561,7 +575,9 @@ async def test_get_shuttle_timetable_holiday_filter(
         query {
             shuttle (timestamp: "2024-01-01T00:00:00+09:00") {
                 timetable {
-                    id, period, weekdays, route, tag, stop, time
+                    id, period, weekdays, route, tag, stop, time, via {
+                        stop, time
+                    }
                 }
             }
         }
@@ -580,6 +596,7 @@ async def test_get_shuttle_timetable_holiday_filter(
         assert "tag" in item
         assert "stop" in item
         assert "time" in item
+        assert "via" in item
 
 
 @pytest.mark.asyncio
@@ -595,7 +612,9 @@ async def test_get_shuttle_timetable_halt_filter(
         query {
             shuttle (timestamp: "2024-01-02T00:00:00+09:00") {
                 timetable {
-                    id, period, weekdays, route, tag, stop, time
+                    id, period, weekdays, route, tag, stop, time, via {
+                        stop, time
+                    }
                 }
             }
         }
@@ -622,7 +641,9 @@ async def test_get_shuttle_timetable_start_filter(
         query {
             shuttle (start: "05:00:00") {
                 timetable {
-                    id, period, weekdays, route, tag, stop, time
+                    id, period, weekdays, route, tag, stop, time, via {
+                        stop, time
+                    }
                 }
             }
         }
@@ -641,6 +662,7 @@ async def test_get_shuttle_timetable_start_filter(
         assert "tag" in item
         assert "stop" in item
         assert item["time"] >= "05:00:00"
+        assert "via" in item
 
 
 @pytest.mark.asyncio
@@ -656,7 +678,9 @@ async def test_get_shuttle_timetable_end_filter(
         query {
             shuttle (end: "05:00:00") {
                 timetable {
-                    id, period, weekdays, route, tag, stop, time
+                    id, period, weekdays, route, tag, stop, time, via {
+                        stop, time
+                    }
                 }
             }
         }
@@ -675,3 +699,4 @@ async def test_get_shuttle_timetable_end_filter(
         assert "tag" in item
         assert "stop" in item
         assert item["time"] <= "05:00:00"
+        assert "via" in item

@@ -1,6 +1,7 @@
 import datetime
 
 import holidays
+import pytz
 import strawberry
 from korean_lunar_calendar import KoreanLunarCalendar
 from pytz import timezone
@@ -24,6 +25,12 @@ kr_holidays = holidays.country_holidays("KR")
 
 
 @strawberry.type
+class ShuttleViaQuery:
+    stop: str = strawberry.field(name="stop")
+    departure_time: str = strawberry.field(name="time")
+
+
+@strawberry.type
 class ShuttleTimetableQuery:
     id_: int = strawberry.field(name="id")
     period: str = strawberry.field(name="period")
@@ -32,6 +39,7 @@ class ShuttleTimetableQuery:
     route_tag: str = strawberry.field(name="tag")
     stop_name: str = strawberry.field(name="stop")
     departure_time: str = strawberry.field(name="time")
+    via: list[ShuttleViaQuery] = strawberry.field(name="via")
 
 
 @strawberry.type
@@ -143,9 +151,7 @@ async def resolve_shuttle(
 
 
 async def resolve_shuttle_timetable(
-    timestamp: datetime.datetime | None = datetime.datetime.now().astimezone(
-        tz=timezone("Asia/Seoul"),
-    ),
+    timestamp: datetime.datetime | None = datetime.datetime.now(tz=pytz.timezone("Asia/Seoul")),
     period: list[str] | None = None,
     weekdays: list[bool] | None = None,
     route_name: list[str] | None = None,
@@ -245,6 +251,12 @@ async def resolve_shuttle_timetable(
                 ShuttleTimetableView.stop_name,
                 ShuttleTimetableView.departure_time,
             ),
+            selectinload(ShuttleTimetableView.via).options(
+                load_only(
+                    ShuttleTimetableView.stop_name,
+                    ShuttleTimetableView.departure_time,
+                ),
+            ),
         )
         .where(and_(*timetable_condition))
         .order_by(ShuttleTimetableView.id_)
@@ -259,6 +271,13 @@ async def resolve_shuttle_timetable(
             route_tag=timetable.route_tag,
             stop_name=timetable.stop_name,
             departure_time=timetable.departure_time.strftime("%H:%M:%S"),
+            via=[
+                ShuttleViaQuery(
+                    stop=via.stop_name,
+                    departure_time=via.departure_time.strftime("%H:%M:%S"),
+                )
+                for via in sorted(timetable.via, key=lambda x: x.departure_time)
+            ],
         )
         for timetable in timetable_list
     ]

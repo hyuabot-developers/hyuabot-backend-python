@@ -307,7 +307,7 @@ async def test_get_bus_query_filter_weekdays(
 ) -> None:
     query = """
         query {
-            bus (weekdays: "weekdays") {
+            bus (weekdays: ["weekdays"]) {
                 id, name, districtCode, region, mobileNumber, latitude, longitude,
                 routes {
                     sequence,

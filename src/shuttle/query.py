@@ -189,9 +189,6 @@ async def resolve_shuttle_timetable(
         lunar_calendar.setSolarDate(timestamp.year, timestamp.month, timestamp.day)
         lunar_date = lunar_calendar.LunarIsoFormat()
 
-        if timestamp.isoformat() in kr_holidays:
-            timetable_condition.append(ShuttleTimetableView.is_weekdays.is_(false()))
-
         select_holiday_query = (
             select(ShuttleHoliday)
             .options(load_only(ShuttleHoliday.type_))
@@ -217,7 +214,10 @@ async def resolve_shuttle_timetable(
             elif holiday.type_ == "halt":
                 return []
         else:
-            if timestamp.weekday() >= 5:
+            if timestamp.isoformat() in kr_holidays:
+                timetable_condition.append(
+                    ShuttleTimetableView.is_weekdays.is_(false()))
+            elif timestamp.weekday() >= 5:
                 timetable_condition.append(ShuttleTimetableView.is_weekdays.is_(false()))
             else:
                 timetable_condition.append(ShuttleTimetableView.is_weekdays.is_(true()))

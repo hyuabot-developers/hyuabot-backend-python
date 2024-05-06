@@ -113,7 +113,7 @@ async def resolve_bus(
     id_: list[int] | None = None,
     name: str | None = None,
     route: str | None = None,
-    weekdays: str | None = None,
+    weekdays: list[str] | None = None,
     log_date: list[datetime.date] | None = None,
     start: datetime.time | None = None,
     end: datetime.time | None = None,
@@ -198,7 +198,10 @@ async def resolve_bus(
         (weekdays is None or x.weekday == weekdays)
         and (
             start is None
-            or (x.departure_time.replace(tzinfo=KST) >= start.replace(tzinfo=KST))
+            or (
+                x.departure_time.replace(tzinfo=KST) >= start.replace(tzinfo=KST) or
+                x.departure_time.replace(tzinfo=KST) < datetime.time(4, 0, 0).replace(tzinfo=KST)
+            )
             if start is not None
             else True
         )
@@ -277,13 +280,13 @@ async def resolve_bus(
                         timetable=[
                             BusTimetableQuery(
                                 weekdays=timetable.weekday,
-                                departure_time=timetable.departure_time.strftime(
-                                    "%H:%M:%S",
+                                departure_time=convert_time_after_midnight(
+                                    timetable.departure_time,
                                 ),
                             )
                             for timetable in sorted(
                                 list(filter(timetable_filter, route.timetable)),
-                                key=lambda x: x.departure_time,
+                                key=lambda x: convert_time_after_midnight(x.departure_time),
                             )
                         ],
                         realtime=[
@@ -310,12 +313,14 @@ async def resolve_bus(
                                 departure_time=log.time,
                                 vehicle_id=log.vehicle_id,
                             )
-                            for log in sorted(list(
-                                filter(
-                                    lambda x: log_date is None or x.date in log_date,
-                                    route.log,
-                                ),
-                            ), key=lambda x: x.date)
+                            for log in sorted(
+                                list(
+                                    filter(
+                                        lambda x: log_date is None or x.date in log_date,
+                                        route.log,
+                                    ),
+                                ), key=lambda x: x.date,
+                            )
                         ],
                     )
                     for route in sorted(
@@ -340,3 +345,11 @@ def calculate_remaining_time(
     now = datetime.datetime.now(tz=KST)
     remaining_secs = (updated_at + time - now).total_seconds()
     return round(remaining_secs / 60, 1)
+
+
+def convert_time_after_midnight(
+    time: datetime.time,
+) -> str:
+    if time.replace(tzinfo=KST) < datetime.time(4, 0, 0).replace(tzinfo=KST):
+        return f'{24 + time.hour}:{time.strftime("%M:%S")}'
+    return time.strftime("%H:%M:%S")

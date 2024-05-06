@@ -1,6 +1,8 @@
 import datetime
 from typing import Callable
 
+import holidays
+import pytz
 import strawberry
 from pytz import timezone
 from sqlalchemy import select
@@ -9,6 +11,9 @@ from sqlalchemy.orm import selectinload, load_only, joinedload
 from database import fetch_all
 from model.bus import BusStop, BusRouteStop, BusTimetable, BusRealtime, BusRoute, BusDepartureLog
 from utils import KST
+
+
+kr_holidays = holidays.country_holidays("KR")
 
 
 @strawberry.type
@@ -193,9 +198,16 @@ async def resolve_bus(
     )
     stops = await fetch_all(stop_query)
     result: list[StopQuery] = []
-    now = datetime.datetime.now(tz=KST)
+    now = datetime.datetime.now(tz=pytz.timezone("Asia/Seoul"))
+    if weekdays is None:
+        if now.isoformat() in kr_holidays or now.weekday() == 6:
+            weekdays = ["sunday"]
+        elif now.weekday() == 5:
+            weekdays = ["saturday"]
+        else:
+            weekdays = ["weekdays"]
     timetable_filter: Callable[[BusTimetable], bool] = lambda x: (
-        (weekdays is None or x.weekday == weekdays)
+        x.weekday in weekdays
         and (
             start is None
             or (

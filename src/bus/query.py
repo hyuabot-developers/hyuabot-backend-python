@@ -117,7 +117,7 @@ class StopQuery(BusStopItem):
 async def resolve_bus(
     id_: list[int] | None = None,
     name: str | None = None,
-    route: str | None = None,
+    route_id: int | None = None,
     weekdays: list[str] | None = None,
     log_date: list[datetime.date] | None = None,
     start: datetime.time | None = None,
@@ -338,7 +338,7 @@ async def resolve_bus(
                     for route in sorted(
                         list(
                             filter(
-                                lambda x: route is None or route in x.route.name,
+                                lambda x: route_id is None or route_id == x.route_id,
                                 stop.routes,
                             ),
                         ),

@@ -49,6 +49,8 @@ class Menu(Base):
             "restaurant_id",
             "feed_date",
             "time_type",
+            "menu_food",
+            "menu_price",
             name="pk_menu",
         ),
         ForeignKeyConstraint(
@@ -68,5 +70,7 @@ class Menu(Base):
     price: Mapped[str] = mapped_column("menu_price", String(30))
 
     restaurant: Mapped["Cafeteria"] = relationship(
-        back_populates="menu_list",
+        primaryjoin="Menu.restaurant_id == Cafeteria.id_",
+        viewonly=True,
+        uselist=False,
     )

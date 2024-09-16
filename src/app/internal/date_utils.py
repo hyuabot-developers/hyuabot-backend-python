@@ -7,7 +7,7 @@ from sqlalchemy import select, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.model.calendar import Holiday
-from app.model.shuttle import ShuttlePeriod, ShuttleHoliday
+from app.model.shuttle import ShuttlePeriod
 
 exclude_holidays = [
     datetime.date(2021, 5, 1),
@@ -24,8 +24,8 @@ def is_weekends(value: datetime.date = datetime.date.today()) -> bool:
 
 
 async def is_halt(db_session: AsyncSession, value: datetime.date = datetime.date.today()) -> bool:
-    statement = select(ShuttleHoliday).where(
-        ShuttleHoliday.holiday_date == value,
+    statement = select(Holiday).where(
+        Holiday.holiday_date == value,
     )
     query_result = (await db_session.execute(statement)).scalars().first()
     if query_result is None:

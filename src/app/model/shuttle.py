@@ -135,16 +135,6 @@ class ShuttlePeriod(BaseModel):
         mapped_column('period_end', DateTime, primary_key=True)
 
 
-class ShuttleHoliday(BaseModel):
-    __tablename__ = 'shuttle_holiday'
-    holiday_date: Mapped[datetime.date] = \
-        mapped_column('holiday_date', Date, primary_key=True)
-    calendar_type: Mapped[str] = \
-        mapped_column('calendar_type', String(10), primary_key=True)
-    holiday_type: Mapped[str] = \
-        mapped_column('holiday_type', String(50), primary_key=True)
-
-
 class ShuttleTimetableItem(BaseModel):
     __tablename__ = 'shuttle_timetable'
     # Period - TimetableItem: 1 - N

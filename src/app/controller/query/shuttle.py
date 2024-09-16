@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.internal.date_utils import current_period, is_weekends
+from app.internal.date_utils import current_period, is_weekends, is_halt
 from app.model.shuttle import ShuttleRouteStop, ShuttleStop, ShuttleRoute
 
 
@@ -88,6 +88,7 @@ async def query_shuttle(
         period_query = [(await current_period(db_session, date_query))]
     if weekday_query is None:
         weekday_query = [not is_weekends(date_query.date())]
+    halt = is_halt(db_session, date_query.date())
     statement = select(ShuttleStop).where(*filters).options(
         selectinload(ShuttleStop.routes).options(
             selectinload(ShuttleRouteStop.route).options(
@@ -113,39 +114,40 @@ async def query_shuttle(
             if tag_query is not None and route.route.tags not in tag_query:
                 continue
             timetable: list[ShuttleArrivalTimeItem] = []
-            for timetable_item in route.timetable:
-                if timetable_item.period_type_name not in period_query:
-                    continue
-                elif timetable_item.weekday not in weekday_query:
-                    continue
-                elif timetable_start is not None and \
-                        timetable_item.departure_time < timetable_start:
-                    continue
-                elif timetable_end is not None and \
-                        timetable_item.departure_time > timetable_end:
-                    continue
-                remaining_time = (datetime.datetime.combine(
-                    date_query.date(),
-                    timetable_item.departure_time,
-                ) - date_query).total_seconds()
-                other_stops: list[ShuttleArrivalOtherStopItem] = []
-                for other_stop in route_stop_list:
-                    other_stops.append(ShuttleArrivalOtherStopItem(
-                        stop_name=other_stop["stop_name"],
-                        timedelta=other_stop["timedelta"],
-                        time=(datetime.datetime.combine(
-                            date_query.date(),
-                            timetable_item.departure_time,
-                        ) + datetime.timedelta(
-                            minutes=other_stop["timedelta"],
-                        )).time(),
+            if not halt:
+                for timetable_item in route.timetable:
+                    if timetable_item.period_type_name not in period_query:
+                        continue
+                    elif timetable_item.weekday not in weekday_query:
+                        continue
+                    elif timetable_start is not None and \
+                            timetable_item.departure_time < timetable_start:
+                        continue
+                    elif timetable_end is not None and \
+                            timetable_item.departure_time > timetable_end:
+                        continue
+                    remaining_time = (datetime.datetime.combine(
+                        date_query.date(),
+                        timetable_item.departure_time,
+                    ) - date_query).total_seconds()
+                    other_stops: list[ShuttleArrivalOtherStopItem] = []
+                    for other_stop in route_stop_list:
+                        other_stops.append(ShuttleArrivalOtherStopItem(
+                            stop_name=other_stop["stop_name"],
+                            timedelta=other_stop["timedelta"],
+                            time=(datetime.datetime.combine(
+                                date_query.date(),
+                                timetable_item.departure_time,
+                            ) + datetime.timedelta(
+                                minutes=other_stop["timedelta"],
+                            )).time(),
+                        ))
+                    timetable.append(ShuttleArrivalTimeItem(
+                        weekdays=timetable_item.weekday,
+                        time=timetable_item.departure_time,
+                        remaining_time=remaining_time,
+                        other_stops=other_stops,
                     ))
-                timetable.append(ShuttleArrivalTimeItem(
-                    weekdays=timetable_item.weekday,
-                    time=timetable_item.departure_time,
-                    remaining_time=remaining_time,
-                    other_stops=other_stops,
-                ))
             if route.route.name not in route_dict:
                 route_dict[route.route.name] = ShuttleRouteStopItem(
                     route_id=route.route.name,

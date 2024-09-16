@@ -1,11 +1,13 @@
 import datetime
+from turtledemo.penrose import start
+
 import holidays
 from korean_lunar_calendar import KoreanLunarCalendar
 from sqlalchemy import select, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.model.calendar import Holiday
-from app.model.shuttle import ShuttlePeriod
+from app.model.shuttle import ShuttlePeriod, ShuttleHoliday
 
 exclude_holidays = [
     datetime.date(2021, 5, 1),
@@ -19,6 +21,16 @@ def is_weekends(value: datetime.date = datetime.date.today()) -> bool:
                        exclude_holidays))):
         return value.weekday() >= 5
     return value.weekday() >= 5 or value in korean_holidays
+
+
+async def is_halt(db_session: AsyncSession, value: datetime.date = datetime.date.today()) -> bool:
+    statement = select(ShuttleHoliday).where(
+        ShuttleHoliday.holiday_date == value,
+    )
+    query_result = (await db_session.execute(statement)).scalars().first()
+    if query_result is None:
+        return False
+    return query_result.holiday_type == 'halt'
 
 
 def current_time() -> datetime.time:

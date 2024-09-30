@@ -1,5 +1,4 @@
 import datetime
-from turtledemo.penrose import start
 
 import holidays
 from korean_lunar_calendar import KoreanLunarCalendar

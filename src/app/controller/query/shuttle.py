@@ -88,7 +88,7 @@ async def query_shuttle(
         period_query = [(await current_period(db_session, date_query))]
     if weekday_query is None:
         weekday_query = [not is_weekends(date_query.date())]
-    halt = is_halt(db_session, date_query.date())
+    halt = await is_halt(db_session, date_query.date())
     statement = select(ShuttleStop).where(*filters).options(
         selectinload(ShuttleStop.routes).options(
             selectinload(ShuttleRouteStop.route).options(

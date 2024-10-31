@@ -1,6 +1,9 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.cafeteria import Cafeteria, Menu
 from tests.utils import get_access_token
 
 
@@ -131,6 +134,12 @@ async def test_create_cafeteria(
     assert "breakfast" in running_time.keys()
     assert "lunch" in running_time.keys()
     assert "dinner" in running_time.keys()
+    check_statement = (
+        select(Cafeteria).where(Cafeteria.id_ == 1)
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_cafeteria"
 
 
 @pytest.mark.asyncio
@@ -478,6 +487,12 @@ async def test_create_cafeteria_menu(
     assert response_json.get("time") is not None
     assert response_json.get("menu") is not None
     assert response_json.get("price") is not None
+    check_statement = (
+        select(Menu).where(Menu.restaurant_id == 1)
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.date == "2021-01-01"
 
 
 @pytest.mark.asyncio

@@ -1,6 +1,9 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.notice import NoticeCategory, Notice
 from tests.utils import get_access_token
 
 
@@ -63,6 +66,10 @@ async def test_create_notice_category(
     assert response_json.get("id") is not None
     assert response_json.get("name") is not None
     assert response_json["name"] == "test_category"
+    check_statement = select(NoticeCategory).where(NoticeCategory.name == "test_category")
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_category"
 
 
 @pytest.mark.asyncio
@@ -281,6 +288,10 @@ async def test_create_notice(
     assert response_json.get("expiredAt") is not None
     assert response_json.get("language") == "korean"
     assert response_json.get("url") == "test_url"
+    check_statement = select(Notice).where(Notice.title == "test_title")
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.title == "test_title"
 
 
 @pytest.mark.asyncio

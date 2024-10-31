@@ -1,7 +1,10 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
 from tests.utils import get_access_token
+from model.contact import PhoneBookCategory, PhoneBook
 
 
 @pytest.mark.asyncio
@@ -63,6 +66,12 @@ async def test_create_contact_category(
     assert response_json.get("id") is not None
     assert response_json.get("name") is not None
     assert response_json["name"] == "test_category"
+    check_statement = (
+        select(PhoneBookCategory).where(PhoneBookCategory.name == "test_category")
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_category"
 
 
 @pytest.mark.asyncio
@@ -276,6 +285,10 @@ async def test_create_contact(
     assert response_json.get("campusID") == 1
     assert response_json.get("name") == "test_name"
     assert response_json.get("phone") == "test_phone"
+    check_statement = select(PhoneBook).where(PhoneBook.name == "test_name")
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_name"
 
 
 @pytest.mark.asyncio

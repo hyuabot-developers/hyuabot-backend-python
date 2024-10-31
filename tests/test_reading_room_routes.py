@@ -1,6 +1,9 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.reading_room import ReadingRoom
 from tests.utils import get_access_token
 
 
@@ -122,6 +125,12 @@ async def test_create_reading_room(
     assert response_json.get("active") is not None
     assert response_json.get("available") is not None
     assert response_json.get("occupied") is not None
+    check_statement = (
+        select(ReadingRoom).where(ReadingRoom.id_ == 100)
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.id_ == 100
 
 
 @pytest.mark.asyncio

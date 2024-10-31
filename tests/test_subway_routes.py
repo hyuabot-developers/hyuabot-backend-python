@@ -1,6 +1,9 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.subway import SubwayStation, SubwayRoute, SubwayRouteStation, SubwayTimetable
 from tests.utils import get_access_token
 
 
@@ -68,9 +71,14 @@ async def test_create_station_name(
         },
     )
     assert response.status_code == 201
-
     response_json = response.json()
     assert response_json.get("name") == "test_station_name"
+    check_statement = select(SubwayStation).where(
+        SubwayStation.name == "test_station_name"
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_station_name"
 
 
 @pytest.mark.asyncio
@@ -274,10 +282,13 @@ async def test_create_route(
         },
     )
     assert response.status_code == 201
-
     response_json = response.json()
     assert response_json.get("id") == 1001
     assert response_json.get("name") == "test_route"
+    check_statement = select(SubwayRoute).where(SubwayRoute.id_ == 1001)
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.id == 1001
 
 
 @pytest.mark.asyncio
@@ -578,13 +589,18 @@ async def test_create_route_station(
         },
     )
     assert response.status_code == 201
-
     response_json = response.json()
     assert response_json.get("id") == "K001"
     assert response_json.get("name") == "test_station_name1"
     assert response_json.get("routeID") == 1001
     assert response_json.get("sequence") == 1
     assert response_json.get("cumulativeTime") == "00:01:00"
+    check_statement = select(SubwayRouteStation).where(
+        SubwayRouteStation.id_ == "K001"
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.id_ == "K001"
 
 
 @pytest.mark.asyncio
@@ -864,7 +880,6 @@ async def test_create_subway_timetable(
         },
     )
     assert response.status_code == 201
-
     response_json = response.json()
     assert response_json.get("stationID") is not None
     assert response_json.get("startStationID") is not None
@@ -872,6 +887,12 @@ async def test_create_subway_timetable(
     assert response_json.get("departureTime") is not None
     assert response_json.get("weekday") is not None
     assert response_json.get("heading") is not None
+    check_statement = select(SubwayTimetable).where(
+        SubwayTimetable.start_station_id == "K001"
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.start_station_id == "K001"
 
 
 @pytest.mark.asyncio

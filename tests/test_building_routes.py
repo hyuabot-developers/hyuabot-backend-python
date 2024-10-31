@@ -1,6 +1,9 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.building import Building, Room
 from tests.utils import get_access_token
 
 
@@ -128,6 +131,12 @@ async def test_create_building(
     assert response_json["latitude"] is not None
     assert response_json["longitude"] is not None
     assert response_json["url"] is not None
+    check_statement = (
+        select(Building).where(Building.id_ == "test_id")
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_name"
 
 
 @pytest.mark.asyncio
@@ -454,6 +463,12 @@ async def test_create_room_in_a_building(
     assert response_json["buildingID"] is not None
     assert response_json["name"] is not None
     assert response_json["number"] is not None
+    check_statement = (
+        select(Room).where(Room.name == "test_name")
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.number == "101"
 
 
 @pytest.mark.asyncio

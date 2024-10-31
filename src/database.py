@@ -29,6 +29,8 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
 async def fetch_one(select_query: Select | Insert | Update):
     async with AsyncSession(engine) as session:
         query = await session.execute(select_query)
+        if isinstance(query, Insert) or isinstance(query, Update):
+            await session.commit()
         result = query.one_or_none()
         if result:
             return result[0]
@@ -38,12 +40,16 @@ async def fetch_one(select_query: Select | Insert | Update):
 async def fetch_all(select_query: Select | Insert | Update):
     async with AsyncSession(engine) as session:
         query = await session.execute(select_query)
+        if isinstance(query, Insert) or isinstance(query, Update):
+            await session.commit()
         return [item[0] for item in query.all()]
 
 
 async def execute_query(query: Select | Insert | Update | Delete):
     async with AsyncSession(engine) as session:
         await session.execute(query)
+        if isinstance(query, Insert) or isinstance(query, Update):
+            await session.commit()
         await session.commit()
 
 

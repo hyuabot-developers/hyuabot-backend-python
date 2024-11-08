@@ -84,10 +84,7 @@ class SubwayTimetable(Base):
     station_id: Mapped[str] = mapped_column("station_id", String(10))
     heading: Mapped[str] = mapped_column("up_down_type", String(10))
     is_weekdays: Mapped[str] = mapped_column("weekday", String(10))
-    departure_time: Mapped[datetime.time] = mapped_column(
-        "departure_time",
-        Time(timezone=True),
-    )
+    departure_time: Mapped[datetime.time] = mapped_column("departure_time", Time)
     start_station_id: Mapped[str] = mapped_column("start_station_id", String(10))
     terminal_station_id: Mapped[str] = mapped_column("terminal_station_id", String(10))
 

@@ -10,7 +10,7 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
     String,
     Time,
-    ForeignKeyConstraint,
+    ForeignKeyConstraint, Date,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -41,8 +41,8 @@ class BusDepartureLog(Base):
 
     route_id: Mapped[int] = mapped_column("route_id", Integer)
     stop_id: Mapped[int] = mapped_column("stop_id", Integer)
-    time: Mapped[datetime.time] = mapped_column("departure_time", Time(timezone=True))
-    date: Mapped[datetime.date] = mapped_column("departure_date", DateTime(timezone=True))
+    time: Mapped[datetime.time] = mapped_column("departure_time", Time)
+    date: Mapped[datetime.date] = mapped_column("departure_date", Date)
     vehicle_id: Mapped[str] = mapped_column("vehicle_id", String(20))
 
 
@@ -78,7 +78,7 @@ class BusTimetable(Base):
     weekday: Mapped[str] = mapped_column("weekday", String(10))
     departure_time: Mapped[datetime.time] = mapped_column(
         "departure_time",
-        Time(timezone=True),
+        Time,
     )
 
     start_stop: Mapped["BusStop"] = relationship(
@@ -216,22 +216,10 @@ class BusRoute(Base):
     company_name: Mapped[str] = mapped_column("company_name", String(30))
     company_telephone: Mapped[str] = mapped_column("company_telephone", String(15))
     district: Mapped[int] = mapped_column("district_code", Integer)
-    up_first_time: Mapped[datetime.time] = mapped_column(
-        "up_first_time",
-        Time(timezone=True),
-    )
-    up_last_time: Mapped[datetime.time] = mapped_column(
-        "up_last_time",
-        Time(timezone=True),
-    )
-    down_first_time: Mapped[datetime.time] = mapped_column(
-        "down_first_time",
-        Time(timezone=True),
-    )
-    down_last_time: Mapped[datetime.time] = mapped_column(
-        "down_last_time",
-        Time(timezone=True),
-    )
+    up_first_time: Mapped[datetime.time] = mapped_column("up_first_time", Time)
+    up_last_time: Mapped[datetime.time] = mapped_column("up_last_time", Time)
+    down_first_time: Mapped[datetime.time] = mapped_column("down_first_time", Time)
+    down_last_time: Mapped[datetime.time] = mapped_column("down_last_time", Time)
     start_stop_id: Mapped[int] = mapped_column("start_stop_id", Integer)
     end_stop_id: Mapped[int] = mapped_column("end_stop_id", Integer)
 

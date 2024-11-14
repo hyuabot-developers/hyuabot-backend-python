@@ -135,7 +135,7 @@ create table if not exists shuttle_route_stop (
     route_name varchar(15) references shuttle_route(route_name),
     stop_name varchar(15) references shuttle_stop(stop_name),
     stop_order int,
-    cumulative_time interval not null,
+    cumulative_time int not null,
     constraint pk_shuttle_route_stop primary key (route_name, stop_name)
 );
 
@@ -183,7 +183,7 @@ select
     shuttle_timetable.route_name,
     shuttle_route.route_tag,
     shuttle_route_stop.stop_name,
-    shuttle_timetable.departure_time + shuttle_route_stop.cumulative_time as departure_time
+    shuttle_timetable.departure_time + interval '1 minute' * shuttle_route_stop.cumulative_time as departure_time
 from shuttle_timetable
 inner join shuttle_period_type on shuttle_period_type.period_type = shuttle_timetable.period_type
 inner join shuttle_route_stop on shuttle_route_stop.route_name = shuttle_timetable.route_name
@@ -304,7 +304,7 @@ create table if not exists bus_realtime(
     arrival_sequence int not null, -- 도착 순서
     remaining_stop_count int not null, -- 남은 정류장 수
     remaining_seat_count int not null, -- 남은 좌석 수
-    remaining_time interval not null, -- 남은 시간
+    remaining_time time not null, -- 남은 시간
     low_plate boolean not null, -- 저상 버스 여부,
     last_updated_time timestamptz not null, -- 마지막 업데이트 시간
     constraint pk_bus_realtime primary key (stop_id, route_id, arrival_sequence),
@@ -356,7 +356,7 @@ create table if not exists subway_route_station(
     route_id int not null, -- 노선 ID
     station_name varchar(30) not null,-- 역 이름
     station_sequence int not null, -- 역 순서
-    cumulative_time interval not null, -- 누적 시간
+    cumulative_time time not null, -- 누적 시간
     constraint fk_route_id
         foreign key (route_id)
         references subway_route(route_id),
@@ -371,7 +371,7 @@ create table if not exists subway_realtime(
     arrival_sequence int not null, -- 도착 순서
     current_station_name varchar(30) not null, -- 현재 역 이름
     remaining_stop_count int not null, -- 남은 정류장 수
-    remaining_time interval not null, -- 남은 시간
+    remaining_time time not null, -- 남은 시간
     up_down_type varchar(10) not null, -- 상행, 하행 여부
     terminal_station_id varchar(10) not null, -- 종착역 ID
     train_number varchar(10) not null, -- 열차 번호

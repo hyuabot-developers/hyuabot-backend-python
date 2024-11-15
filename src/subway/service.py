@@ -160,7 +160,7 @@ async def update_route_station(
     station_id: str,
     payload: UpdateSubwayRouteStation,
 ) -> SubwayRouteStation | None:
-    new_data: dict[str, str | int | datetime.timedelta] = {}
+    new_data: dict[str, str | int | datetime.time] = {}
     if payload.name:
         new_data["name"] = payload.name
     if payload.sequence:

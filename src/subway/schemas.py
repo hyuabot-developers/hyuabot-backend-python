@@ -45,7 +45,7 @@ class CreateSubwayRouteStation(BaseModel):
     name: Annotated[str, Field(max_length=30, alias="name")]
     route_id: Annotated[int, Field(alias="routeID", ge=1)]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
-    cumulative_time: Annotated[datetime.timedelta, Field(alias="cumulativeTime")]
+    cumulative_time: Annotated[datetime.time, Field(alias="cumulativeTime")]
 
     class Config:
         json_schema_extra = {
@@ -63,7 +63,7 @@ class UpdateSubwayRouteStation(BaseModel):
     name: Annotated[Optional[str], Field(max_length=30, alias="name", default=None)]
     sequence: Annotated[Optional[int], Field(alias="sequence", ge=0, default=None)]
     cumulative_time: Annotated[
-        datetime.timedelta,
+        datetime.time,
         Field(alias="cumulativeTime", default=None),
     ]
 

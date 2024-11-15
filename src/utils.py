@@ -12,11 +12,8 @@ def generate_random_alphanum(length: int = 20) -> str:
     return "".join(random.choices(ALPHA_NUM, k=length))
 
 
-def timedelta_to_str(td: datetime.timedelta) -> str:
-    total_seconds = td.total_seconds()
-    hours, remainder = divmod(total_seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
+def time_to_str(td: datetime.time) -> str:
+    return f"{td.hour:02d}:{td.minute:02d}:{td.second:02d}"
 
 
 def remove_timezone(dt: datetime.time) -> datetime.time:

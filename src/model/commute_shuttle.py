@@ -68,7 +68,7 @@ class CommuteShuttleTimetable(Base):
     route_name: Mapped[str] = mapped_column("route_name", String(15))
     stop_name: Mapped[str] = mapped_column("stop_name", String(50))
     sequence: Mapped[int] = mapped_column("stop_order", Integer)
-    time: Mapped[datetime.time] = mapped_column("departure_time", Time(timezone=True))
+    time: Mapped[datetime.time] = mapped_column("departure_time", Time)
 
     route: Mapped["CommuteShuttleRoute"] = relationship(
         "CommuteShuttleRoute",

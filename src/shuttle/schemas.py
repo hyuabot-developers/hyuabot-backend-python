@@ -122,7 +122,7 @@ class UpdateShuttleStopRequest(BaseModel):
 class CreateShuttleRouteStopRequest(BaseModel):
     stop_name: Annotated[str, Field(max_length=15, alias="stop")]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
-    cumulative_time: Annotated[datetime.timedelta, Field(alias="cumulativeTime")]
+    cumulative_time: Annotated[int, Field(alias="cumulativeTime")]
 
     class Config:
         json_schema_extra = {
@@ -137,7 +137,7 @@ class CreateShuttleRouteStopRequest(BaseModel):
 class UpdateShuttleRouteStopRequest(BaseModel):
     sequence: Annotated[Optional[int], Field(alias="sequence", ge=1)]
     cumulative_time: Annotated[
-        Optional[datetime.timedelta],
+        Optional[int],
         Field(alias="cumulativeTime"),
     ]
 
@@ -242,7 +242,7 @@ class ShuttleRouteStopItemResponse(BaseModel):
     route_name: Annotated[str, Field(max_length=15, alias="route")]
     stop_name: Annotated[str, Field(max_length=15, alias="stop")]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
-    cumulative_time: Annotated[str, Field(alias="cumulativeTime")]
+    cumulative_time: Annotated[int, Field(alias="cumulativeTime")]
 
 
 class ShuttleRouteStopListResponse(BaseModel):

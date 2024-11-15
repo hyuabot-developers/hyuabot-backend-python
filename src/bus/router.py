@@ -480,7 +480,7 @@ async def get_bus_realtime_list(
         realtime_list = await service.list_realtime_filter(stop_id, route_id)
     mapping_func: Callable[
         [BusRealtime],
-        dict[str, int | str | datetime.datetime | datetime.timedelta],
+        dict[str, int | str | datetime.datetime | datetime.time],
     ] = lambda x: {
         "stopID": x.stop_id,
         "routeID": x.route_id,

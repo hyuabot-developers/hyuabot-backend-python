@@ -36,7 +36,7 @@ from subway.schemas import (
     CreateSubwayTimetable,
 )
 from user.jwt import parse_jwt_user_data
-from utils import timedelta_to_str, remove_timezone, KST
+from utils import time_to_str, remove_timezone, KST
 
 router = APIRouter()
 
@@ -196,7 +196,7 @@ async def get_route_station_list(
                 "name": x.name,
                 "routeID": x.route_id,
                 "sequence": x.sequence,
-                "cumulativeTime": timedelta_to_str(
+                "cumulativeTime": time_to_str(
                     x.cumulative_time,
                 ),
             },
@@ -220,7 +220,7 @@ async def get_route_station(
         "name": station.name,
         "routeID": station.route_id,
         "sequence": station.sequence,
-        "cumulativeTime": timedelta_to_str(
+        "cumulativeTime": time_to_str(
             station.cumulative_time,
         ),
     }
@@ -243,7 +243,7 @@ async def create_route_station(
         "name": station.name,
         "routeID": station.route_id,
         "sequence": station.sequence,
-        "cumulativeTime": timedelta_to_str(
+        "cumulativeTime": time_to_str(
             station.cumulative_time,
         ),
     }
@@ -388,7 +388,7 @@ async def get_route_station_realtime(
                 "current": x.location,
                 "heading": x.heading,
                 "station": x.stop,
-                "time": timedelta_to_str(x.time),
+                "time": time_to_str(x.time),
                 "trainNumber": x.train_number,
                 "express": x.is_express,
                 "last": x.is_last,

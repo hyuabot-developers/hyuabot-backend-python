@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, List
 
 import pytz
 from sqlalchemy import Boolean, String, DateTime, UUID
-from sqlalchemy.dialects.postgresql import BYTEA
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from model import Base
@@ -16,7 +15,7 @@ class User(Base):
     __tablename__ = "admin_user"
 
     id_: Mapped[str] = mapped_column("user_id", String(20), primary_key=True)
-    password: Mapped[bytes] = mapped_column("password", BYTEA)
+    password: Mapped[str] = mapped_column("password", String(88))
     name: Mapped[str] = mapped_column("name", String(20))
     email: Mapped[str] = mapped_column("email", String(50))
     phone: Mapped[str] = mapped_column("phone", String(20))

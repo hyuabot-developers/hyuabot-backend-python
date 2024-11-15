@@ -6,7 +6,6 @@ from sqlalchemy import (
     DateTime,
     Float,
     Integer,
-    Interval,
     PrimaryKeyConstraint,
     String,
     Time,
@@ -161,9 +160,9 @@ class ShuttleRouteStop(Base):
     route_name: Mapped[str] = mapped_column("route_name", String(15))
     stop_name: Mapped[str] = mapped_column("stop_name", String(15))
     sequence: Mapped[int] = mapped_column("stop_order", Integer)
-    cumulative_time: Mapped[datetime.timedelta] = mapped_column(
+    cumulative_time: Mapped[int] = mapped_column(
         "cumulative_time",
-        Interval,
+        Integer,
     )
 
     route: Mapped["ShuttleRoute"] = relationship(
@@ -195,10 +194,7 @@ class ShuttleTimetable(Base):
     period: Mapped[str] = mapped_column("period_type", String(20))
     is_weekdays: Mapped[bool] = mapped_column("weekday", Boolean)
     route_name: Mapped[str] = mapped_column("route_name", String(15))
-    departure_time: Mapped[datetime.time] = mapped_column(
-        "departure_time",
-        Time(timezone=True),
-    )
+    departure_time: Mapped[datetime.time] = mapped_column("departure_time", Time)
 
     route: Mapped["ShuttleRoute"] = relationship(
         "ShuttleRoute",
@@ -230,7 +226,7 @@ class ShuttleTimetableView(Base):
     stop_name: Mapped[str] = mapped_column("stop_name", String(15))
     departure_time: Mapped[datetime.time] = mapped_column(
         "departure_time",
-        Time(timezone=True),
+        Time,
     )
     via: Mapped[list["ShuttleTimetableView"]] = relationship(
         "ShuttleTimetableView",

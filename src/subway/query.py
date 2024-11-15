@@ -148,7 +148,11 @@ async def resolve_subway(
         )
     )
     realtime_filter: Callable[[SubwayRealtime], bool] = lambda x: (
-        x.updated_at.astimezone(timezone("Asia/Seoul")) >= now - x.time
+        x.updated_at.astimezone(timezone("Asia/Seoul")) >= now - datetime.timedelta(
+            hours=x.time.hour,
+            minutes=x.time.minute,
+            seconds=x.time.second,
+        )
     )
     for station in stations:
         timetable = list(filter(timetable_filter, station.timetable))
@@ -260,8 +264,12 @@ async def resolve_subway(
 
 def calculate_remaining_time(
     updated_at: datetime.datetime,
-    time: datetime.timedelta,
+    time: datetime.time,
 ) -> float:
     now = datetime.datetime.now(tz=KST)
-    remaining_secs = (updated_at + time - now).total_seconds()
+    remaining_secs = (updated_at + datetime.timedelta(
+        hours=time.hour,
+        minutes=time.minute,
+        seconds=time.second,
+    ) - now).total_seconds()
     return round(remaining_secs / 60, 1)

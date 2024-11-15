@@ -1060,7 +1060,7 @@ async def test_create_shuttle_route_stop(
         json={
             "stop": "test_stop3",
             "sequence": 3,
-            "cumulativeTime": "00:10:00",
+            "cumulativeTime": 10,
         },
     )
     assert response.status_code == 201
@@ -1068,7 +1068,7 @@ async def test_create_shuttle_route_stop(
     assert response_json.get("route") == "test_route1"
     assert response_json.get("stop") == "test_stop3"
     assert response_json.get("sequence") == 3
-    assert response_json.get("cumulativeTime") == "00:10:00"
+    assert response_json.get("cumulativeTime") == 10
 
 
 @pytest.mark.asyncio
@@ -1085,7 +1085,7 @@ async def test_create_shuttle_route_stop_duplicate(
         json={
             "stop": "test_stop1",
             "sequence": 3,
-            "cumulativeTime": "00:10:00",
+            "cumulativeTime": 10,
         },
     )
     assert response.status_code == 409
@@ -1107,7 +1107,7 @@ async def test_create_shuttle_route_stop_route_not_found(
         json={
             "stop": "test_stop1",
             "sequence": 3,
-            "cumulativeTime": "00:10:00",
+            "cumulativeTime": 10,
         },
     )
     assert response.status_code == 404
@@ -1138,7 +1138,7 @@ async def test_create_shuttle_route_stop_internal_server_error(
         json={
             "stop": "test_stop3",
             "sequence": 3,
-            "cumulativeTime": "00:10:00",
+            "cumulativeTime": 10,
         },
     )
     assert response.status_code == 500
@@ -1196,7 +1196,7 @@ async def test_update_shuttle_route_stop_item(
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "sequence": 2,
-            "cumulativeTime": "00:10:00",
+            "cumulativeTime": 10,
         },
     )
     assert response.status_code == 200
@@ -1220,7 +1220,7 @@ async def test_update_shuttle_route_stop_item_not_found(
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "sequence": 2,
-            "cumulativeTime": "00:10:00",
+            "cumulativeTime": 10,
         },
     )
     assert response.status_code == 404
@@ -1249,7 +1249,7 @@ async def test_update_shuttle_route_stop_item_internal_server_error(
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "sequence": 2,
-            "cumulativeTime": "00:10:00",
+            "cumulativeTime": 10,
         },
     )
     assert response.status_code == 500

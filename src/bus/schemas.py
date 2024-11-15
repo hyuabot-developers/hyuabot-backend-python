@@ -304,7 +304,7 @@ class BusRealtimeListItemResponse(BaseModel):
     sequence: Annotated[int, Field(alias="sequence", ge=1)]
     remaining_stop: Annotated[int, Field(alias="stop", ge=0)]
     remaining_time: Annotated[
-        datetime.timedelta,
+        datetime.time,
         Field(alias="time"),
     ]
     remaining_seat: Annotated[int, Field(alias="seat", ge=-1)]

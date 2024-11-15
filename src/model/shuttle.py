@@ -6,7 +6,6 @@ from sqlalchemy import (
     DateTime,
     Float,
     Integer,
-    Interval,
     PrimaryKeyConstraint,
     String,
     Time,
@@ -161,9 +160,9 @@ class ShuttleRouteStop(Base):
     route_name: Mapped[str] = mapped_column("route_name", String(15))
     stop_name: Mapped[str] = mapped_column("stop_name", String(15))
     sequence: Mapped[int] = mapped_column("stop_order", Integer)
-    cumulative_time: Mapped[datetime.timedelta] = mapped_column(
+    cumulative_time: Mapped[int] = mapped_column(
         "cumulative_time",
-        Interval,
+        Integer,
     )
 
     route: Mapped["ShuttleRoute"] = relationship(

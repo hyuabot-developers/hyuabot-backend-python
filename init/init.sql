@@ -65,7 +65,7 @@ drop table if exists campus cascade;
 -- 관리자 계정 테이블
 create table if not exists admin_user (
     user_id varchar(20) primary key,
-    password bytea not null,
+    password varchar(88) not null,
     name varchar(20) not null,
     email varchar(50) not null,
     phone varchar(15) not null,
@@ -139,7 +139,7 @@ create table if not exists shuttle_route_stop (
     constraint pk_shuttle_route_stop primary key (route_name, stop_name)
 );
 
--- 셔틀버스 운행 기간 (학기중, 계절학기, 방학)
+-- 셔틀버스 운행 shuttle-timetable-initialize-g8fws기간 (학기중, 계절학기, 방학)
 create table if not exists shuttle_period(
     -- 셔틀버스 운행 기간 ID
     period_type varchar(20) not null,

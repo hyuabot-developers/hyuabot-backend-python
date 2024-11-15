@@ -225,7 +225,9 @@ async def resolve_bus(
         )
     )
     realtime_filter: Callable[[BusRealtime], bool] = lambda x: (
-        x.updated_at.astimezone(timezone("Asia/Seoul")) >= now - x.time
+        x.updated_at.astimezone(timezone("Asia/Seoul")) >= now - datetime.timedelta(
+            hours=x.time.hour, minutes=x.time.minute, seconds=x.time.second,
+        )
     )
     for stop in stops:
         result.append(
@@ -352,10 +354,14 @@ async def resolve_bus(
 
 def calculate_remaining_time(
     updated_at: datetime.datetime,
-    time: datetime.timedelta,
+    time: datetime.time,
 ) -> float:
     now = datetime.datetime.now(tz=KST)
-    remaining_secs = (updated_at + time - now).total_seconds()
+    remaining_secs = (updated_at + datetime.timedelta(
+        hours=time.hour,
+        minutes=time.minute,
+        seconds=time.second,
+    ) - now).total_seconds()
     return round(remaining_secs / 60, 1)
 
 

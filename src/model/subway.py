@@ -5,7 +5,6 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     Integer,
-    Interval,
     PrimaryKeyConstraint,
     String,
     Time,
@@ -36,9 +35,9 @@ class SubwayRouteStation(Base):
     route_id: Mapped[int] = mapped_column("route_id", Integer)
     name: Mapped[str] = mapped_column("station_name", String(30))
     sequence: Mapped[int] = mapped_column("station_sequence", Integer)
-    cumulative_time: Mapped[datetime.timedelta] = mapped_column(
+    cumulative_time: Mapped[datetime.time] = mapped_column(
         "cumulative_time",
-        Interval,
+        Time,
     )
 
     timetable: Mapped[List["SubwayTimetable"]] = relationship(
@@ -123,7 +122,7 @@ class SubwayRealtime(Base):
     sequence: Mapped[int] = mapped_column("arrival_sequence", Integer)
     location: Mapped[str] = mapped_column("current_station_name", String(30))
     stop: Mapped[int] = mapped_column("remaining_stop_count", Integer)
-    time: Mapped[datetime.timedelta] = mapped_column("remaining_time", Interval)
+    time: Mapped[datetime.time] = mapped_column("remaining_time", Time)
     terminal_station_id: Mapped[str] = mapped_column("terminal_station_id", String(10))
     train_number: Mapped[str] = mapped_column("train_number", String(10))
     is_express: Mapped[bool] = mapped_column("is_express_train", Boolean)

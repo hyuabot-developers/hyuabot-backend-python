@@ -6,7 +6,6 @@ from sqlalchemy import (
     DateTime,
     Float,
     Integer,
-    Interval,
     PrimaryKeyConstraint,
     String,
     Time,
@@ -112,7 +111,7 @@ class BusRealtime(Base):
     sequence: Mapped[int] = mapped_column("arrival_sequence", Integer)
     stops: Mapped[int] = mapped_column("remaining_stop_count", Integer)
     seats: Mapped[int] = mapped_column("remaining_seat_count", Integer)
-    time: Mapped[datetime.timedelta] = mapped_column("remaining_time", Interval)
+    time: Mapped[datetime.time] = mapped_column("remaining_time", Time)
     low_floor: Mapped[bool] = mapped_column("low_plate", Boolean)
     updated_at: Mapped[datetime.datetime] = mapped_column(
         "last_updated_time",

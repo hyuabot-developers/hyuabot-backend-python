@@ -65,7 +65,7 @@ async def create_route(new_holiday: CreateBusRouteRequest) -> BusRoute | None:
         )
         .returning(BusRoute)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_route(
@@ -142,7 +142,7 @@ async def update_route(
         )
         .returning(BusRoute)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_route(route_id: int) -> None:
@@ -181,7 +181,7 @@ async def create_stop(new_stop: CreateBusStopRequest) -> BusStop | None:
         )
         .returning(BusStop)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_stop(
@@ -223,7 +223,7 @@ async def update_stop(
         )
         .returning(BusStop)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_stop(stop_id: int) -> None:
@@ -261,7 +261,7 @@ async def create_route_stop(
         )
         .returning(BusRouteStop)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_route_stop(
@@ -296,7 +296,7 @@ async def update_route_stop(
         )
         .returning(BusRouteStop)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_route_stop(route_id: int, stop_id: int) -> None:
@@ -364,7 +364,7 @@ async def create_timetable(
         )
         .returning(BusTimetable)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def delete_timetable(

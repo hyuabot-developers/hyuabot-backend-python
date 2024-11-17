@@ -34,7 +34,7 @@ async def create_calendar_category(
         )
         .returning(CalendarCategory)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def get_calendar_category(calendar_category_id: int) -> CalendarCategory | None:
@@ -109,7 +109,7 @@ async def create_calendar(
         .returning(CalendarVersion)
     )
     await execute_query(insert_version_query)
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def delete_calendar(
@@ -176,4 +176,4 @@ async def update_calendar(
         .returning(CalendarVersion)
     )
     await execute_query(insert_version_query)
-    return await fetch_one(update_query)
+    return await execute_query(update_query)

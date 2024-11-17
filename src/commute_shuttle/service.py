@@ -45,7 +45,7 @@ async def create_route(
         )
         .returning(CommuteShuttleRoute)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_route(
@@ -63,7 +63,7 @@ async def update_route(
         )
         .returning(CommuteShuttleRoute)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_route(route_name: str) -> None:
@@ -100,7 +100,7 @@ async def create_stop(
         )
         .returning(CommuteShuttleStop)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_stop(
@@ -119,7 +119,7 @@ async def update_stop(
         )
         .returning(CommuteShuttleStop)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_stop(stop_name: str) -> None:
@@ -178,7 +178,7 @@ async def create_timetable(
         )
         .returning(CommuteShuttleTimetable)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_timetable(
@@ -200,7 +200,7 @@ async def update_timetable(
         .values(payload)
         .returning(CommuteShuttleTimetable)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_timetable(

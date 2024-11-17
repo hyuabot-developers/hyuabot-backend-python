@@ -35,7 +35,7 @@ async def create_station_name(
         .returning(SubwayStation)
     )
 
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def get_station_name(station_name: str) -> SubwayStation | None:
@@ -74,7 +74,7 @@ async def create_route(
         .returning(SubwayRoute)
     )
 
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def get_route(route_id: int) -> SubwayRoute:
@@ -134,7 +134,7 @@ async def create_route_station(
         .returning(SubwayRouteStation)
     )
 
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def get_route_station(station_id: str) -> SubwayRouteStation:
@@ -233,7 +233,7 @@ async def create_timetable(
         .returning(SubwayTimetable)
     )
 
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def delete_timetable(

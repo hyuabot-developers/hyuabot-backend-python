@@ -32,7 +32,7 @@ async def create_user(user: CreateUserRequest) -> User | None:
         .returning(User)
     )
 
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def get_user_by_id(user_id: str) -> User | None:

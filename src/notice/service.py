@@ -33,7 +33,7 @@ async def create_notice_category(
         )
         .returning(NoticeCategory)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def get_notice_category(notice_category_id: int) -> NoticeCategory | None:
@@ -94,7 +94,7 @@ async def create_notice(
         )
         .returning(Notice)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def delete_notice(
@@ -133,4 +133,4 @@ async def update_notice(
         .returning(Notice)
     )
 
-    return await fetch_one(update_query)
+    return await execute_query(update_query)

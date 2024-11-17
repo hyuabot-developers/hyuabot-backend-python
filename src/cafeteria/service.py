@@ -43,7 +43,7 @@ async def create_cafeteria(
         )
         .returning(Cafeteria)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def get_cafeteria(cafeteria_id: int) -> Cafeteria | None:
@@ -75,7 +75,7 @@ async def update_cafeteria(
         .returning(Cafeteria)
     )
 
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_cafeteria(cafeteria_id: int) -> None:
@@ -131,7 +131,7 @@ async def create_menu(
         )
         .returning(Menu)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def delete_menu(
@@ -172,4 +172,4 @@ async def update_menu(
         .returning(Menu)
     )
 
-    return await fetch_one(update_query)
+    return await execute_query(update_query)

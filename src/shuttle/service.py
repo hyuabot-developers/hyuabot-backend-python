@@ -74,7 +74,7 @@ async def create_holiday(
         )
         .returning(ShuttleHoliday)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def delete_holiday(calendar_type: str, date: datetime.date) -> None:
@@ -138,7 +138,7 @@ async def create_period(
         )
         .returning(ShuttlePeriod)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def delete_period(
@@ -203,7 +203,7 @@ async def create_route(
         )
         .returning(ShuttleRoute)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_route(
@@ -227,7 +227,7 @@ async def update_route(
         .values(payload)
         .returning(ShuttleRoute)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_route(route_name: str) -> None:
@@ -266,7 +266,7 @@ async def create_stop(
         )
         .returning(ShuttleStop)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_stop(
@@ -284,7 +284,7 @@ async def update_stop(
         )
         .returning(ShuttleStop)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_stop(stop_name: str) -> None:
@@ -328,7 +328,7 @@ async def create_route_stop(
         )
         .returning(ShuttleRouteStop)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_route_stop(
@@ -350,7 +350,7 @@ async def update_route_stop(
         .values(payload)
         .returning(ShuttleRouteStop)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_route_stop(
@@ -431,7 +431,7 @@ async def create_timetable(
         )
         .returning(ShuttleTimetable)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_timetable(
@@ -455,7 +455,7 @@ async def update_timetable(
         .values(payload)
         .returning(ShuttleTimetable)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_timetable(seq: int) -> None:

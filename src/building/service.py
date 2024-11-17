@@ -50,7 +50,7 @@ async def create_building(
         )
         .returning(Building)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_building(
@@ -72,7 +72,7 @@ async def update_building(
         .values(payload)
         .returning(Building)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_building(building_name: str) -> None:
@@ -120,7 +120,7 @@ async def create_room(
         )
         .returning(Room)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def update_room(
@@ -143,7 +143,7 @@ async def update_room(
         .values(payload)
         .returning(Room)
     )
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_room(building_name: str, room_number: str) -> None:

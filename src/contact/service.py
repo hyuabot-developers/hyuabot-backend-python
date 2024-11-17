@@ -34,7 +34,7 @@ async def create_contact_category(
         )
         .returning(PhoneBookCategory)
     )
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def get_contact_category(contact_category_id: int) -> PhoneBookCategory | None:
@@ -108,7 +108,7 @@ async def create_contact(
         .returning(PhoneBookVersion)
     )
     await execute_query(insert_version_query)
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def delete_contact(
@@ -174,4 +174,4 @@ async def update_contact(
         .returning(PhoneBookVersion)
     )
     await execute_query(insert_version_query)
-    return await fetch_one(update_query)
+    return await execute_query(update_query)

@@ -36,7 +36,7 @@ async def create_reading_room(
         .returning(ReadingRoom)
     )
 
-    return await fetch_one(insert_query)
+    return await execute_query(insert_query)
 
 
 async def get_reading_room(reading_room_id: int) -> ReadingRoom | None:
@@ -65,7 +65,7 @@ async def update_reading_room(
         .returning(ReadingRoom)
     )
 
-    return await fetch_one(update_query)
+    return await execute_query(update_query)
 
 
 async def delete_reading_room(room_id: int) -> None:

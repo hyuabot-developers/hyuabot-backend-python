@@ -29,10 +29,10 @@ async def create_user(user: CreateUserRequest) -> User | None:
                 "active": False,
             },
         )
-        .returning(User)
     )
-
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(User).where(User.id_ == user.user_id)
+    return await fetch_one(select_query)
 
 
 async def get_user_by_id(user_id: str) -> User | None:
@@ -66,10 +66,8 @@ async def create_refresh_token(
                 )
             ),
         )
-        .returning(RefreshToken)
     )
     await execute_query(insert_query)
-
     return refresh_token
 
 

@@ -32,10 +32,10 @@ async def create_station_name(
                 "station_name": new_station_name.name,
             },
         )
-        .returning(SubwayStation)
     )
-
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(SubwayStation).where(SubwayStation.name == new_station_name.name)
+    return await fetch_one(select_query)
 
 
 async def get_station_name(station_name: str) -> SubwayStation | None:
@@ -71,10 +71,10 @@ async def create_route(
                 "route_name": new_route.name,
             },
         )
-        .returning(SubwayRoute)
     )
-
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(SubwayRoute).where(SubwayRoute.id_ == new_route.id_)
+    return await fetch_one(select_query)
 
 
 async def get_route(route_id: int) -> SubwayRoute:
@@ -106,10 +106,10 @@ async def update_route(
                 "name": payload.name,
             },
         )
-        .returning(SubwayRoute)
     )
-
-    return await execute_query(update_query)
+    await execute_query(update_query)
+    select_query = select(SubwayRoute).where(SubwayRoute.id_ == route_id)
+    return await fetch_one(select_query)
 
 
 async def delete_route(route_id: int) -> None:
@@ -131,10 +131,10 @@ async def create_route_station(
                 "cumulative_time": new_station.cumulative_time,
             },
         )
-        .returning(SubwayRouteStation)
     )
-
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(SubwayRouteStation).where(SubwayRouteStation.id_ == new_station.id_)
+    return await fetch_one(select_query)
 
 
 async def get_route_station(station_id: str) -> SubwayRouteStation:
@@ -173,11 +173,8 @@ async def update_route_station(
             SubwayRouteStation.id_ == station_id,
         )
         .values(new_data)
-        .returning(SubwayRouteStation)
     )
-
     await execute_query(update_query)
-
     select_query = select(SubwayRouteStation).where(
         SubwayRouteStation.id_ == station_id,
     )
@@ -230,10 +227,17 @@ async def create_timetable(
                 "heading": new_timetable.heading,
             },
         )
-        .returning(SubwayTimetable)
     )
-
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(SubwayTimetable).where(
+        SubwayTimetable.station_id == station_id,
+        SubwayTimetable.start_station_id == new_timetable.start_station_id,
+        SubwayTimetable.terminal_station_id == new_timetable.terminal_station_id,
+        SubwayTimetable.departure_time == new_timetable.departure_time.replace(tzinfo=KST),
+        SubwayTimetable.is_weekdays == new_timetable.weekday,
+        SubwayTimetable.heading == new_timetable.heading,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_timetable(

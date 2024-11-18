@@ -1,6 +1,9 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.commute_shuttle import CommuteShuttleRoute, CommuteShuttleStop, CommuteShuttleTimetable
 from tests.utils import get_access_token
 
 
@@ -51,6 +54,12 @@ async def test_create_commute_shuttle_route(
     assert response_json.get("name") == route_name
     assert response_json.get("korean") == route_description_korean
     assert response_json.get("english") == route_description_english
+    check_statement = select(CommuteShuttleRoute).where(
+        CommuteShuttleRoute.name == route_name
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == route_name
 
 
 @pytest.mark.asyncio
@@ -309,6 +318,12 @@ async def test_create_commute_shuttle_stop(
     assert response_json.get("description") == stop_description
     assert response_json.get("latitude") == stop_latitude
     assert response_json.get("longitude") == stop_longitude
+    check_statement = select(CommuteShuttleStop).where(
+        CommuteShuttleStop.name == stop_name
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == stop_name
 
 
 @pytest.mark.asyncio
@@ -604,6 +619,12 @@ async def test_create_commute_shuttle_timetable(
     assert response_json.get("stop") == stop_name
     assert response_json.get("sequence") == sequence
     assert response_json.get("time") is not None
+    check_statement = select(CommuteShuttleTimetable).where(
+        CommuteShuttleTimetable.route_name == route_name
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.route_name == route_name
 
 
 @pytest.mark.asyncio

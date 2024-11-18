@@ -1,6 +1,9 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.calendar import CalendarCategory, Calendar
 from tests.utils import get_access_token
 
 
@@ -63,6 +66,12 @@ async def test_create_calendar_category(
     assert response_json.get("id") is not None
     assert response_json.get("name") is not None
     assert response_json["name"] == "test_category"
+    check_statement = select(CalendarCategory).where(
+        CalendarCategory.name == "test_category",
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_category"
 
 
 @pytest.mark.asyncio
@@ -278,6 +287,12 @@ async def test_create_calendar(
     assert response_json.get("description") == "test_description"
     assert response_json.get("start") is not None
     assert response_json.get("end") is not None
+    check_statement = select(Calendar).where(
+        Calendar.title == "test_title",
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.title == "test_title"
 
 
 @pytest.mark.asyncio

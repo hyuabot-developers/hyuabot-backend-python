@@ -43,9 +43,12 @@ async def create_route(
                 "route_description_english": new_route.route_description_english,
             },
         )
-        .returning(CommuteShuttleRoute)
     )
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(CommuteShuttleRoute).where(
+        CommuteShuttleRoute.name == new_route.name,
+    )
+    return await fetch_one(select_query)
 
 
 async def update_route(
@@ -61,9 +64,12 @@ async def update_route(
                 "english": new_route.route_description_english,
             },
         )
-        .returning(CommuteShuttleRoute)
     )
-    return await fetch_one(update_query)
+    await execute_query(update_query)
+    select_query = select(CommuteShuttleRoute).where(
+        CommuteShuttleRoute.name == route_name,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_route(route_name: str) -> None:
@@ -98,9 +104,12 @@ async def create_stop(
                 "longitude": new_stop.longitude,
             },
         )
-        .returning(CommuteShuttleStop)
     )
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(CommuteShuttleStop).where(
+        CommuteShuttleStop.name == new_stop.name,
+    )
+    return await fetch_one(select_query)
 
 
 async def update_stop(
@@ -117,9 +126,12 @@ async def update_stop(
                 "longitude": new_stop.longitude,
             },
         )
-        .returning(CommuteShuttleStop)
     )
-    return await fetch_one(update_query)
+    await execute_query(update_query)
+    select_query = select(CommuteShuttleStop).where(
+        CommuteShuttleStop.name == stop_name,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_stop(stop_name: str) -> None:
@@ -176,9 +188,13 @@ async def create_timetable(
                 "departure_time": new_timetable.departure_time.replace(tzinfo=KST),
             },
         )
-        .returning(CommuteShuttleTimetable)
     )
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(CommuteShuttleTimetable).where(
+        CommuteShuttleTimetable.route_name == new_timetable.route_name,
+        CommuteShuttleTimetable.stop_name == new_timetable.stop_name,
+    )
+    return await fetch_one(select_query)
 
 
 async def update_timetable(
@@ -198,9 +214,13 @@ async def update_timetable(
             CommuteShuttleTimetable.stop_name == stop_name,
         )
         .values(payload)
-        .returning(CommuteShuttleTimetable)
     )
-    return await fetch_one(update_query)
+    await execute_query(update_query)
+    select_query = select(CommuteShuttleTimetable).where(
+        CommuteShuttleTimetable.route_name == route_name,
+        CommuteShuttleTimetable.stop_name == stop_name,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_timetable(

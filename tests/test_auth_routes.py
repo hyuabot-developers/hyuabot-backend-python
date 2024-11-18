@@ -1,5 +1,9 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
+
+from database import fetch_one
+from model.user import User
 
 
 @pytest.mark.asyncio
@@ -25,6 +29,10 @@ async def test_register_user(
         "phone": "test_phone",
         "active": False,
     }
+    check_statement = select(User).where(User.id_ == "test_id")
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.id_ == "test_id"
 
 
 @pytest.mark.asyncio

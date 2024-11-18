@@ -2,8 +2,12 @@ import datetime
 
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.shuttle import ShuttleHoliday, ShuttlePeriod, ShuttleRoute, ShuttleStop, ShuttleRouteStop, ShuttleTimetable
 from tests.utils import get_access_token
+from utils import KST
 
 
 @pytest.mark.asyncio
@@ -135,6 +139,12 @@ async def test_create_shuttle_holiday(
     assert response_json.get("calendar") == "lunar"
     assert response_json.get("date") == "2021-01-01"
     assert response_json.get("type") == "weekends"
+    check_statement = select(ShuttleHoliday).where(
+        ShuttleHoliday.calendar == "lunar",
+        ShuttleHoliday.type_ == "weekends",
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
 
 
 @pytest.mark.asyncio
@@ -341,6 +351,17 @@ async def test_create_shuttle_period(
     assert response_json.get("type") == "semester"
     assert response_json.get("start") is not None
     assert response_json.get("end") is not None
+    check_statement = select(ShuttlePeriod).where(
+        ShuttlePeriod.type_id == "semester",
+        ShuttlePeriod.start == datetime.datetime(
+            2021, 1, 1, 0, 0, 0,
+        ).replace(tzinfo=KST),
+        ShuttlePeriod.end == datetime.datetime(
+            2021, 1, 31, 23, 59, 59,
+        ).replace(tzinfo=KST),
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
 
 
 @pytest.mark.asyncio
@@ -550,6 +571,14 @@ async def test_create_shuttle_route(
     assert response_json.get("english") == "test"
     assert response_json.get("start") == "test_stop1"
     assert response_json.get("end") == "test_stop2"
+    check_statement = select(ShuttleRoute).where(
+        ShuttleRoute.name == "test",
+        ShuttleRoute.tag == "test",
+        ShuttleRoute.korean == "테스트",
+        ShuttleRoute.english == "test"
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
 
 
 @pytest.mark.asyncio
@@ -829,6 +858,11 @@ async def test_create_shuttle_stop(
     assert response_json.get("name") == "test_stop3"
     assert response_json.get("latitude") == 37.000000
     assert response_json.get("longitude") == 127.000000
+    check_statement = select(ShuttleStop).where(
+        ShuttleStop.name == "test_stop3"
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
 
 
 @pytest.mark.asyncio
@@ -1069,6 +1103,18 @@ async def test_create_shuttle_route_stop(
     assert response_json.get("stop") == "test_stop3"
     assert response_json.get("sequence") == 3
     assert response_json.get("cumulativeTime") == "00:10:00"
+    check_statement = select(ShuttleRouteStop).where(
+        ShuttleRouteStop.route_name == "test_route1",
+        ShuttleRouteStop.stop_name == "test_stop3",
+        ShuttleRouteStop.sequence == 3,
+        ShuttleRouteStop.cumulative_time == datetime.timedelta(
+            hours=0,
+            minutes=10,
+            seconds=0
+        )
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
 
 
 @pytest.mark.asyncio
@@ -1467,6 +1513,12 @@ async def test_create_shuttle_timetable(
     assert response_json.get("weekdays") is True
     assert response_json.get("route") == "test_route1"
     assert response_json.get("time") == "00:00:00"
+    check_statement = select(ShuttleTimetable).where(
+        ShuttleTimetable.period == "semester",
+        ShuttleTimetable.route_name == "test_route1",
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
 
 
 @pytest.mark.asyncio

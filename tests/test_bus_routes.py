@@ -1,7 +1,13 @@
+from datetime import time
+
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.bus import BusRoute, BusStop, BusRouteStop, BusTimetable
 from tests.utils import get_access_token
+from utils import KST
 
 
 @pytest.mark.asyncio
@@ -183,6 +189,10 @@ async def test_create_bus_route(
     assert response_json.get("down") is not None
     assert response_json["down"].get("first") is not None
     assert response_json["down"].get("last") is not None
+    check_statement = select(BusRoute).where(BusRoute.id_ == 20)
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_route"
 
 
 @pytest.mark.asyncio
@@ -518,6 +528,10 @@ async def test_create_bus_stop(
     assert response_json.get("district") is not None
     assert response_json.get("mobileNumber") is not None
     assert response_json.get("regionName") is not None
+    check_statement = select(BusStop).where(BusStop.id_ == 20)
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_stop"
 
 
 @pytest.mark.asyncio
@@ -828,6 +842,12 @@ async def test_create_bus_route_stop(
     assert response.json().get("sequence") is not None
     assert response.json().get("start") is not None
     assert response.json().get("minuteFromStart") is not None
+    check_statement = select(BusRouteStop).where(
+        BusRouteStop.route_id == 1, BusRouteStop.stop_id == 9
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.sequence == 1
 
 
 @pytest.mark.asyncio
@@ -1304,6 +1324,14 @@ async def test_create_timetable(
     assert response.json().get("start") is not None
     assert response.json().get("weekdays") is not None
     assert response.json().get("departureTime") is not None
+    check_statement = select(BusTimetable).where(
+        BusTimetable.route_id == 1,
+        BusTimetable.start_stop_id == 1,
+        BusTimetable.weekday == "saturday",
+        BusTimetable.departure_time == time(hour=15).replace(tzinfo=KST),
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
 
 
 @pytest.mark.asyncio

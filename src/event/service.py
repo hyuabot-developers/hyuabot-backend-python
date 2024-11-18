@@ -32,9 +32,12 @@ async def create_calendar_category(
                 "name": new_calendar_category.name,
             },
         )
-        .returning(CalendarCategory)
     )
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(CalendarCategory).where(
+        CalendarCategory.name == new_calendar_category.name,
+    )
+    return await fetch_one(select_query)
 
 
 async def get_calendar_category(calendar_category_id: int) -> CalendarCategory | None:
@@ -92,7 +95,6 @@ async def create_calendar(
                 "end_date": new_calendar.end_date,
             },
         )
-        .returning(Calendar)
     )
     delete_version_query = delete(CalendarVersion)
     await execute_query(delete_version_query)
@@ -106,10 +108,17 @@ async def create_calendar(
                 "created_at": now,
             },
         )
-        .returning(CalendarVersion)
     )
     await execute_query(insert_version_query)
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(Calendar).where(
+        Calendar.category_id == category_id,
+        Calendar.title == new_calendar.title,
+        Calendar.description == new_calendar.description,
+        Calendar.start_date == new_calendar.start_date,
+        Calendar.end_date == new_calendar.end_date,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_calendar(
@@ -133,7 +142,6 @@ async def delete_calendar(
                 "created_at": now,
             },
         )
-        .returning(CalendarVersion)
     )
     await execute_query(insert_version_query)
 
@@ -159,7 +167,6 @@ async def update_calendar(
             Calendar.id_ == calendar_id,
         )
         .values(update_data)
-        .returning(Calendar)
     )
     delete_version_query = delete(CalendarVersion)
     await execute_query(delete_version_query)
@@ -173,7 +180,11 @@ async def update_calendar(
                 "created_at": now,
             },
         )
-        .returning(CalendarVersion)
     )
     await execute_query(insert_version_query)
-    return await fetch_one(update_query)
+    await execute_query(update_query)
+    select_query = select(Calendar).where(
+        Calendar.category_id == calendar_category_id,
+        Calendar.id_ == calendar_id,
+    )
+    return await fetch_one(select_query)

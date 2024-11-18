@@ -41,9 +41,10 @@ async def create_cafeteria(
                 "dinner_running_time": new_cafeteria.dinner_running_time,
             },
         )
-        .returning(Cafeteria)
     )
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(Cafeteria).where(Cafeteria.id_ == new_cafeteria.id_)
+    return await fetch_one(select_query)
 
 
 async def get_cafeteria(cafeteria_id: int) -> Cafeteria | None:
@@ -72,10 +73,10 @@ async def update_cafeteria(
         update(Cafeteria)
         .where(Cafeteria.id_ == cafeteria_id)
         .values(update_data)
-        .returning(Cafeteria)
     )
-
-    return await fetch_one(update_query)
+    await execute_query(update_query)
+    select_query = select(Cafeteria).where(Cafeteria.id_ == cafeteria_id)
+    return await fetch_one(select_query)
 
 
 async def delete_cafeteria(cafeteria_id: int) -> None:
@@ -129,9 +130,15 @@ async def create_menu(
                 "menu_price": new_menu.price,
             },
         )
-        .returning(Menu)
     )
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(Menu).where(
+        Menu.restaurant_id == cafeteria_id,
+        Menu.feed_date == new_menu.date,
+        Menu.time_type == new_menu.time,
+        Menu.menu == new_menu.menu,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_menu(
@@ -169,7 +176,12 @@ async def update_menu(
                 "price": payload.price,
             },
         )
-        .returning(Menu)
     )
-
-    return await fetch_one(update_query)
+    await execute_query(update_query)
+    select_query = select(Menu).where(
+        Menu.restaurant_id == cafeteria_id,
+        Menu.feed_date == date,
+        Menu.time_type == time,
+        Menu.menu == menu,
+    )
+    return await fetch_one(select_query)

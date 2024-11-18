@@ -32,9 +32,12 @@ async def create_contact_category(
                 "name": new_contact_category.name,
             },
         )
-        .returning(PhoneBookCategory)
     )
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(PhoneBookCategory).where(
+        PhoneBookCategory.name == new_contact_category.name
+    )
+    return await fetch_one(select_query)
 
 
 async def get_contact_category(contact_category_id: int) -> PhoneBookCategory | None:
@@ -91,7 +94,6 @@ async def create_contact(
                 "campus_id": new_contact.campus_id,
             },
         )
-        .returning(PhoneBook)
     )
     delete_version_query = delete(PhoneBookVersion)
     await execute_query(delete_version_query)
@@ -105,10 +107,14 @@ async def create_contact(
                 "created_at": now,
             },
         )
-        .returning(PhoneBookVersion)
     )
     await execute_query(insert_version_query)
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(PhoneBook).where(
+        PhoneBook.category_id == category_id,
+        PhoneBook.name == new_contact.name,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_contact(
@@ -132,7 +138,6 @@ async def delete_contact(
                 "created_at": now,
             },
         )
-        .returning(PhoneBookVersion)
     )
     await execute_query(insert_version_query)
 
@@ -157,7 +162,6 @@ async def update_contact(
             PhoneBook.id_ == contact_id,
         )
         .values(update_data)
-        .returning(PhoneBook)
     )
     delete_version_query = delete(PhoneBookVersion)
     await execute_query(delete_version_query)
@@ -171,7 +175,11 @@ async def update_contact(
                 "created_at": now,
             },
         )
-        .returning(PhoneBookVersion)
     )
     await execute_query(insert_version_query)
-    return await fetch_one(update_query)
+    await execute_query(update_query)
+    select_query = select(PhoneBook).where(
+        PhoneBook.category_id == contact_category_id,
+        PhoneBook.id_ == contact_id,
+    )
+    return await fetch_one(select_query)

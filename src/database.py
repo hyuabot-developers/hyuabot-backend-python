@@ -26,22 +26,22 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
         await session.close()
 
 
-async def fetch_one(select_query: Select | Insert | Update):
+async def fetch_one(query: Select):
     async with AsyncSession(engine) as session:
-        query = await session.execute(select_query)
-        result = query.one_or_none()
+        query_result = await session.execute(query)
+        result = query_result.one_or_none()
         if result:
             return result[0]
         return None
 
 
-async def fetch_all(select_query: Select | Insert | Update):
+async def fetch_all(query: Select):
     async with AsyncSession(engine) as session:
-        query = await session.execute(select_query)
-        return [item[0] for item in query.all()]
+        query_result = await session.execute(query)
+        return [item[0] for item in query_result.all()]
 
 
-async def execute_query(query: Select | Insert | Update | Delete):
+async def execute_query(query: Insert | Update | Delete):
     async with AsyncSession(engine) as session:
         await session.execute(query)
         await session.commit()

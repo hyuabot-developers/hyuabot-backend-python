@@ -48,9 +48,10 @@ async def create_building(
                 "url": new_building.url,
             },
         )
-        .returning(Building)
     )
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(Building).where(Building.name == new_building.name)
+    return await fetch_one(select_query)
 
 
 async def update_building(
@@ -70,9 +71,10 @@ async def update_building(
         update(Building)
         .where(Building.name == building_name)
         .values(payload)
-        .returning(Building)
     )
-    return await fetch_one(update_query)
+    await execute_query(update_query)
+    select_query = select(Building).where(Building.name == building_name)
+    return await fetch_one(select_query)
 
 
 async def delete_building(building_name: str) -> None:
@@ -118,9 +120,13 @@ async def create_room(
                 "number": new_room.number,
             },
         )
-        .returning(Room)
     )
-    return await fetch_one(insert_query)
+    await execute_query(insert_query)
+    select_query = select(Room).where(
+        Room.building_name == building_name,
+        Room.number == new_room.number,
+    )
+    return await fetch_one(select_query)
 
 
 async def update_room(
@@ -141,9 +147,13 @@ async def update_room(
             Room.number == room_number,
         )
         .values(payload)
-        .returning(Room)
     )
-    return await fetch_one(update_query)
+    await execute_query(update_query)
+    select_query = select(Room).where(
+        Room.building_name == building_name,
+        Room.number == new_room.number,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_room(building_name: str, room_number: str) -> None:

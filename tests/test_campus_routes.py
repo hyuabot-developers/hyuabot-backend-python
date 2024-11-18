@@ -1,6 +1,9 @@
 import pytest
 from async_asgi_testclient import TestClient
+from sqlalchemy import select
 
+from database import fetch_one
+from model.campus import Campus
 from tests.utils import get_access_token
 
 
@@ -110,6 +113,10 @@ async def test_create_campus(
     response_json = response.json()
     assert response_json.get("id") is not None
     assert response_json.get("name") is not None
+    check_statement = select(Campus).filter(Campus.id_ == 100)
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_campus100"
 
 
 @pytest.mark.asyncio

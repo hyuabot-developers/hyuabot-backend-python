@@ -35,8 +35,9 @@ async def update_campus(
             },
         )
     )
-
     await execute_query(update_query)
+    select_query = select(Campus).where(Campus.id_ == campus_id)
+    return await fetch_one(select_query)
 
 
 async def delete_campus(campus_id: int) -> None:
@@ -56,5 +57,6 @@ async def create_campus(
             },
         )
     )
-
     await execute_query(insert_query)
+    select_query = select(Campus).where(Campus.id_ == new_campus.id_)
+    return await fetch_one(select_query)

@@ -7,6 +7,7 @@ from sqlalchemy import select
 from database import fetch_one
 from model.shuttle import ShuttleHoliday, ShuttlePeriod, ShuttleRoute, ShuttleStop, ShuttleRouteStop, ShuttleTimetable
 from tests.utils import get_access_token
+from utils import KST
 
 
 @pytest.mark.asyncio
@@ -352,8 +353,12 @@ async def test_create_shuttle_period(
     assert response_json.get("end") is not None
     check_statement = select(ShuttlePeriod).where(
         ShuttlePeriod.type_id == "semester",
-        ShuttlePeriod.start == "2021-01-01",
-        ShuttlePeriod.end == "2021-01-31",
+        ShuttlePeriod.start == datetime.datetime(
+            2021, 1, 1, 0, 0, 0,
+        ).replace(tzinfo=KST),
+        ShuttlePeriod.end == datetime.datetime(
+            2021, 1, 31, 23, 59, 59,
+        ).replace(tzinfo=KST),
     )
     query_result = await fetch_one(check_statement)
     assert query_result is not None
@@ -1102,7 +1107,11 @@ async def test_create_shuttle_route_stop(
         ShuttleRouteStop.route_name == "test_route1",
         ShuttleRouteStop.stop_name == "test_stop3",
         ShuttleRouteStop.sequence == 3,
-        ShuttleRouteStop.cumulative_time == "00:10:00",
+        ShuttleRouteStop.cumulative_time == datetime.timedelta(
+            hours=0,
+            minutes=10,
+            seconds=0
+        )
     )
     query_result = await fetch_one(check_statement)
     assert query_result is not None

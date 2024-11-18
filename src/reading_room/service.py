@@ -34,8 +34,9 @@ async def create_reading_room(
             },
         )
     )
-
     await execute_query(insert_query)
+    select_query = select(ReadingRoom).where(ReadingRoom.id_ == new_reading_room.id_)
+    return await fetch_one(select_query)
 
 
 async def get_reading_room(reading_room_id: int) -> ReadingRoom | None:
@@ -62,8 +63,9 @@ async def update_reading_room(
         .where(ReadingRoom.id_ == room_id)
         .values(payload)
     )
-
     await execute_query(update_query)
+    select_query = select(ReadingRoom).where(ReadingRoom.id_ == room_id)
+    return await fetch_one(select_query)
 
 
 async def delete_reading_room(room_id: int) -> None:

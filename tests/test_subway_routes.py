@@ -288,7 +288,7 @@ async def test_create_route(
     check_statement = select(SubwayRoute).where(SubwayRoute.id_ == 1001)
     query_result = await fetch_one(check_statement)
     assert query_result is not None
-    assert query_result.id == 1001
+    assert query_result.id_ == 1001
 
 
 @pytest.mark.asyncio

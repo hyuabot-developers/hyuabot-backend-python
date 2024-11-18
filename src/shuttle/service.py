@@ -74,6 +74,11 @@ async def create_holiday(
         )
     )
     await execute_query(insert_query)
+    select_query = select(ShuttleHoliday).where(
+        ShuttleHoliday.calendar == new_holiday.calendar,
+        ShuttleHoliday.date == new_holiday.date,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_holiday(calendar_type: str, date: datetime.date) -> None:
@@ -137,6 +142,18 @@ async def create_period(
         )
     )
     await execute_query(insert_query)
+    select_query = select(ShuttlePeriod).where(
+        ShuttlePeriod.type_id == new_period.type_,
+        ShuttlePeriod.start == datetime.datetime.strptime(
+            f"{new_period.start}T00:00:00+09:00",
+            "%Y-%m-%dT%H:%M:%S%z",
+        ),
+        ShuttlePeriod.end == datetime.datetime.strptime(
+            f"{new_period.end}T23:59:59+09:00",
+            "%Y-%m-%dT%H:%M:%S%z",
+        ),
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_period(
@@ -201,6 +218,8 @@ async def create_route(
         )
     )
     await execute_query(insert_query)
+    select_query = select(ShuttleRoute).where(ShuttleRoute.name == new_route.name)
+    return await fetch_one(select_query)
 
 
 async def update_route(
@@ -224,6 +243,8 @@ async def update_route(
         .values(payload)
     )
     await execute_query(update_query)
+    select_query = select(ShuttleRoute).where(ShuttleRoute.name == route_name)
+    return await fetch_one(select_query)
 
 
 async def delete_route(route_name: str) -> None:
@@ -262,6 +283,8 @@ async def create_stop(
         )
     )
     await execute_query(insert_query)
+    select_query = select(ShuttleStop).where(ShuttleStop.name == new_stop.name)
+    return await fetch_one(select_query)
 
 
 async def update_stop(
@@ -279,6 +302,8 @@ async def update_stop(
         )
     )
     await execute_query(update_query)
+    select_query = select(ShuttleStop).where(ShuttleStop.name == stop_name)
+    return await fetch_one(select_query)
 
 
 async def delete_stop(stop_name: str) -> None:
@@ -322,6 +347,11 @@ async def create_route_stop(
         )
     )
     await execute_query(insert_query)
+    select_query = select(ShuttleRouteStop).where(
+        ShuttleRouteStop.route_name == route_name,
+        ShuttleRouteStop.stop_name == new_route_stop.stop_name,
+    )
+    return await fetch_one(select_query)
 
 
 async def update_route_stop(
@@ -343,6 +373,11 @@ async def update_route_stop(
         .values(payload)
     )
     await execute_query(update_query)
+    select_query = select(ShuttleRouteStop).where(
+        ShuttleRouteStop.route_name == route_name,
+        ShuttleRouteStop.stop_name == stop_name,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_route_stop(
@@ -423,6 +458,15 @@ async def create_timetable(
         )
     )
     await execute_query(insert_query)
+    select_query = select(ShuttleTimetable).where(
+        ShuttleTimetable.route_name == new_timetable.route_name,
+        ShuttleTimetable.period == new_timetable.period_type,
+        ShuttleTimetable.is_weekdays == new_timetable.is_weekdays,
+        ShuttleTimetable.departure_time == new_timetable.departure_time.replace(
+            tzinfo=KST,
+        ),
+    )
+    return await fetch_one(select_query)
 
 
 async def update_timetable(
@@ -446,6 +490,8 @@ async def update_timetable(
         .values(payload)
     )
     await execute_query(update_query)
+    select_query = select(ShuttleTimetable).where(ShuttleTimetable.id_ == seq)
+    return await fetch_one(select_query)
 
 
 async def delete_timetable(seq: int) -> None:

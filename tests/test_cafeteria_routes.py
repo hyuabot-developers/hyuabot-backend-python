@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from async_asgi_testclient import TestClient
 from sqlalchemy import select
@@ -492,7 +494,10 @@ async def test_create_cafeteria_menu(
     )
     query_result = await fetch_one(check_statement)
     assert query_result is not None
-    assert query_result.date == "2021-01-01"
+    assert query_result.feed_date == datetime.strptime(
+        "2021-01-01",
+        "%Y-%m-%d"
+    ).date()
 
 
 @pytest.mark.asyncio

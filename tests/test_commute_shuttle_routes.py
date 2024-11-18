@@ -624,7 +624,7 @@ async def test_create_commute_shuttle_timetable(
     )
     query_result = await fetch_one(check_statement)
     assert query_result is not None
-    assert query_result.route == route_name
+    assert query_result.route_name == route_name
 
 
 @pytest.mark.asyncio

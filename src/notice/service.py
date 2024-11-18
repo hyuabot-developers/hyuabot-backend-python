@@ -33,6 +33,10 @@ async def create_notice_category(
         )
     )
     await execute_query(insert_query)
+    select_query = select(NoticeCategory).where(
+        NoticeCategory.name == new_notice_category.name,
+    )
+    return await fetch_one(select_query)
 
 
 async def get_notice_category(notice_category_id: int) -> NoticeCategory | None:
@@ -93,6 +97,13 @@ async def create_notice(
         )
     )
     await execute_query(insert_query)
+    select_query = select(Notice).where(
+        Notice.category_id == category_id,
+        Notice.title == new_notice.title,
+        Notice.url == new_notice.url,
+        Notice.expired_at == new_notice.expired_at,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_notice(
@@ -129,5 +140,9 @@ async def update_notice(
         )
         .values(update_data)
     )
-
     await execute_query(update_query)
+    select_query = select(Notice).where(
+        Notice.category_id == notice_category_id,
+        Notice.id_ == notice_id,
+    )
+    return await fetch_one(select_query)

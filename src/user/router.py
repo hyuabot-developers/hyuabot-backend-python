@@ -28,9 +28,8 @@ async def register_user(
     user = await service.create_user(new_user)
     if user is None:
         raise DetailedHTTPException()
-    print(user)
     return {
-        "username": user["user_id"],
+        "username": user.id_,
         "nickname": user.name,
         "email": user.email,
         "phone": user.phone,

@@ -1,3 +1,5 @@
+from datetime import time
+
 import pytest
 from async_asgi_testclient import TestClient
 from sqlalchemy import select
@@ -5,6 +7,7 @@ from sqlalchemy import select
 from database import fetch_one
 from model.bus import BusRoute, BusStop, BusRouteStop, BusTimetable
 from tests.utils import get_access_token
+from utils import KST
 
 
 @pytest.mark.asyncio
@@ -1325,6 +1328,7 @@ async def test_create_timetable(
         BusTimetable.route_id == 1,
         BusTimetable.start_stop_id == 1,
         BusTimetable.weekday == "saturday",
+        BusTimetable.departure_time == time(hour=15).replace(tzinfo=KST),
     )
     query_result = await fetch_one(check_statement)
     assert query_result is not None

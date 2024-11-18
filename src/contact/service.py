@@ -34,6 +34,10 @@ async def create_contact_category(
         )
     )
     await execute_query(insert_query)
+    select_query = select(PhoneBookCategory).where(
+        PhoneBookCategory.name == new_contact_category.name
+    )
+    return await fetch_one(select_query)
 
 
 async def get_contact_category(contact_category_id: int) -> PhoneBookCategory | None:
@@ -106,6 +110,11 @@ async def create_contact(
     )
     await execute_query(insert_version_query)
     await execute_query(insert_query)
+    select_query = select(PhoneBook).where(
+        PhoneBook.category_id == category_id,
+        PhoneBook.name == new_contact.name,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_contact(
@@ -169,3 +178,8 @@ async def update_contact(
     )
     await execute_query(insert_version_query)
     await execute_query(update_query)
+    select_query = select(PhoneBook).where(
+        PhoneBook.category_id == contact_category_id,
+        PhoneBook.id_ == contact_id,
+    )
+    return await fetch_one(select_query)

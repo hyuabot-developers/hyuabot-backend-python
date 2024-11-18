@@ -42,29 +42,31 @@ async def get_route(route_id: int) -> BusRoute | None:
     return await fetch_one(select_query)
 
 
-async def create_route(new_holiday: CreateBusRouteRequest) -> BusRoute | None:
+async def create_route(new_route: CreateBusRouteRequest) -> BusRoute | None:
     insert_query = (
         insert(BusRoute)
         .values(
             {
-                "route_id": new_holiday.id_,
-                "route_name": new_holiday.name,
-                "route_type_code": new_holiday.type_code,
-                "route_type_name": new_holiday.type_name,
-                "company_id": new_holiday.company_id,
-                "company_name": new_holiday.company_name,
-                "company_telephone": new_holiday.company_telephone,
-                "district_code": new_holiday.district_code,
-                "up_first_time": new_holiday.up_first_time.replace(tzinfo=KST),
-                "up_last_time": new_holiday.up_last_time.replace(tzinfo=KST),
-                "down_first_time": new_holiday.down_first_time.replace(tzinfo=KST),
-                "down_last_time": new_holiday.down_last_time.replace(tzinfo=KST),
-                "start_stop_id": new_holiday.start_stop_id,
-                "end_stop_id": new_holiday.end_stop_id,
+                "route_id": new_route.id_,
+                "route_name": new_route.name,
+                "route_type_code": new_route.type_code,
+                "route_type_name": new_route.type_name,
+                "company_id": new_route.company_id,
+                "company_name": new_route.company_name,
+                "company_telephone": new_route.company_telephone,
+                "district_code": new_route.district_code,
+                "up_first_time": new_route.up_first_time.replace(tzinfo=KST),
+                "up_last_time": new_route.up_last_time.replace(tzinfo=KST),
+                "down_first_time": new_route.down_first_time.replace(tzinfo=KST),
+                "down_last_time": new_route.down_last_time.replace(tzinfo=KST),
+                "start_stop_id": new_route.start_stop_id,
+                "end_stop_id": new_route.end_stop_id,
             },
         )
     )
     await execute_query(insert_query)
+    select_query = select(BusRoute).where(BusRoute.id_ == new_route.id_)
+    return await fetch_one(select_query)
 
 
 async def update_route(
@@ -141,6 +143,8 @@ async def update_route(
         )
     )
     await execute_query(update_query)
+    select_query = select(BusRoute).where(BusRoute.id_ == route_id)
+    return await fetch_one(select_query)
 
 
 async def delete_route(route_id: int) -> None:
@@ -179,6 +183,8 @@ async def create_stop(new_stop: CreateBusStopRequest) -> BusStop | None:
         )
     )
     await execute_query(insert_query)
+    select_query = select(BusStop).where(BusStop.id_ == new_stop.id_)
+    return await fetch_one(select_query)
 
 
 async def update_stop(
@@ -220,6 +226,8 @@ async def update_stop(
         )
     )
     await execute_query(update_query)
+    select_query = select(BusStop).where(BusStop.id_ == stop_id)
+    return await fetch_one(select_query)
 
 
 async def delete_stop(stop_id: int) -> None:
@@ -257,6 +265,11 @@ async def create_route_stop(
         )
     )
     await execute_query(insert_query)
+    select_query = select(BusRouteStop).where(
+        BusRouteStop.route_id == route_id,
+        BusRouteStop.stop_id == new_route_stop.stop_id,
+    )
+    return await fetch_one(select_query)
 
 
 async def update_route_stop(
@@ -291,6 +304,11 @@ async def update_route_stop(
         )
     )
     await execute_query(update_query)
+    select_query = select(BusRouteStop).where(
+        BusRouteStop.route_id == route_id,
+        BusRouteStop.stop_id == stop_id,
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_route_stop(route_id: int, stop_id: int) -> None:
@@ -358,6 +376,13 @@ async def create_timetable(
         )
     )
     await execute_query(insert_query)
+    select_query = select(BusTimetable).where(
+        BusTimetable.route_id == new_timetable.route_id,
+        BusTimetable.start_stop_id == new_timetable.start_stop_id,
+        BusTimetable.weekday == new_timetable.weekdays,
+        BusTimetable.departure_time == new_timetable.departure_time.replace(tzinfo=KST),
+    )
+    return await fetch_one(select_query)
 
 
 async def delete_timetable(

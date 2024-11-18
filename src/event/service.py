@@ -32,9 +32,8 @@ async def create_calendar_category(
                 "name": new_calendar_category.name,
             },
         )
-        .returning(CalendarCategory)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def get_calendar_category(calendar_category_id: int) -> CalendarCategory | None:
@@ -92,7 +91,6 @@ async def create_calendar(
                 "end_date": new_calendar.end_date,
             },
         )
-        .returning(Calendar)
     )
     delete_version_query = delete(CalendarVersion)
     await execute_query(delete_version_query)
@@ -106,10 +104,9 @@ async def create_calendar(
                 "created_at": now,
             },
         )
-        .returning(CalendarVersion)
     )
     await execute_query(insert_version_query)
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def delete_calendar(
@@ -133,7 +130,6 @@ async def delete_calendar(
                 "created_at": now,
             },
         )
-        .returning(CalendarVersion)
     )
     await execute_query(insert_version_query)
 
@@ -159,7 +155,6 @@ async def update_calendar(
             Calendar.id_ == calendar_id,
         )
         .values(update_data)
-        .returning(Calendar)
     )
     delete_version_query = delete(CalendarVersion)
     await execute_query(delete_version_query)
@@ -173,7 +168,6 @@ async def update_calendar(
                 "created_at": now,
             },
         )
-        .returning(CalendarVersion)
     )
     await execute_query(insert_version_query)
-    return await execute_query(update_query)
+    await execute_query(update_query)

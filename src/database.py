@@ -43,9 +43,8 @@ async def fetch_all(query: Select):
 
 async def execute_query(query: Insert | Update | Delete):
     async with AsyncSession(engine) as session:
-        query_result = await session.execute(query)
+        await session.execute(query)
         await session.commit()
-        return query_result
 
 
 # Redis database engine.

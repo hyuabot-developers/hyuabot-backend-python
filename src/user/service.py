@@ -16,7 +16,7 @@ from user.schemas import CreateUserRequest
 from user.security import hash_password, verify_password
 
 
-async def create_user(user: CreateUserRequest) -> User | None:
+async def create_user(user: CreateUserRequest) -> dict:
     insert_query = (
         insert(User)
         .values(
@@ -29,10 +29,9 @@ async def create_user(user: CreateUserRequest) -> User | None:
                 "active": False,
             },
         )
-        .returning(User)
     )
 
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def get_user_by_id(user_id: str) -> User | None:
@@ -66,7 +65,6 @@ async def create_refresh_token(
                 )
             ),
         )
-        .returning(RefreshToken)
     )
     await execute_query(insert_query)
 

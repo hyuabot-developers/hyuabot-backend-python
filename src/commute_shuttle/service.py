@@ -43,9 +43,8 @@ async def create_route(
                 "route_description_english": new_route.route_description_english,
             },
         )
-        .returning(CommuteShuttleRoute)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def update_route(
@@ -61,9 +60,8 @@ async def update_route(
                 "english": new_route.route_description_english,
             },
         )
-        .returning(CommuteShuttleRoute)
     )
-    return await execute_query(update_query)
+    await execute_query(update_query)
 
 
 async def delete_route(route_name: str) -> None:
@@ -98,9 +96,8 @@ async def create_stop(
                 "longitude": new_stop.longitude,
             },
         )
-        .returning(CommuteShuttleStop)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def update_stop(
@@ -117,9 +114,8 @@ async def update_stop(
                 "longitude": new_stop.longitude,
             },
         )
-        .returning(CommuteShuttleStop)
     )
-    return await execute_query(update_query)
+    await execute_query(update_query)
 
 
 async def delete_stop(stop_name: str) -> None:
@@ -176,9 +172,8 @@ async def create_timetable(
                 "departure_time": new_timetable.departure_time.replace(tzinfo=KST),
             },
         )
-        .returning(CommuteShuttleTimetable)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def update_timetable(
@@ -198,9 +193,8 @@ async def update_timetable(
             CommuteShuttleTimetable.stop_name == stop_name,
         )
         .values(payload)
-        .returning(CommuteShuttleTimetable)
     )
-    return await execute_query(update_query)
+    await execute_query(update_query)
 
 
 async def delete_timetable(

@@ -32,10 +32,9 @@ async def create_station_name(
                 "station_name": new_station_name.name,
             },
         )
-        .returning(SubwayStation)
     )
 
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def get_station_name(station_name: str) -> SubwayStation | None:
@@ -71,10 +70,9 @@ async def create_route(
                 "route_name": new_route.name,
             },
         )
-        .returning(SubwayRoute)
     )
 
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def get_route(route_id: int) -> SubwayRoute:
@@ -106,10 +104,9 @@ async def update_route(
                 "name": payload.name,
             },
         )
-        .returning(SubwayRoute)
     )
 
-    return await execute_query(update_query)
+    await execute_query(update_query)
 
 
 async def delete_route(route_id: int) -> None:
@@ -131,10 +128,9 @@ async def create_route_station(
                 "cumulative_time": new_station.cumulative_time,
             },
         )
-        .returning(SubwayRouteStation)
     )
 
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def get_route_station(station_id: str) -> SubwayRouteStation:
@@ -173,7 +169,6 @@ async def update_route_station(
             SubwayRouteStation.id_ == station_id,
         )
         .values(new_data)
-        .returning(SubwayRouteStation)
     )
 
     await execute_query(update_query)
@@ -230,10 +225,9 @@ async def create_timetable(
                 "heading": new_timetable.heading,
             },
         )
-        .returning(SubwayTimetable)
     )
 
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def delete_timetable(

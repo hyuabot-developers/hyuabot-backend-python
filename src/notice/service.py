@@ -31,9 +31,8 @@ async def create_notice_category(
                 "name": new_notice_category.name,
             },
         )
-        .returning(NoticeCategory)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def get_notice_category(notice_category_id: int) -> NoticeCategory | None:
@@ -92,9 +91,8 @@ async def create_notice(
                 "expired_at": new_notice.expired_at,
             },
         )
-        .returning(Notice)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def delete_notice(
@@ -130,7 +128,6 @@ async def update_notice(
             Notice.id_ == notice_id,
         )
         .values(update_data)
-        .returning(Notice)
     )
 
-    return await execute_query(update_query)
+    await execute_query(update_query)

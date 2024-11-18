@@ -34,10 +34,9 @@ async def update_campus(
                 "name": new_campus.name,
             },
         )
-        .returning(Campus)
     )
 
-    return await execute_query(update_query)
+    await execute_query(update_query)
 
 
 async def delete_campus(campus_id: int) -> None:
@@ -56,7 +55,6 @@ async def create_campus(
                 "campus_name": new_campus.name,
             },
         )
-        .returning(Campus)
     )
 
-    return await execute_query(insert_query)
+    await execute_query(insert_query)

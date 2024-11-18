@@ -72,9 +72,8 @@ async def create_holiday(
                 "calendar_type": new_holiday.calendar,
             },
         )
-        .returning(ShuttleHoliday)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def delete_holiday(calendar_type: str, date: datetime.date) -> None:
@@ -136,9 +135,8 @@ async def create_period(
                 ),
             },
         )
-        .returning(ShuttlePeriod)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def delete_period(
@@ -201,9 +199,8 @@ async def create_route(
                 "end_stop_id": new_route.end_stop_id,
             },
         )
-        .returning(ShuttleRoute)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def update_route(
@@ -225,9 +222,8 @@ async def update_route(
         update(ShuttleRoute)
         .where(ShuttleRoute.name == route_name)
         .values(payload)
-        .returning(ShuttleRoute)
     )
-    return await execute_query(update_query)
+    await execute_query(update_query)
 
 
 async def delete_route(route_name: str) -> None:
@@ -264,9 +260,8 @@ async def create_stop(
                 "longitude": new_stop.longitude,
             },
         )
-        .returning(ShuttleStop)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def update_stop(
@@ -282,9 +277,8 @@ async def update_stop(
                 "longitude": new_stop.longitude,
             },
         )
-        .returning(ShuttleStop)
     )
-    return await execute_query(update_query)
+    await execute_query(update_query)
 
 
 async def delete_stop(stop_name: str) -> None:
@@ -326,9 +320,8 @@ async def create_route_stop(
                 "cumulative_time": new_route_stop.cumulative_time,
             },
         )
-        .returning(ShuttleRouteStop)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def update_route_stop(
@@ -348,9 +341,8 @@ async def update_route_stop(
             ShuttleRouteStop.stop_name == stop_name,
         )
         .values(payload)
-        .returning(ShuttleRouteStop)
     )
-    return await execute_query(update_query)
+    await execute_query(update_query)
 
 
 async def delete_route_stop(
@@ -429,9 +421,8 @@ async def create_timetable(
                 ),
             },
         )
-        .returning(ShuttleTimetable)
     )
-    return await execute_query(insert_query)
+    await execute_query(insert_query)
 
 
 async def update_timetable(
@@ -453,9 +444,8 @@ async def update_timetable(
         update(ShuttleTimetable)
         .where(ShuttleTimetable.id_ == seq)
         .values(payload)
-        .returning(ShuttleTimetable)
     )
-    return await execute_query(update_query)
+    await execute_query(update_query)
 
 
 async def delete_timetable(seq: int) -> None:

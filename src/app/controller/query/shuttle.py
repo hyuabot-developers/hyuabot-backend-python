@@ -148,6 +148,40 @@ async def query_shuttle(
                         remaining_time=remaining_time,
                         other_stops=other_stops,
                     ))
+            elif len(weekday_query) > 1:
+                for timetable_item in route.timetable:
+                    if timetable_item.period_type_name not in period_query:
+                        continue
+                    elif timetable_item.weekday not in weekday_query:
+                        continue
+                    elif timetable_start is not None and \
+                            timetable_item.departure_time < timetable_start:
+                        continue
+                    elif timetable_end is not None and \
+                            timetable_item.departure_time > timetable_end:
+                        continue
+                    remaining_time = (datetime.datetime.combine(
+                        date_query.date(),
+                        timetable_item.departure_time,
+                    ) - date_query).total_seconds()
+                    other_stops: list[ShuttleArrivalOtherStopItem] = []
+                    for other_stop in route_stop_list:
+                        other_stops.append(ShuttleArrivalOtherStopItem(
+                            stop_name=other_stop["stop_name"],
+                            timedelta=other_stop["timedelta"],
+                            time=(datetime.datetime.combine(
+                                date_query.date(),
+                                timetable_item.departure_time,
+                            ) + datetime.timedelta(
+                                minutes=other_stop["timedelta"],
+                            )).time(),
+                        ))
+                    timetable.append(ShuttleArrivalTimeItem(
+                        weekdays=timetable_item.weekday,
+                        time=timetable_item.departure_time,
+                        remaining_time=remaining_time,
+                        other_stops=other_stops,
+                    ))
             if route.route.name not in route_dict:
                 route_dict[route.route.name] = ShuttleRouteStopItem(
                     route_id=route.route.name,

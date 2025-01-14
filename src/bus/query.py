@@ -343,6 +343,8 @@ async def resolve_bus(
                                     route_id is not None and x.route.id_ == route_id
                                 ) or (
                                     routes is not None and x.route.id_ in routes
+                                ) or (
+                                    route_id is None and routes is None
                                 ),
                                 stop.routes,
                             ),

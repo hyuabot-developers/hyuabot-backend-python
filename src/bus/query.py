@@ -118,6 +118,7 @@ async def resolve_bus(
     id_: list[int] | None = None,
     name: str | None = None,
     route_id: int | None = None,
+    routes: list[int] | None = None,
     weekdays: list[str] | None = None,
     log_date: list[datetime.date] | None = None,
     start: datetime.time | None = None,
@@ -338,7 +339,11 @@ async def resolve_bus(
                     for route in sorted(
                         list(
                             filter(
-                                lambda x: route_id is None or route_id == x.route_id,
+                                lambda x: (
+                                    route_id is not None and x.route.id_ == route_id
+                                ) or (
+                                    routes is not None and x.route.id_ in routes
+                                ),
                                 stop.routes,
                             ),
                         ),

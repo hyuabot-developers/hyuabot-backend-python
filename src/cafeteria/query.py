@@ -48,6 +48,7 @@ class CafeteriaQuery:
 
 async def resolve_menu(
     campus_id: Optional[int] = None,
+    id_: Optional[int] = None,
     name: Optional[str] = None,
     date: Optional[datetime.date] = None,
     type_: Optional[list[str]] = None,
@@ -55,6 +56,8 @@ async def resolve_menu(
     cafeteria_conditions = []
     if campus_id is not None:
         cafeteria_conditions.append(Cafeteria.campus_id == campus_id)
+    if id_ is not None:
+        cafeteria_conditions.append(Cafeteria.id_ == id_)
     if name is not None:
         cafeteria_conditions.append(Cafeteria.name.like(f"%{name}%"))
     select_query = select(Cafeteria).where(*cafeteria_conditions)

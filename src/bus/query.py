@@ -35,6 +35,8 @@ class BusStopItem:
 class BusTimetableQuery:
     weekdays: str = strawberry.field(description="Is weekdays", name="weekdays")
     departure_time: str = strawberry.field(description="Departure time", name="time")
+    departure_hour: int = strawberry.field(description="Departure hour")
+    departure_minute: int = strawberry.field(description="Departure minute")
 
 
 @strawberry.type
@@ -94,6 +96,8 @@ class BusRouteQuery:
 class BusDepartureLogQuery:
     departure_date: datetime.date = strawberry.field(description="Departure date")
     departure_time: datetime.time = strawberry.field(description="Departure time")
+    departure_hour: int = strawberry.field(description="Departure hour")
+    departure_minute: int = strawberry.field(description="Departure minute")
     vehicle_id: str = strawberry.field(description="Vehicle ID", name="vehicleId")
 
 
@@ -296,6 +300,11 @@ async def resolve_bus(
                                 departure_time=convert_time_after_midnight(
                                     timetable.departure_time,
                                 ),
+                                departure_hour=(
+                                    timetable.departure_time.hour
+                                    if timetable.departure_time < 4 else timetable.departure_time.hour
+                                ),
+                                departure_minute=timetable.departure_time.minute,
                             )
                             for timetable in sorted(
                                 list(filter(timetable_filter, route.timetable)),
@@ -324,6 +333,8 @@ async def resolve_bus(
                             BusDepartureLogQuery(
                                 departure_date=log.date,
                                 departure_time=log.time,
+                                departure_hour=log.time.hour,
+                                departure_minute=log.time.minute,
                                 vehicle_id=log.vehicle_id,
                             )
                             for log in sorted(

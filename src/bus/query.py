@@ -302,7 +302,7 @@ async def resolve_bus(
                                 ),
                                 departure_hour=(
                                     timetable.departure_time.hour
-                                    if timetable.departure_time < 4 else timetable.departure_time.hour
+                                    if timetable.departure_time.hour < 4 else timetable.departure_time.hour
                                 ),
                                 departure_minute=timetable.departure_time.minute,
                             )

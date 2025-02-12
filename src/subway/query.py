@@ -21,6 +21,8 @@ class TimetableStation:
 class TimetableQuery:
     is_weekdays: bool = strawberry.field(description="Is weekdays", name="weekdays")
     departure_time: str = strawberry.field(description="Departure time", name="time")
+    departure_hour: int = strawberry.field(description="Departure hour", name="hour")
+    departure_minute: int = strawberry.field(description="Departure minute", name="minute")
     start_station: TimetableStation = strawberry.field(
         description="Start station",
         name="start",
@@ -170,6 +172,8 @@ async def resolve_subway(
                             departure_time=timetable.departure_time.strftime(
                                 "%H:%M:%S",
                             ),
+                            departure_hour=timetable.departure_time.hour,
+                            departure_minute=timetable.departure_time.minute,
                             start_station=TimetableStation(
                                 id_=timetable.start_station.id_,
                                 name=timetable.start_station.name,
@@ -190,6 +194,8 @@ async def resolve_subway(
                             departure_time=timetable.departure_time.strftime(
                                 "%H:%M:%S",
                             ),
+                            departure_hour=timetable.departure_time.hour,
+                            departure_minute=timetable.departure_time.minute,
                             start_station=TimetableStation(
                                 id_=timetable.start_station.id_,
                                 name=timetable.start_station.name,

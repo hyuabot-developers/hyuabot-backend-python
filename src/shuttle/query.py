@@ -39,6 +39,8 @@ class ShuttleTimetableQuery:
     route_tag: str = strawberry.field(name="tag")
     stop_name: str = strawberry.field(name="stop")
     departure_time: str = strawberry.field(name="time")
+    departure_hour: int = strawberry.field(name="hour")
+    departure_minute: int = strawberry.field(name="minute")
     via: list[ShuttleViaQuery] = strawberry.field(name="via")
 
 
@@ -271,6 +273,8 @@ async def resolve_shuttle_timetable(
             route_tag=timetable.route_tag,
             stop_name=timetable.stop_name,
             departure_time=timetable.departure_time.strftime("%H:%M:%S"),
+            departure_hour=timetable.departure_time.hour,
+            departure_minute=timetable.departure_time.minute,
             via=[
                 ShuttleViaQuery(
                     stop=via.stop_name,

@@ -28,6 +28,8 @@ kr_holidays = holidays.country_holidays("KR")
 class ShuttleViaQuery:
     stop: str = strawberry.field(name="stop")
     departure_time: str = strawberry.field(name="time")
+    departure_hour: int = strawberry.field(name="hour")
+    departure_minute: int = strawberry.field(name="minute")
 
 
 @strawberry.type
@@ -279,6 +281,8 @@ async def resolve_shuttle_timetable(
                 ShuttleViaQuery(
                     stop=via.stop_name,
                     departure_time=via.departure_time.strftime("%H:%M:%S"),
+                    departure_hour=via.departure_time.hour,
+                    departure_minute=via.departure_time.minute
                 )
                 for via in sorted(timetable.via, key=lambda x: x.departure_time)
             ],

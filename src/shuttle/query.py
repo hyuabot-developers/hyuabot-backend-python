@@ -299,8 +299,8 @@ async def resolve_shuttle_period(
     period_condition = []
     if current is True:
         now = datetime.datetime.now().astimezone(tz=timezone("Asia/Seoul"))
-        period_condition.append(ShuttlePeriod.start <= now.date())
-        period_condition.append(ShuttlePeriod.end >= now.date())
+        period_condition.append(ShuttlePeriod.start <= now)
+        period_condition.append(ShuttlePeriod.end >= now)
     else:
         if start:
             period_condition.append(ShuttlePeriod.start <= start)

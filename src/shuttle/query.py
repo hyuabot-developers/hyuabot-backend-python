@@ -173,8 +173,8 @@ async def resolve_shuttle_timetable(
             .options(load_only(ShuttlePeriod.type_id))
             .where(
                 and_(
-                    ShuttlePeriod.start <= timestamp.date(),
-                    ShuttlePeriod.end >= timestamp.date(),
+                    ShuttlePeriod.start <= timestamp,
+                    ShuttlePeriod.end >= timestamp,
                 ),
             )
             .order_by(ShuttlePeriod.type_id.desc())

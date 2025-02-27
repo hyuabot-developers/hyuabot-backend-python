@@ -501,6 +501,10 @@ async def test_get_shuttle_route(
     for route in response_json.get("data"):
         assert route.get("name") is not None
         assert route.get("tag") is not None
+        assert route.get("korean") is not None
+        assert route.get("english") is not None
+        assert route.get("start") is not None
+        assert route.get("end") is not None
 
 
 @pytest.mark.asyncio
@@ -521,6 +525,10 @@ async def test_get_shuttle_route_filter_name(
     for route in response_json.get("data"):
         assert route.get("name") == "test_route1"
         assert route.get("tag") is not None
+        assert route.get("korean") is not None
+        assert route.get("english") is not None
+        assert route.get("start") is not None
+        assert route.get("end") is not None
 
 
 @pytest.mark.asyncio
@@ -541,6 +549,10 @@ async def test_get_shuttle_route_filter_tag(
     for route in response_json.get("data"):
         assert route.get("name") is not None
         assert route.get("tag") == "test_tag"
+        assert route.get("korean") is not None
+        assert route.get("english") is not None
+        assert route.get("start") is not None
+        assert route.get("end") is not None
 
 
 @pytest.mark.asyncio

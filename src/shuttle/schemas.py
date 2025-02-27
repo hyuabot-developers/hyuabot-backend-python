@@ -204,15 +204,6 @@ class ShuttlePeriodListResponse(BaseModel):
     data: Annotated[list["ShuttlePeriodItemResponse"], Field(alias="data")]
 
 
-class ShuttleRouteListItemResponse(BaseModel):
-    name: Annotated[str, Field(max_length=15, alias="name")]
-    tag: Annotated[str, Field(max_length=10, alias="tag")]
-
-
-class ShuttleRouteListResponse(BaseModel):
-    data: Annotated[list["ShuttleRouteListItemResponse"], Field(alias="data")]
-
-
 class ShuttleRouteDetailResponse(BaseModel):
     name: Annotated[str, Field(max_length=15, alias="name")]
     tag: Annotated[str, Field(max_length=10, alias="tag")]
@@ -220,6 +211,10 @@ class ShuttleRouteDetailResponse(BaseModel):
     route_description_english: Annotated[str, Field(max_length=100, alias="english")]
     start_stop_id: Annotated[str, Field(alias="start", max_length=15)]
     end_stop_id: Annotated[str, Field(alias="end", max_length=15)]
+
+
+class ShuttleRouteListResponse(BaseModel):
+    data: Annotated[list["ShuttleRouteDetailResponse"], Field(alias="data")]
 
 
 class ShuttleRouteStopResponse(BaseModel):

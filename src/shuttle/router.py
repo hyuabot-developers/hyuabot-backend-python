@@ -246,6 +246,8 @@ async def get_route_list(
         "tag": x.tag,
         "korean": x.korean,
         "english": x.english,
+        "start": x.start_stop_id,
+        "end": x.end_stop_id,
     }
     return {"data": map(mapping_func, data)}
 

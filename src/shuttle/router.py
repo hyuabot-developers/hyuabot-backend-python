@@ -60,7 +60,7 @@ from shuttle.schemas import (
     UpdateShuttleRouteStopRequest,
 )
 from user.jwt import parse_jwt_user_data
-from utils import timedelta_to_str, timestamp_tz_to_datetime
+from utils import timestamp_tz_to_datetime
 
 router = APIRouter()
 

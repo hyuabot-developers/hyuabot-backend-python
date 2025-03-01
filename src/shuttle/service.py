@@ -24,7 +24,7 @@ from shuttle.schemas import (
     UpdateShuttleTimetableRequest,
     UpdateShuttleStopRequest,
 )
-from utils import KST
+from utils import KST, second_to_timedelta
 
 
 async def list_holiday() -> list[ShuttleHoliday]:
@@ -342,7 +342,7 @@ async def create_route_stop(
                 "route_name": route_name,
                 "stop_name": new_route_stop.stop_name,
                 "stop_order": new_route_stop.sequence,
-                "cumulative_time": new_route_stop.cumulative_time,
+                "cumulative_time": second_to_timedelta(new_route_stop.cumulative_time),
             },
         )
     )
@@ -363,7 +363,7 @@ async def update_route_stop(
     if new_route_stop.sequence:
         payload["sequence"] = new_route_stop.sequence
     if new_route_stop.cumulative_time:
-        payload["cumulative_time"] = new_route_stop.cumulative_time
+        payload["cumulative_time"] = second_to_timedelta(new_route_stop.cumulative_time)
     update_query = (
         update(ShuttleRouteStop)
         .where(

@@ -19,6 +19,10 @@ def timedelta_to_str(td: datetime.timedelta) -> str:
     return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
 
 
+def second_to_timedelta(seconds: int) -> datetime.timedelta:
+    return datetime.timedelta(seconds=seconds)
+
+
 def remove_timezone(dt: datetime.time) -> datetime.time:
     return dt.replace(tzinfo=None)
 

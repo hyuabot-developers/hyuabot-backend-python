@@ -410,7 +410,7 @@ async def get_route_stop_list(
         "route": x.route_name,
         "stop": x.stop_name,
         "sequence": x.sequence,
-        "cumulativeTime": timedelta_to_str(x.cumulative_time),
+        "cumulativeTime": x.cumulative_time.total_seconds(),
     }
     return {"data": map(mapping_func, data)}
 
@@ -433,7 +433,7 @@ async def create_route_stop(
         "route": data.route_name,
         "stop": data.stop_name,
         "sequence": data.sequence,
-        "cumulativeTime": timedelta_to_str(data.cumulative_time),
+        "cumulativeTime": data.cumulative_time.total_seconds(),
     }
 
 
@@ -453,7 +453,7 @@ async def get_route_stop(
         "route": data.route_name,
         "stop": data.stop_name,
         "sequence": data.sequence,
-        "cumulativeTime": timedelta_to_str(data.cumulative_time),
+        "cumulativeTime": data.cumulative_time.total_seconds(),
     }
 
 
@@ -477,7 +477,7 @@ async def update_route_stop(
         "route": data.route_name,
         "stop": data.stop_name,
         "sequence": data.sequence,
-        "cumulativeTime": timedelta_to_str(data.cumulative_time),
+        "cumulativeTime": data.cumulative_time.total_seconds(),
     }
 
 

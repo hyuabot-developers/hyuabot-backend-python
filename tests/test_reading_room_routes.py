@@ -26,9 +26,13 @@ async def test_get_reading_room_list(
     response_json = response.json()
     assert response.status_code == 200
     assert response_json.get("data") is not None
-    for campus in response_json["data"]:
-        assert campus.get("id") is not None
-        assert campus.get("name") is not None
+    for room in response_json["data"]:
+        assert room.get("id") is not None
+        assert room.get("name") is not None
+        assert room.get("total") is not None
+        assert room.get("active") is not None
+        assert room.get("available") is not None
+        assert room.get("occupied") is not None
 
 
 @pytest.mark.asyncio
@@ -48,9 +52,13 @@ async def test_get_reading_room_list_filter(
 
     response_json = response.json()
     assert response_json.get("data") is not None
-    for campus in response_json["data"]:
-        assert campus.get("id") is not None
-        assert campus.get("name") is not None
+    for room in response_json["data"]:
+        assert room.get("id") is not None
+        assert room.get("name") is not None
+        assert room.get("total") is not None
+        assert room.get("active") is not None
+        assert room.get("available") is not None
+        assert room.get("occupied") is not None
 
 
 @pytest.mark.asyncio

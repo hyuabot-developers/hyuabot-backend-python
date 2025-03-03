@@ -44,13 +44,8 @@ class UpdateReadingRoomRequest(BaseModel):
         }
 
 
-class ReadingRoomListItemResponse(BaseModel):
-    id_: Annotated[int, Field(alias="id", ge=1)]
-    name: Annotated[str, Field(max_length=30, alias="name")]
-
-
 class ReadingRoomListResponse(BaseModel):
-    data: Annotated[list["ReadingRoomListItemResponse"], Field(alias="data")]
+    data: Annotated[list["ReadingRoomDetailResponse"], Field(alias="data")]
 
 
 class ReadingRoomDetailResponse(BaseModel):

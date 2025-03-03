@@ -44,7 +44,6 @@ class UpdateContactRequest(BaseModel):
         }
 
 
-
 class ContactCategoryDetailResponse(BaseModel):
     id_: Annotated[int, Field(alias="id", ge=1)]
     name: Annotated[str, Field(max_length=20, alias="name")]

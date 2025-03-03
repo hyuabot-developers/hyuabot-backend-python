@@ -93,7 +93,6 @@ class CafeteriaDetailResponse(BaseModel):
     running_time: Annotated[CafeteriaRunningTimeResponse, Field(alias="runningTime")]
 
 
-
 class CafeteriaListResponse(BaseModel):
     data: Annotated[list["CafeteriaDetailResponse"], Field(alias="data")]
 

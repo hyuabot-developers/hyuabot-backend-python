@@ -1,3 +1,4 @@
+import datetime
 from typing import Callable
 
 from fastapi import APIRouter, Depends
@@ -31,7 +32,7 @@ async def get_reading_room_list(
         data = await service.list_reading_room()
     else:
         data = await service.list_reading_room_filter(campus)
-    mapping_func: Callable[[ReadingRoom], dict[str, int | str]] = lambda x: {
+    mapping_func: Callable[[ReadingRoom], dict[str, int | str | datetime.datetime]] = lambda x: {
         "id": x.id_,
         "name": x.name,
         "total": x.total_seats,

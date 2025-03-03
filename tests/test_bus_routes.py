@@ -488,6 +488,11 @@ async def test_stop_list(
     for stop in response_json.get("data"):
         assert stop.get("id") is not None
         assert stop.get("name") is not None
+        assert stop.get("latitude") is not None
+        assert stop.get("longitude") is not None
+        assert stop.get("district") is not None
+        assert stop.get("mobileNumber") is not None
+        assert stop.get("regionName") is not None
 
 
 @pytest.mark.asyncio
@@ -508,6 +513,11 @@ async def test_stop_list_filter_name(
     for stop in response_json.get("data"):
         assert stop.get("id") is not None
         assert "test_stop" in stop.get("name")
+        assert stop.get("latitude") is not None
+        assert stop.get("longitude") is not None
+        assert stop.get("district") is not None
+        assert stop.get("mobileNumber") is not None
+        assert stop.get("regionName") is not None
 
 
 @pytest.mark.asyncio

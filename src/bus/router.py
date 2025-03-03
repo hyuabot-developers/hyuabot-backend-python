@@ -193,9 +193,14 @@ async def get_bus_stop_list(
         stops = await service.list_stops()
     else:
         stops = await service.list_stops_filter(name)
-    mapping_func: Callable[[BusStop], dict[str, int | str]] = lambda x: {
+    mapping_func: Callable[[BusStop], dict[str, int | str | float]] = lambda x: {
         "id": x.id_,
         "name": x.name,
+        "latitude": x.latitude,
+        "longitude": x.longitude,
+        "district": x.district,
+        "mobileNumber": x.mobile_no,
+        "regionName": x.region,
     }
     return {"data": map(mapping_func, stops)}
 

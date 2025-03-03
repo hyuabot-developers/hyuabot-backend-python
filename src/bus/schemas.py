@@ -231,15 +231,6 @@ class BusRouteListResponse(BaseModel):
     data: Annotated[list[BusRouteDetailResponse], Field(alias="data")]
 
 
-class BusStopListItemResponse(BaseModel):
-    stop_id: Annotated[int, Field(alias="id", ge=1)]
-    stop_name: Annotated[str, Field(max_length=30, alias="name")]
-
-
-class BusStopListResponse(BaseModel):
-    data: Annotated[list[BusStopListItemResponse], Field(alias="data")]
-
-
 class BusStopDetailResponse(BaseModel):
     stop_id: Annotated[int, Field(alias="id", ge=1)]
     stop_name: Annotated[str, Field(max_length=30, alias="name")]
@@ -248,6 +239,10 @@ class BusStopDetailResponse(BaseModel):
     region_name: Annotated[str, Field(alias="regionName", max_length=30)]
     latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
+
+
+class BusStopListResponse(BaseModel):
+    data: Annotated[list[BusStopDetailResponse], Field(alias="data")]
 
 
 class BusRouteStopListItemResponse(BaseModel):

@@ -1078,6 +1078,28 @@ async def test_get_shuttle_route_stop(
 ):
     access_token = await get_access_token(client)
     response = await client.get(
+        "/api/shuttle/route-stop",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert len(response_json.get("data")) > 0
+    for route_stop in response_json.get("data"):
+        assert route_stop.get("route") is not None
+        assert route_stop.get("stop") is not None
+        assert route_stop.get("sequence") is not None
+        assert route_stop.get("cumulativeTime") is not None
+
+
+@pytest.mark.asyncio
+async def test_get_shuttle_route_stop_filter_route(
+    client: TestClient,
+    clean_db,
+    create_test_user,
+    create_test_shuttle_route_stop,
+):
+    access_token = await get_access_token(client)
+    response = await client.get(
         "/api/shuttle/route/test_route1/stop",
         headers={"Authorization": f"Bearer {access_token}"},
     )

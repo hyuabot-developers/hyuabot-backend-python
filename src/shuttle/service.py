@@ -311,6 +311,10 @@ async def delete_stop(stop_name: str) -> None:
     await execute_query(delete_query)
 
 
+async def list_route_stop() -> list[ShuttleRouteStop]:
+    return await fetch_all(select(ShuttleRouteStop))
+
+
 async def list_route_stop_filter(
     route_name: str,
 ) -> list[ShuttleRouteStop]:

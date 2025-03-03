@@ -400,8 +400,22 @@ async def delete_stop(
     await service.delete_stop(stop_name)
 
 
-@router.get("/route/{route_name}/stop", response_model=ShuttleRouteStopListResponse)
+@router.get("/route-stop", response_model=ShuttleRouteStopListResponse)
 async def get_route_stop_list(
+    _: str = Depends(parse_jwt_user_data),
+):
+    data = await service.list_route_stop()
+    mapping_func: Callable[[ShuttleRouteStop], dict[str, Any]] = lambda x: {
+        "route": x.route_name,
+        "stop": x.stop_name,
+        "sequence": x.sequence,
+        "cumulativeTime": x.cumulative_time.total_seconds(),
+    }
+    return {"data": map(mapping_func, data)}
+
+
+@router.get("/route/{route_name}/stop", response_model=ShuttleRouteStopListResponse)
+async def get_route_stop_list_filter(
     route_name: str = Depends(get_valid_route),
     _: str = Depends(parse_jwt_user_data),
 ):

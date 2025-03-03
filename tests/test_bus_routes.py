@@ -722,6 +722,27 @@ async def test_bus_route_stop_list(
 ):
     access_token = await get_access_token(client)
     response = await client.get(
+        "/api/bus/route-stop",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 200
+    assert len(response.json().get("data")) > 0
+    for stop in response.json().get("data"):
+        assert stop.get("id") is not None
+        assert stop.get("sequence") is not None
+        assert stop.get("start") is not None
+        assert stop.get("minuteFromStart") is not None
+
+
+@pytest.mark.asyncio
+async def test_bus_route_stop_list_filter(
+    client: TestClient,
+    clean_db,
+    create_test_user,
+    create_test_bus_route_stop,
+):
+    access_token = await get_access_token(client)
+    response = await client.get(
         "/api/bus/route/1/stop",
         headers={"Authorization": f"Bearer {access_token}"},
     )

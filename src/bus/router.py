@@ -256,8 +256,20 @@ async def delete_bus_stop(
     return None
 
 
+@router.get("/route-stop", response_model=BusRouteStopListResponse)
+async def get_bus_route_stop_list(_: str = Depends(parse_jwt_user_data)):
+    route_stops = await service.list_route_stops()
+    mapping_func: Callable[[BusRouteStop], dict[str, int]] = lambda x: {
+        "id": x.stop_id,
+        "sequence": x.sequence,
+        "start": x.start_stop_id,
+        "minuteFromStart": x.minute_from_start,
+    }
+    return {"data": map(mapping_func, route_stops)}
+
+
 @router.get("/route/{route_id}/stop", response_model=BusRouteStopListResponse)
-async def get_bus_route_stop_list(
+async def get_bus_route_stop_list_filter(
     route_id: int = Depends(get_valid_route),
     _: str = Depends(parse_jwt_user_data),
 ):

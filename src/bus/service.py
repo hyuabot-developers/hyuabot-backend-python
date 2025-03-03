@@ -235,7 +235,9 @@ async def delete_stop(stop_id: int) -> None:
     await execute_query(delete_query)
 
 
-async def list_route_stops(route_id: int) -> list[BusRouteStop]:
+async def list_route_stops(route_id: int | None = None) -> list[BusRouteStop]:
+    if route_id is None:
+        return await fetch_all(select(BusRouteStop))
     select_query = select(BusRouteStop).where(BusRouteStop.route_id == route_id)
     return await fetch_all(select_query)
 

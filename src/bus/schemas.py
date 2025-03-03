@@ -205,16 +205,6 @@ class CreateBusTimetableRequest(BaseModel):
         }
 
 
-class BusRouteListItemResponse(BaseModel):
-    route_id: Annotated[int, Field(alias="id", ge=0)]
-    route_name: Annotated[str, Field(max_length=30, alias="name")]
-    type_name: Annotated[str, Field(max_length=10, alias="type")]
-
-
-class BusRouteListResponse(BaseModel):
-    data: Annotated[list[BusRouteListItemResponse], Field(alias="data")]
-
-
 class BusRouteFirstLastTimeResponse(BaseModel):
     first_time: Annotated[datetime.time, Field(alias="first")]
     last_time: Annotated[datetime.time, Field(alias="last")]
@@ -235,6 +225,10 @@ class BusRouteDetailResponse(BaseModel):
     up: Annotated[BusRouteFirstLastTimeResponse, Field(alias="up")]
     down: Annotated[BusRouteFirstLastTimeResponse, Field(alias="down")]
     company: Annotated[BusRouteCompanyResponse, Field(alias="company")]
+
+
+class BusRouteListResponse(BaseModel):
+    data: Annotated[list[BusRouteDetailResponse], Field(alias="data")]
 
 
 class BusStopListItemResponse(BaseModel):

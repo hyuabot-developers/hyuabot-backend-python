@@ -29,6 +29,19 @@ async def test_bus_routes(
         assert route.get("id") is not None
         assert route.get("name") is not None
         assert route.get("type") is not None
+        assert route.get("company") is not None
+        assert route.get("start") is not None
+        assert route.get("end") is not None
+        assert route.get("company") is not None
+        assert route["company"].get("id") is not None
+        assert route["company"].get("name") is not None
+        assert route["company"].get("telephone") is not None
+        assert route.get("up") is not None
+        assert route["up"].get("first") is not None
+        assert route["up"].get("last") is not None
+        assert route.get("down") is not None
+        assert route["down"].get("first") is not None
+        assert route["down"].get("last") is not None
 
 
 @pytest.mark.asyncio
@@ -50,6 +63,19 @@ async def test_bus_routes_filter_name(
         assert route.get("id") is not None
         assert "test_route" in route.get("name")
         assert route.get("type") is not None
+        assert route.get("company") is not None
+        assert route.get("start") is not None
+        assert route.get("end") is not None
+        assert route.get("company") is not None
+        assert route["company"].get("id") is not None
+        assert route["company"].get("name") is not None
+        assert route["company"].get("telephone") is not None
+        assert route.get("up") is not None
+        assert route["up"].get("first") is not None
+        assert route["up"].get("last") is not None
+        assert route.get("down") is not None
+        assert route["down"].get("first") is not None
+        assert route["down"].get("last") is not None
 
 
 @pytest.mark.asyncio
@@ -71,6 +97,19 @@ async def test_bus_routes_filter_type(
         assert route.get("id") is not None
         assert route.get("name") is not None
         assert route.get("type") == "EXPRESS"
+        assert route.get("company") is not None
+        assert route.get("start") is not None
+        assert route.get("end") is not None
+        assert route.get("company") is not None
+        assert route["company"].get("id") is not None
+        assert route["company"].get("name") is not None
+        assert route["company"].get("telephone") is not None
+        assert route.get("up") is not None
+        assert route["up"].get("first") is not None
+        assert route["up"].get("last") is not None
+        assert route.get("down") is not None
+        assert route["down"].get("first") is not None
+        assert route["down"].get("last") is not None
 
 
 @pytest.mark.asyncio
@@ -92,6 +131,19 @@ async def test_bus_routes_filter_company(
         assert route.get("id") is not None
         assert route.get("name") is not None
         assert route.get("type") is not None
+        assert route.get("company") is not None
+        assert route.get("start") is not None
+        assert route.get("end") is not None
+        assert route.get("company") is not None
+        assert route["company"].get("id") is not None
+        assert route["company"].get("name") is not None
+        assert route["company"].get("telephone") is not None
+        assert route.get("up") is not None
+        assert route["up"].get("first") is not None
+        assert route["up"].get("last") is not None
+        assert route.get("down") is not None
+        assert route["down"].get("first") is not None
+        assert route["down"].get("last") is not None
 
 
 @pytest.mark.asyncio

@@ -57,10 +57,25 @@ async def get_bus_route_list(
         data = await service.list_routes()
     else:
         data = await service.list_routes_filter(name, type_, company)
-    mapping_func: Callable[[BusRoute], dict[str, int | str]] = lambda x: {
+    mapping_func: Callable[[BusRoute], dict[str, int | str | dict[str, int | str | datetime.time]]] = lambda x: {
         "id": x.id_,
         "name": x.name,
         "type": x.type_name,
+        "start": x.start_stop_id,
+        "end": x.end_stop_id,
+        "company": {
+            "id": x.company_id,
+            "name": x.company_name,
+            "telephone": x.company_telephone,
+        },
+        "up": {
+            "first": x.up_first_time,
+            "last": x.up_last_time,
+        },
+        "down": {
+            "first": x.down_first_time,
+            "last": x.down_last_time,
+        },
     }
     return {"data": map(mapping_func, data)}
 

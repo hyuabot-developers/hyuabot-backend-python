@@ -40,9 +40,17 @@ async def get_cafeteria_list(
         data = await service.list_cafeteria()
     else:
         data = await service.list_cafeteria_filter(campus)
-    mapping_func: Callable[[Cafeteria], dict[str, int | str]] = lambda x: {
+    mapping_func: Callable[[Cafeteria], dict[str, int | str | float | dict[str, str]]] = lambda x: {
         "id": x.id_,
         "name": x.name,
+        "campusID": x.campus_id,
+        "latitude": x.latitude,
+        "longitude": x.longitude,
+        "runningTime": {
+            "breakfast": x.breakfast_running_time,
+            "lunch": x.lunch_running_time,
+            "dinner": x.dinner_running_time,
+        },
     }
     return {"data": map(mapping_func, data)}
 

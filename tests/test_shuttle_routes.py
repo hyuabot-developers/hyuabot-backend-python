@@ -1677,6 +1677,33 @@ async def test_update_shuttle_timetable_item(
 
 
 @pytest.mark.asyncio
+async def test_update_shuttle_timetable_item_false(
+    client: TestClient,
+    clean_db,
+    create_test_user,
+    create_test_shuttle_timetable,
+):
+    access_token = await get_access_token(client)
+    response = await client.patch(
+        "/api/shuttle/timetable/1",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={
+            "period": "semester",
+            "weekdays": False,
+            "route": "test_route1",
+            "time": "00:00:00",
+        },
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json.get("sequence") is not None
+    assert response_json.get("period") is not None
+    assert response_json.get("weekdays") is False
+    assert response_json.get("route") is not None
+    assert response_json.get("time") is not None
+
+
+@pytest.mark.asyncio
 async def test_update_shuttle_timetable_item_not_found(
     client: TestClient,
     clean_db,

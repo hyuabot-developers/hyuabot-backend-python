@@ -476,7 +476,7 @@ async def update_timetable(
     payload: dict[str, str | int | bool | datetime.time] = {}
     if new_timetable.period_type:
         payload["period"] = new_timetable.period_type
-    if new_timetable.is_weekdays:
+    if new_timetable.is_weekdays is not None:
         payload["is_weekdays"] = new_timetable.is_weekdays
     if new_timetable.route_name:
         payload["route_name"] = new_timetable.route_name

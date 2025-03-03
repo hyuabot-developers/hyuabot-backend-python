@@ -57,10 +57,25 @@ async def get_bus_route_list(
         data = await service.list_routes()
     else:
         data = await service.list_routes_filter(name, type_, company)
-    mapping_func: Callable[[BusRoute], dict[str, int | str]] = lambda x: {
+    mapping_func: Callable[[BusRoute], dict[str, int | str | dict[str, int | str | datetime.time]]] = lambda x: {
         "id": x.id_,
         "name": x.name,
         "type": x.type_name,
+        "start": x.start_stop_id,
+        "end": x.end_stop_id,
+        "company": {
+            "id": x.company_id,
+            "name": x.company_name,
+            "telephone": x.company_telephone,
+        },
+        "up": {
+            "first": x.up_first_time,
+            "last": x.up_last_time,
+        },
+        "down": {
+            "first": x.down_first_time,
+            "last": x.down_last_time,
+        },
     }
     return {"data": map(mapping_func, data)}
 
@@ -178,9 +193,14 @@ async def get_bus_stop_list(
         stops = await service.list_stops()
     else:
         stops = await service.list_stops_filter(name)
-    mapping_func: Callable[[BusStop], dict[str, int | str]] = lambda x: {
+    mapping_func: Callable[[BusStop], dict[str, int | str | float]] = lambda x: {
         "id": x.id_,
         "name": x.name,
+        "latitude": x.latitude,
+        "longitude": x.longitude,
+        "district": x.district,
+        "mobileNumber": x.mobile_no,
+        "regionName": x.region,
     }
     return {"data": map(mapping_func, stops)}
 
@@ -256,8 +276,20 @@ async def delete_bus_stop(
     return None
 
 
+@router.get("/route-stop", response_model=BusRouteStopListResponse)
+async def get_bus_route_stop_list(_: str = Depends(parse_jwt_user_data)):
+    route_stops = await service.list_route_stops()
+    mapping_func: Callable[[BusRouteStop], dict[str, int]] = lambda x: {
+        "id": x.stop_id,
+        "sequence": x.sequence,
+        "start": x.start_stop_id,
+        "minuteFromStart": x.minute_from_start,
+    }
+    return {"data": map(mapping_func, route_stops)}
+
+
 @router.get("/route/{route_id}/stop", response_model=BusRouteStopListResponse)
-async def get_bus_route_stop_list(
+async def get_bus_route_stop_list_filter(
     route_id: int = Depends(get_valid_route),
     _: str = Depends(parse_jwt_user_data),
 ):

@@ -29,9 +29,13 @@ async def test_get_cafeteria_list(
     assert response.status_code == 200
     assert response_json.get("data") is not None
     assert len(response_json["data"]) > 0
-    for campus in response_json["data"]:
-        assert campus.get("id") is not None
-        assert campus.get("name") is not None
+    for cafeteria in response_json["data"]:
+        assert cafeteria.get("id") is not None
+        assert cafeteria.get("name") is not None
+        assert cafeteria.get("campusID") is not None
+        assert cafeteria.get("latitude") is not None
+        assert cafeteria.get("longitude") is not None
+        assert cafeteria.get("runningTime") is not None
 
 
 @pytest.mark.asyncio
@@ -52,9 +56,13 @@ async def test_get_cafeteria_list_filter(
     response_json = response.json()
     assert response_json.get("data") is not None
     assert len(response_json["data"]) > 0
-    for campus in response_json["data"]:
-        assert campus.get("id") is not None
-        assert campus.get("name") is not None
+    for cafeteria in response_json["data"]:
+        assert cafeteria.get("id") is not None
+        assert cafeteria.get("name") is not None
+        assert cafeteria.get("campusID") is not None
+        assert cafeteria.get("latitude") is not None
+        assert cafeteria.get("longitude") is not None
+        assert cafeteria.get("runningTime") is not None
 
 
 @pytest.mark.asyncio

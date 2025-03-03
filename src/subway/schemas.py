@@ -119,7 +119,7 @@ class SubwayStationListResponse(BaseModel):
     data: Annotated[list[SubwayStationItemResponse], Field(alias="data")]
 
 
-class SubwayRouteStationListItemResponse(BaseModel):
+class SubwayRouteStationDetailResponse(BaseModel):
     id_: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
     name: Annotated[str, Field(max_length=30, alias="name")]
     route_id: Annotated[int, Field(alias="routeID", ge=1)]
@@ -131,18 +131,7 @@ class SubwayRouteStationListItemResponse(BaseModel):
 
 
 class SubwayRouteStationListResponse(BaseModel):
-    data: Annotated[list[SubwayRouteStationListItemResponse], Field(alias="data")]
-
-
-class SubwayRouteStationDetailResponse(BaseModel):
-    id_: Annotated[str, Field(alias="id", pattern=r"^K[0-9]{3}$")]
-    name: Annotated[str, Field(max_length=30, alias="name")]
-    route_id: Annotated[int, Field(alias="routeID", ge=1)]
-    sequence: Annotated[int, Field(alias="sequence", ge=0)]
-    cumulative_time: Annotated[
-        str,
-        Field(alias="cumulativeTime", pattern=r"^[0-9]{2}:[0-9]{2}:[0-9]{2}$"),
-    ]
+    data: Annotated[list[SubwayRouteStationDetailResponse], Field(alias="data")]
 
 
 class SubwayStartEndStation(BaseModel):

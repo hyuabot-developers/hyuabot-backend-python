@@ -205,16 +205,6 @@ class CreateBusTimetableRequest(BaseModel):
         }
 
 
-class BusRouteListItemResponse(BaseModel):
-    route_id: Annotated[int, Field(alias="id", ge=0)]
-    route_name: Annotated[str, Field(max_length=30, alias="name")]
-    type_name: Annotated[str, Field(max_length=10, alias="type")]
-
-
-class BusRouteListResponse(BaseModel):
-    data: Annotated[list[BusRouteListItemResponse], Field(alias="data")]
-
-
 class BusRouteFirstLastTimeResponse(BaseModel):
     first_time: Annotated[datetime.time, Field(alias="first")]
     last_time: Annotated[datetime.time, Field(alias="last")]
@@ -237,13 +227,8 @@ class BusRouteDetailResponse(BaseModel):
     company: Annotated[BusRouteCompanyResponse, Field(alias="company")]
 
 
-class BusStopListItemResponse(BaseModel):
-    stop_id: Annotated[int, Field(alias="id", ge=1)]
-    stop_name: Annotated[str, Field(max_length=30, alias="name")]
-
-
-class BusStopListResponse(BaseModel):
-    data: Annotated[list[BusStopListItemResponse], Field(alias="data")]
+class BusRouteListResponse(BaseModel):
+    data: Annotated[list[BusRouteDetailResponse], Field(alias="data")]
 
 
 class BusStopDetailResponse(BaseModel):
@@ -254,6 +239,10 @@ class BusStopDetailResponse(BaseModel):
     region_name: Annotated[str, Field(alias="regionName", max_length=30)]
     latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
+
+
+class BusStopListResponse(BaseModel):
+    data: Annotated[list[BusStopDetailResponse], Field(alias="data")]
 
 
 class BusRouteStopListItemResponse(BaseModel):

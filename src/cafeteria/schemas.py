@@ -78,15 +78,6 @@ class UpdateCafeteriaMenuRequest(BaseModel):
         }
 
 
-class CafeteriaListItemResponse(BaseModel):
-    cafeteria_id: Annotated[int, Field(alias="id", ge=1)]
-    cafeteria_name: Annotated[str, Field(max_length=50, alias="name")]
-
-
-class CafeteriaListResponse(BaseModel):
-    data: Annotated[list["CafeteriaListItemResponse"], Field(alias="data")]
-
-
 class CafeteriaRunningTimeResponse(BaseModel):
     breakfast: Annotated[Optional[str], Field(alias="breakfast", default=None)]
     lunch: Annotated[Optional[str], Field(alias="lunch", default=None)]
@@ -100,6 +91,10 @@ class CafeteriaDetailResponse(BaseModel):
     latitude: Annotated[float, Field(alias="latitude", ge=-90, le=90)]
     longitude: Annotated[float, Field(alias="longitude", ge=-180, le=180)]
     running_time: Annotated[CafeteriaRunningTimeResponse, Field(alias="runningTime")]
+
+
+class CafeteriaListResponse(BaseModel):
+    data: Annotated[list["CafeteriaDetailResponse"], Field(alias="data")]
 
 
 class CafeteriaMenuResponse(BaseModel):

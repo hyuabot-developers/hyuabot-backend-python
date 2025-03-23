@@ -1,7 +1,6 @@
 import datetime
 from typing import Callable
 
-import pytz
 from fastapi import APIRouter, Depends
 from starlette import status
 
@@ -46,7 +45,6 @@ from utils import (
     KST,
     timestamp_tz_to_datetime,
     datetime_to_str,
-    timedelta_to_str,
     timedelta_to_seconds
 )
 
@@ -287,9 +285,10 @@ async def delete_bus_stop(
 async def get_bus_route_stop_list(_: str = Depends(parse_jwt_user_data)):
     route_stops = await service.list_route_stops()
     mapping_func: Callable[[BusRouteStop], dict[str, int]] = lambda x: {
-        "id": x.stop_id,
+        "routeID": x.route_id,
+        "stopID": x.stop_id,
         "sequence": x.sequence,
-        "start": x.start_stop_id,
+        "startStopID": x.start_stop_id,
         "minuteFromStart": x.minute_from_start,
     }
     return {"data": map(mapping_func, route_stops)}
@@ -302,9 +301,10 @@ async def get_bus_route_stop_list_filter(
 ):
     route_stops = await service.list_route_stops(route_id)
     mapping_func: Callable[[BusRouteStop], dict[str, int]] = lambda x: {
-        "id": x.stop_id,
+        "routeID": x.route_id,
+        "stopID": x.stop_id,
         "sequence": x.sequence,
-        "start": x.start_stop_id,
+        "startStopID": x.start_stop_id,
         "minuteFromStart": x.minute_from_start,
     }
     return {"data": map(mapping_func, route_stops)}
@@ -519,7 +519,7 @@ async def get_bus_realtime_list(
         realtime_list = await service.list_realtime_filter(stop_id, route_id)
     mapping_func: Callable[
         [BusRealtime],
-        dict[str, int | str | datetime.datetime | datetime.timedelta],
+        dict[str, int | str | float],
     ] = lambda x: {
         "stopID": x.stop_id,
         "routeID": x.route_id,

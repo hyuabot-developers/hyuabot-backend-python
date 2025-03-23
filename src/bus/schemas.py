@@ -246,9 +246,10 @@ class BusStopListResponse(BaseModel):
 
 
 class BusRouteStopListItemResponse(BaseModel):
-    stop_id: Annotated[int, Field(alias="id", ge=1)]
+    route_id: Annotated[int, Field(alias="routeID", ge=1)]
+    stop_id: Annotated[int, Field(alias="stopID", ge=1)]
     sequence: Annotated[int, Field(alias="sequence", ge=0)]
-    start_stop_id: Annotated[int, Field(alias="start", ge=1)]
+    start_stop_id: Annotated[int, Field(alias="startStopID", ge=1)]
     minute_from_start: Annotated[int, Field(alias="minuteFromStart", ge=0)]
 
 

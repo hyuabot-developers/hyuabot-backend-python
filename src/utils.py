@@ -23,6 +23,10 @@ def second_to_timedelta(seconds: int) -> datetime.timedelta:
     return datetime.timedelta(seconds=seconds)
 
 
+def timedelta_to_seconds(td: datetime.timedelta) -> float:
+    return td.total_seconds()
+
+
 def remove_timezone(dt: datetime.time) -> datetime.time:
     return dt.replace(tzinfo=None)
 

@@ -1,6 +1,7 @@
 import datetime
 from typing import Callable
 
+import pytz
 from fastapi import APIRouter, Depends
 from starlette import status
 
@@ -41,7 +42,13 @@ from bus.schemas import (
 from exceptions import DetailedHTTPException
 from model.bus import BusRoute, BusStop, BusRouteStop, BusTimetable, BusRealtime
 from user.jwt import parse_jwt_user_data
-from utils import timestamp_tz_to_datetime, KST, datetime_to_str
+from utils import (
+    KST,
+    timestamp_tz_to_datetime,
+    datetime_to_str,
+    timedelta_to_str,
+    timedelta_to_seconds
+)
 
 router = APIRouter()
 
@@ -519,8 +526,8 @@ async def get_bus_realtime_list(
         "sequence": x.sequence,
         "stop": x.stops,
         "seat": x.seats,
-        "time": x.time,
+        "time": timedelta_to_seconds(x.time) // 60,
         "lowFloor": x.low_floor,
-        "updatedAt": datetime_to_str(x.updated_at),
+        "updatedAt": datetime_to_str(x.updated_at.astimezone(KST)),
     }
     return {"data": map(mapping_func, realtime_list)}

@@ -790,9 +790,10 @@ async def test_bus_route_stop_list(
     assert response.status_code == 200
     assert len(response.json().get("data")) > 0
     for stop in response.json().get("data"):
-        assert stop.get("id") is not None
+        assert stop.get("routeID") is not None
+        assert stop.get("stopID") is not None
         assert stop.get("sequence") is not None
-        assert stop.get("start") is not None
+        assert stop.get("startStopID") is not None
         assert stop.get("minuteFromStart") is not None
 
 
@@ -811,9 +812,10 @@ async def test_bus_route_stop_list_filter(
     assert response.status_code == 200
     assert len(response.json().get("data")) > 0
     for stop in response.json().get("data"):
-        assert stop.get("id") is not None
+        assert stop.get("routeID") is not None
+        assert stop.get("stopID") is not None
         assert stop.get("sequence") is not None
-        assert stop.get("start") is not None
+        assert stop.get("startStopID") is not None
         assert stop.get("minuteFromStart") is not None
 
 

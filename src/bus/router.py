@@ -41,7 +41,12 @@ from bus.schemas import (
 from exceptions import DetailedHTTPException
 from model.bus import BusRoute, BusStop, BusRouteStop, BusTimetable, BusRealtime
 from user.jwt import parse_jwt_user_data
-from utils import timestamp_tz_to_datetime, KST, datetime_to_str
+from utils import (
+    KST,
+    timestamp_tz_to_datetime,
+    datetime_to_str,
+    timedelta_to_seconds
+)
 
 router = APIRouter()
 
@@ -280,9 +285,10 @@ async def delete_bus_stop(
 async def get_bus_route_stop_list(_: str = Depends(parse_jwt_user_data)):
     route_stops = await service.list_route_stops()
     mapping_func: Callable[[BusRouteStop], dict[str, int]] = lambda x: {
-        "id": x.stop_id,
+        "routeID": x.route_id,
+        "stopID": x.stop_id,
         "sequence": x.sequence,
-        "start": x.start_stop_id,
+        "startStopID": x.start_stop_id,
         "minuteFromStart": x.minute_from_start,
     }
     return {"data": map(mapping_func, route_stops)}
@@ -295,9 +301,10 @@ async def get_bus_route_stop_list_filter(
 ):
     route_stops = await service.list_route_stops(route_id)
     mapping_func: Callable[[BusRouteStop], dict[str, int]] = lambda x: {
-        "id": x.stop_id,
+        "routeID": x.route_id,
+        "stopID": x.stop_id,
         "sequence": x.sequence,
-        "start": x.start_stop_id,
+        "startStopID": x.start_stop_id,
         "minuteFromStart": x.minute_from_start,
     }
     return {"data": map(mapping_func, route_stops)}
@@ -512,15 +519,15 @@ async def get_bus_realtime_list(
         realtime_list = await service.list_realtime_filter(stop_id, route_id)
     mapping_func: Callable[
         [BusRealtime],
-        dict[str, int | str | datetime.datetime | datetime.timedelta],
+        dict[str, int | str | float],
     ] = lambda x: {
         "stopID": x.stop_id,
         "routeID": x.route_id,
         "sequence": x.sequence,
         "stop": x.stops,
         "seat": x.seats,
-        "time": x.time,
+        "time": timedelta_to_seconds(x.time) // 60,
         "lowFloor": x.low_floor,
-        "updatedAt": datetime_to_str(x.updated_at),
+        "updatedAt": datetime_to_str(x.updated_at.astimezone(KST)),
     }
     return {"data": map(mapping_func, realtime_list)}

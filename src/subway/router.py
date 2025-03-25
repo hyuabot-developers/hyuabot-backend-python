@@ -42,7 +42,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/station/name",
+    "/stationName",
     status_code=status.HTTP_200_OK,
     response_model=SubwayStationListResponse,
 )
@@ -58,7 +58,7 @@ async def get_station_name_list(
 
 
 @router.post(
-    "/station/name",
+    "/stationName",
     status_code=status.HTTP_201_CREATED,
     response_model=SubwayStationItemResponse,
 )
@@ -73,7 +73,7 @@ async def create_station_name(
 
 
 @router.get(
-    "/station/name/{station_name}",
+    "/stationName/{station_name}",
     status_code=status.HTTP_200_OK,
     response_model=SubwayStationItemResponse,
 )
@@ -88,7 +88,7 @@ async def get_station_name(
 
 
 @router.delete(
-    "/station/name/{station_name}",
+    "/stationName/{station_name}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_station_name(

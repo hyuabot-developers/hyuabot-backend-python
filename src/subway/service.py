@@ -255,8 +255,11 @@ async def delete_timetable(
     await execute_query(delete_query)
 
 
-async def get_realtime(station_id: str) -> list[SubwayRealtime]:
+async def get_realtime(station_id: str | None = None) -> list[SubwayRealtime]:
+    condition = []
+    if station_id:
+        condition.append(SubwayRealtime.station_id == station_id)
     select_query = select(SubwayRealtime).where(
-        SubwayRealtime.station_id == station_id,
+        *condition,
     )
     return await fetch_all(select_query)

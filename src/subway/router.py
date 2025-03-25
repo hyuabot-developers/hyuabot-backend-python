@@ -371,6 +371,35 @@ async def delete_route_station_timetable(
 
 
 @router.get(
+    "/realtime",
+    status_code=status.HTTP_200_OK,
+    response_model=SubwayRealtimeListResponse,
+)
+async def get_realtime(
+    _: str = Depends(parse_jwt_user_data),
+):
+    realtime: list[SubwayRealtime] = await service.get_realtime()
+    return {
+        "data": map(
+            lambda x: {
+                "stationID": x.station_id,
+                "sequence": x.sequence,
+                "current": x.location,
+                "heading": x.heading,
+                "station": x.stop,
+                "time": timedelta_to_str(x.time),
+                "trainNumber": x.train_number,
+                "express": x.is_express,
+                "last": x.is_last,
+                "terminalStationID": x.terminal_station_id,
+                "status": x.status,
+            },
+            realtime,
+        ),
+    }
+
+
+@router.get(
     "/station/{station_id}/realtime",
     status_code=status.HTTP_200_OK,
     response_model=SubwayRealtimeListResponse,

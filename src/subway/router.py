@@ -273,6 +273,30 @@ async def delete_route_station(
 
 
 @router.get(
+    "/timetable",
+    status_code=status.HTTP_200_OK,
+    response_model=SubwayTimetableListResponse,
+)
+async def get_timetable_list(
+    _: str = Depends(parse_jwt_user_data),
+):
+    timetable = await service.get_timetable_by_station()
+    return {
+        "data": map(
+            lambda x: {
+                "stationID": x.station_id,
+                "startStationID": x.start_station_id,
+                "terminalStationID": x.terminal_station_id,
+                "departureTime": remove_timezone(x.departure_time),
+                "weekday": x.is_weekdays,
+                "heading": x.heading,
+            },
+            timetable,
+        ),
+    }
+
+
+@router.get(
     "/station/{station_id}/timetable",
     status_code=status.HTTP_200_OK,
     response_model=SubwayTimetableListResponse,

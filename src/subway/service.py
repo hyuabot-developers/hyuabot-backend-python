@@ -188,9 +188,14 @@ async def delete_route_station(station_id: str) -> None:
     await execute_query(delete_query)
 
 
-async def get_timetable_by_station(station_id: str) -> list[SubwayTimetable]:
+async def get_timetable_by_station(
+    station_id: str | None = None
+) -> list[SubwayTimetable]:
+    condition = []
+    if station_id:
+        condition.append(SubwayTimetable.station_id == station_id)
     select_query = select(SubwayTimetable).where(
-        SubwayTimetable.station_id == station_id,
+        *condition,
     )
     return await fetch_all(select_query)
 

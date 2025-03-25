@@ -17,7 +17,7 @@ async def test_get_station_list(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/subway/station/name",
+        "/api/subway/stationName",
         headers={
             "Authorization": f"Bearer {access_token}",
         },
@@ -40,7 +40,7 @@ async def test_get_station_list_filter_by_name(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/subway/station/name?name=name2",
+        "/api/subway/stationName?name=name2",
         headers={
             "Authorization": f"Bearer {access_token}",
         },
@@ -62,7 +62,7 @@ async def test_create_station_name(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/subway/station/name",
+        "/api/subway/stationName",
         json={
             "name": "test_station_name",
         },
@@ -91,7 +91,7 @@ async def test_create_station_name_already_exist(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/subway/station/name",
+        "/api/subway/stationName",
         json={
             "name": "test_station_name1",
         },
@@ -122,7 +122,7 @@ async def test_create_station_name_internal_server_error(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/subway/station/name",
+        "/api/subway/stationName",
         json={
             "name": "test_station_name",
         },
@@ -146,7 +146,7 @@ async def test_get_station_name(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/subway/station/name/test_station_name1",
+        "/api/subway/stationName/test_station_name1",
         headers={
             "Authorization": f"Bearer {access_token}",
         },
@@ -166,7 +166,7 @@ async def test_get_station_name_not_exist(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/subway/station/name/test_station_name1",
+        "/api/subway/stationName/test_station_name1",
         headers={
             "Authorization": f"Bearer {access_token}",
         },
@@ -187,7 +187,7 @@ async def test_delete_station_name(
     access_token = await get_access_token(client)
 
     response = await client.delete(
-        "/api/subway/station/name/test_station_name1",
+        "/api/subway/stationName/test_station_name1",
         headers={
             "Authorization": f"Bearer {access_token}",
         },
@@ -204,7 +204,7 @@ async def test_delete_station_name_not_exist(
     access_token = await get_access_token(client)
 
     response = await client.delete(
-        "/api/subway/station/name/test_station_name1",
+        "/api/subway/stationName/test_station_name1",
         headers={
             "Authorization": f"Bearer {access_token}",
         },
@@ -832,6 +832,32 @@ async def test_delete_route_station_not_exist(
 
 
 @pytest.mark.asyncio
+async def test_get_subway_timetable_all(
+    client: TestClient,
+    clean_db,
+    create_test_user,
+    create_test_subway_timetable,
+) -> None:
+    access_token = await get_access_token(client)
+
+    response = await client.get(
+        "/api/subway/timetable",
+        headers={
+            "Authorization": f"Bearer {access_token}",
+        },
+    )
+    assert response.status_code == 200
+    assert len(response.json().get("data")) > 0
+    for item in response.json().get("data"):
+        assert item.get("stationID") is not None
+        assert item.get("startStationID") is not None
+        assert item.get("terminalStationID") is not None
+        assert item.get("departureTime") is not None
+        assert item.get("weekday") is not None
+        assert item.get("heading") is not None
+
+
+@pytest.mark.asyncio
 async def test_get_subway_timetable_list(
     client: TestClient,
     clean_db,
@@ -1036,6 +1062,38 @@ async def test_delete_subway_timetable_not_exist(
         },
     )
     assert response.status_code == 204
+
+
+@pytest.mark.asyncio
+async def test_get_subway_realtime_all(
+    client: TestClient,
+    clean_db,
+    create_test_user,
+    create_test_subway_realtime,
+) -> None:
+    access_token = await get_access_token(client)
+
+    response = await client.get(
+        "/api/subway/realtime",
+        headers={
+            "Authorization": f"Bearer {access_token}",
+        },
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json.get("data") is not None
+    for item in response_json.get("data"):
+        assert item.get("stationID") is not None
+        assert item.get("sequence") is not None
+        assert item.get("current") is not None
+        assert item.get("heading") is not None
+        assert item.get("station") is not None
+        assert item.get("time") is not None
+        assert item.get("trainNumber") is not None
+        assert item.get("express") is not None
+        assert item.get("terminalStationID") is not None
+        assert item.get("last") is not None
+        assert item.get("status") is not None
 
 
 @pytest.mark.asyncio

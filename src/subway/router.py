@@ -42,7 +42,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/station/name",
+    "/stationName",
     status_code=status.HTTP_200_OK,
     response_model=SubwayStationListResponse,
 )
@@ -58,7 +58,7 @@ async def get_station_name_list(
 
 
 @router.post(
-    "/station/name",
+    "/stationName",
     status_code=status.HTTP_201_CREATED,
     response_model=SubwayStationItemResponse,
 )
@@ -73,7 +73,7 @@ async def create_station_name(
 
 
 @router.get(
-    "/station/name/{station_name}",
+    "/stationName/{station_name}",
     status_code=status.HTTP_200_OK,
     response_model=SubwayStationItemResponse,
 )
@@ -88,7 +88,7 @@ async def get_station_name(
 
 
 @router.delete(
-    "/station/name/{station_name}",
+    "/stationName/{station_name}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_station_name(
@@ -273,6 +273,30 @@ async def delete_route_station(
 
 
 @router.get(
+    "/timetable",
+    status_code=status.HTTP_200_OK,
+    response_model=SubwayTimetableListResponse,
+)
+async def get_timetable_list(
+    _: str = Depends(parse_jwt_user_data),
+):
+    timetable = await service.get_timetable_by_station()
+    return {
+        "data": map(
+            lambda x: {
+                "stationID": x.station_id,
+                "startStationID": x.start_station_id,
+                "terminalStationID": x.terminal_station_id,
+                "departureTime": remove_timezone(x.departure_time),
+                "weekday": x.is_weekdays,
+                "heading": x.heading,
+            },
+            timetable,
+        ),
+    }
+
+
+@router.get(
     "/station/{station_id}/timetable",
     status_code=status.HTTP_200_OK,
     response_model=SubwayTimetableListResponse,
@@ -368,6 +392,35 @@ async def delete_route_station_timetable(
         departure_time.replace(tzinfo=KST),
     )
     return {"message": "Hello World"}
+
+
+@router.get(
+    "/realtime",
+    status_code=status.HTTP_200_OK,
+    response_model=SubwayRealtimeListResponse,
+)
+async def get_realtime(
+    _: str = Depends(parse_jwt_user_data),
+):
+    realtime: list[SubwayRealtime] = await service.get_realtime()
+    return {
+        "data": map(
+            lambda x: {
+                "stationID": x.station_id,
+                "sequence": x.sequence,
+                "current": x.location,
+                "heading": x.heading,
+                "station": x.stop,
+                "time": timedelta_to_str(x.time),
+                "trainNumber": x.train_number,
+                "express": x.is_express,
+                "last": x.is_last,
+                "terminalStationID": x.terminal_station_id,
+                "status": x.status,
+            },
+            realtime,
+        ),
+    }
 
 
 @router.get(

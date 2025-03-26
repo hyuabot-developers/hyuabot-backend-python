@@ -273,3 +273,16 @@ async def delete_cafeteria_menu(
         menu_food,
     )
     return None
+
+
+@router.get("/menu", response_model=CafeteriaMenuListResponse)
+async def get_cafeteria_menu_all(_: str = Depends(parse_jwt_user_data)):
+    data = await service.get_list_menu()
+    mapping_func: Callable[[Menu], dict[str, int | str | datetime.date]] = lambda x: {
+        "cafeteriaID": x.restaurant_id,
+        "date": x.feed_date,
+        "time": x.time_type,
+        "menu": x.menu,
+        "price": x.price,
+    }
+    return {"data": map(mapping_func, data)}

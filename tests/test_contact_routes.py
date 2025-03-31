@@ -483,7 +483,7 @@ async def test_get_contact_list_all(
 
 
 @pytest.mark.asyncio
-async def test_get_contact_list_all(
+async def test_get_contact_list_all_filter(
     client: TestClient,
     clean_db,
     create_test_user,

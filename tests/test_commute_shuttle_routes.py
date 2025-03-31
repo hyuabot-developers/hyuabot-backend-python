@@ -165,7 +165,7 @@ async def test_update_commute_shuttle_route(
     route_name = "test_route1"
     route_description_korean = "테스트 노선"
     route_description_english = "Test Route"
-    response = await client.patch(
+    response = await client.put(
         f"/api/commute/route/{route_name}",
         json={
             "korean": route_description_korean,
@@ -191,7 +191,7 @@ async def test_update_commute_shuttle_route_not_found(
     route_name = "test_route"
     route_description_korean = "테스트 노선"
     route_description_english = "Test Route"
-    response = await client.patch(
+    response = await client.put(
         f"/api/commute/route/{route_name}",
         json={
             "korean": route_description_korean,
@@ -222,7 +222,7 @@ async def test_update_commute_shuttle_route_internal_server_error(
     route_name = "test_route1"
     route_description_korean = "테스트 노선"
     route_description_english = "Test Route"
-    response = await client.patch(
+    response = await client.put(
         f"/api/commute/route/{route_name}",
         json={
             "korean": route_description_korean,
@@ -435,7 +435,7 @@ async def test_update_commute_shuttle_stop(
     stop_description = "테스트 정류장"
     stop_latitude = 89.0
     stop_longitude = 89.0
-    response = await client.patch(
+    response = await client.put(
         f"/api/commute/stop/{stop_name}",
         json={
             "description": stop_description,
@@ -464,7 +464,7 @@ async def test_update_commute_shuttle_stop_not_found(
     stop_description = "테스트 정류장"
     stop_latitude = 89.0
     stop_longitude = 89.0
-    response = await client.patch(
+    response = await client.put(
         f"/api/commute/stop/{stop_name}",
         json={
             "description": stop_description,
@@ -497,7 +497,7 @@ async def test_update_commute_shuttle_stop_internal_server_error(
     stop_description = "테스트 정류장"
     stop_latitude = 89.0
     stop_longitude = 89.0
-    response = await client.patch(
+    response = await client.put(
         f"/api/commute/stop/{stop_name}",
         json={
             "description": stop_description,
@@ -792,7 +792,7 @@ async def test_update_commute_shuttle_timetable(
     stop_name = "test_stop1"
     sequence = 1
     departure_time = "09:00"
-    response = await client.patch(
+    response = await client.put(
         f"/api/commute/timetable/{route_name}/{stop_name}",
         json={
             "sequence": sequence,
@@ -820,7 +820,7 @@ async def test_update_commute_shuttle_timetable_not_found(
     stop_name = "test_stop10"
     sequence = 1
     departure_time = "09:00"
-    response = await client.patch(
+    response = await client.put(
         f"/api/commute/timetable/{route_name}/{stop_name}",
         json={
             "sequence": sequence,
@@ -852,7 +852,7 @@ async def test_update_commute_shuttle_timetable_internal_server_error(
     stop_name = "test_stop1"
     sequence = 1
     departure_time = "09:00"
-    response = await client.patch(
+    response = await client.put(
         f"/api/commute/timetable/{route_name}/{stop_name}",
         json={
             "sequence": sequence,

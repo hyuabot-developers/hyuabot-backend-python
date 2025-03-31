@@ -104,7 +104,7 @@ async def create_cafeteria(
     }
 
 
-@router.patch("/{cafeteria_id}", response_model=CafeteriaDetailResponse)
+@router.put("/{cafeteria_id}", response_model=CafeteriaDetailResponse)
 async def update_cafeteria(
     new_cafeteria: UpdateCafeteriaRequest,
     cafeteria_id: int = Depends(get_valid_cafeteria),
@@ -210,7 +210,7 @@ async def get_cafeteria_menu_item(
     }
 
 
-@router.patch(
+@router.put(
     "/{cafeteria_id}/menu/{feed_date}/{time_type}/{menu_food}",
     response_model=CafeteriaMenuResponse,
 )

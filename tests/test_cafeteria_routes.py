@@ -245,7 +245,7 @@ async def test_update_cafeteria(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/cafeteria/1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -282,7 +282,7 @@ async def test_update_cafeteria_not_found(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/cafeteria/100",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -314,7 +314,7 @@ async def test_update_cafeteria_internal_server_error(
 
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/cafeteria/1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -597,7 +597,7 @@ async def test_update_cafeteria_menu(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/cafeteria/1/menu/2023-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -630,7 +630,7 @@ async def test_update_cafeteria_menu_internal_server_error(
 
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/cafeteria/1/menu/2023-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -650,7 +650,7 @@ async def test_update_cafeteria_menu_not_found(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/cafeteria/1/menu/2099-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={

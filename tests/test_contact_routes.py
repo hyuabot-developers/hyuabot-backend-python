@@ -366,7 +366,7 @@ async def test_update_contact(
     create_test_contact,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/contact/100/contacts/9999",
         json={
             "name": "test_name",
@@ -392,7 +392,7 @@ async def test_update_contact_category_not_found(
     create_test_contact,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/contact/1000/contacts/100",
         json={
             "name": "test_name",
@@ -414,7 +414,7 @@ async def test_update_contact_not_found(
     create_test_contact,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/contact/100/contacts/1000",
         json={
             "name": "test_name",
@@ -444,7 +444,7 @@ async def test_update_contact_internal_server_error(
     monkeypatch.setattr(service, "update_contact", mock_update_contact)
 
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/contact/100/contacts/9999",
         json={
             "name": "test_name",

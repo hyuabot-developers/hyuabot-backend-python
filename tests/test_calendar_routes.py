@@ -372,7 +372,7 @@ async def test_update_calendar(
     create_test_calendar,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/calendar/100/calendars/9999",
         json={
             "title": "test_title",
@@ -400,7 +400,7 @@ async def test_update_calendar_category_not_found(
     create_test_calendar,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/calendar/1000/calendars/100",
         json={"title": "test_title", "start": "2021-07-31", "end": "2021-07-31"},
         headers={"Authorization": f"Bearer {access_token}"},
@@ -418,7 +418,7 @@ async def test_update_calendar_not_found(
     create_test_calendar,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/calendar/100/calendars/1000",
         json={"title": "test_title", "start": "2021-07-31", "end": "2021-07-31"},
         headers={"Authorization": f"Bearer {access_token}"},
@@ -444,7 +444,7 @@ async def test_update_calendar_internal_server_error(
     monkeypatch.setattr(service, "update_calendar", mock_update_calendar)
 
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/calendar/100/calendars/9999",
         json={"title": "test_title", "start": "2021-07-31", "end": "2021-07-31"},
         headers={"Authorization": f"Bearer {access_token}"},

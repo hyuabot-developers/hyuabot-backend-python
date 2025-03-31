@@ -89,7 +89,7 @@ async def create_route(
     }
 
 
-@router.patch(
+@router.put(
     "/route/{route_name}",
     response_model=CommuteShuttleRouteDetailResponse,
 )
@@ -166,7 +166,7 @@ async def create_stop(
     }
 
 
-@router.patch(
+@router.put(
     "/stop/{stop_name}",
     response_model=CommuteShuttleStopDetailResponse,
 )
@@ -257,7 +257,7 @@ async def create_timetable(
     }
 
 
-@router.patch(
+@router.put(
     "/timetable/{route_name}/{stop_name}",
     response_model=CommuteShuttleTimetableDetailResponse,
 )

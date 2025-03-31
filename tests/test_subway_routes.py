@@ -399,7 +399,7 @@ async def test_update_route(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/subway/route/1001",
         json={
             "name": "test_route2",
@@ -419,7 +419,7 @@ async def test_update_route_not_exist(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/subway/route/1001",
         json={
             "name": "test_route2",
@@ -752,7 +752,7 @@ async def test_update_route_station(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/subway/station/K001",
         json={
             "id": "K001",
@@ -778,7 +778,7 @@ async def test_update_route_station_not_exist(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/subway/station/K001",
         json={
             "id": "K001",

@@ -91,7 +91,7 @@ async def get_building(
     }
 
 
-@router.patch("/{building_name}", response_model=BuildingItemResponse)
+@router.put("/{building_name}", response_model=BuildingItemResponse)
 async def update_building(
     payload: UpdateBuildingRequest,
     building_name: str = Depends(get_valid_building),
@@ -179,7 +179,7 @@ async def get_building_room_item(
     }
 
 
-@router.patch("/{building_name}/room/{room_number}", response_model=RoomItemResponse)
+@router.put("/{building_name}/room/{room_number}", response_model=RoomItemResponse)
 async def update_building_room_item(
     payload: UpdateRoomRequest,
     building_name: str = Depends(get_valid_building),

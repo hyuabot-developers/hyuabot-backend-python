@@ -98,7 +98,7 @@ async def create_reading_room(
     }
 
 
-@router.patch(
+@router.put(
     "/{reading_room_id}",
     response_model=ReadingRoomDetailResponse,
 )

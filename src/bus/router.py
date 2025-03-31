@@ -149,7 +149,7 @@ async def create_bus_route(
     }
 
 
-@router.patch("/route/{route_id}", response_model=BusRouteDetailResponse)
+@router.put("/route/{route_id}", response_model=BusRouteDetailResponse)
 async def update_bus_route(
     payload: UpdateBusRouteRequest,
     route_id: int = Depends(get_valid_route),
@@ -252,7 +252,7 @@ async def create_bus_stop(
     }
 
 
-@router.patch("/stop/{stop_id}", response_model=BusStopDetailResponse)
+@router.put("/stop/{stop_id}", response_model=BusStopDetailResponse)
 async def update_bus_stop(
     payload: UpdateBusStopRequest,
     stop_id: int = Depends(get_valid_stop),
@@ -353,7 +353,7 @@ async def create_bus_route_stop(
     }
 
 
-@router.patch(
+@router.put(
     "/route/{route_id}/stop/{stop_id}",
     response_model=BusRouteStopDetailResponse,
 )

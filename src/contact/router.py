@@ -148,7 +148,7 @@ async def create_contact(
     }
 
 
-@router.patch(
+@router.put(
     "/{contact_category_id}/contacts/{contact_id}",
     response_model=ContactDetailResponse,
 )

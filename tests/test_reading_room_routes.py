@@ -211,7 +211,7 @@ async def test_update_reading_room(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/library/1",
         json={
             "isActive": False,
@@ -241,7 +241,7 @@ async def test_update_reading_room_not_found(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/library/100",
         json={
             "isActive": False,
@@ -272,7 +272,7 @@ async def test_update_reading_room_internal_server_error(
 
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/library/1",
         json={
             "isActive": False,

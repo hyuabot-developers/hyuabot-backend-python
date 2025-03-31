@@ -152,7 +152,7 @@ async def create_calendar(
     }
 
 
-@router.patch(
+@router.put(
     "/{calendar_category_id}/calendars/{calendar_id}",
     response_model=CalendarDetailResponse,
 )

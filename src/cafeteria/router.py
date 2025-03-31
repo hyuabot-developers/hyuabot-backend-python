@@ -23,6 +23,7 @@ from cafeteria.schemas import (
     CafeteriaMenuListResponse,
     CafeteriaMenuResponse,
     UpdateCafeteriaRequest,
+    MenuListResponse,
 )
 from exceptions import DetailedHTTPException
 from model.cafeteria import Cafeteria, Menu
@@ -275,7 +276,7 @@ async def delete_cafeteria_menu(
     return None
 
 
-@router.get("/menu", response_model=CafeteriaMenuListResponse)
+@router.get("/menu", response_model=MenuListResponse)
 async def get_cafeteria_menu_all(_: str = Depends(parse_jwt_user_data)):
     data = await service.get_list_menu()
     mapping_func: Callable[[Menu], dict[str, int | str | datetime.date]] = lambda x: {

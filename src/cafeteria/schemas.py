@@ -106,3 +106,15 @@ class CafeteriaMenuResponse(BaseModel):
 
 class CafeteriaMenuListResponse(BaseModel):
     data: Annotated[list["CafeteriaMenuResponse"], Field(alias="data")]
+
+
+class MenuResponse(BaseModel):
+    cafeteria_id: Annotated[int, Field(alias="cafeteriaID", ge=1)]
+    date: Annotated[datetime.date, Field(alias="date")]
+    time: Annotated[str, Field(alias="time")]
+    menu: Annotated[str, Field(alias="menu", max_length=400)]
+    price: Annotated[str, Field(alias="price", max_length=30)]
+
+
+class MenuListResponse(BaseModel):
+    data: Annotated[list["MenuResponse"], Field(alias="data")]

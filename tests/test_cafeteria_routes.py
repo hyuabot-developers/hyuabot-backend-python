@@ -19,7 +19,7 @@ async def test_get_cafeteria_list(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/cafeteria",
+        "/api/cafeteria/cafeteria",
         headers={
             "Authorization": f"Bearer {access_token}",
         },
@@ -48,7 +48,7 @@ async def test_get_cafeteria_list_filter(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/cafeteria?campus=1",
+        "/api/cafeteria/cafeteria?campus=1",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -75,7 +75,7 @@ async def test_get_cafeteria(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/cafeteria/1",
+        "/api/cafeteria/cafeteria/1",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -103,7 +103,7 @@ async def test_get_cafeteria_not_found(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/cafeteria/100",
+        "/api/cafeteria/cafeteria/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -121,7 +121,7 @@ async def test_create_cafeteria(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/cafeteria",
+        "/api/cafeteria/cafeteria",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "id": 1,
@@ -162,7 +162,7 @@ async def test_create_cafeteria_invalid_campus(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/cafeteria",
+        "/api/cafeteria/cafeteria",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "id": 1,
@@ -188,7 +188,7 @@ async def test_create_cafeteria_duplicate(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/cafeteria",
+        "/api/cafeteria/cafeteria",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "id": 1,
@@ -221,7 +221,7 @@ async def test_create_cafeteria_internal_server_error(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/cafeteria",
+        "/api/cafeteria/cafeteria",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "id": 1,
@@ -246,7 +246,7 @@ async def test_update_cafeteria(
     access_token = await get_access_token(client)
 
     response = await client.put(
-        "/api/cafeteria/1",
+        "/api/cafeteria/cafeteria/1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "name": "test_cafeteria",
@@ -283,7 +283,7 @@ async def test_update_cafeteria_not_found(
     access_token = await get_access_token(client)
 
     response = await client.put(
-        "/api/cafeteria/100",
+        "/api/cafeteria/cafeteria/100",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "name": "test_cafeteria",
@@ -315,7 +315,7 @@ async def test_update_cafeteria_internal_server_error(
     access_token = await get_access_token(client)
 
     response = await client.put(
-        "/api/cafeteria/1",
+        "/api/cafeteria/cafeteria/1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "name": "test_cafeteria",
@@ -338,7 +338,7 @@ async def test_delete_cafeteria(
     access_token = await get_access_token(client)
 
     response = await client.delete(
-        "/api/cafeteria/1",
+        "/api/cafeteria/cafeteria/1",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 204
@@ -355,7 +355,7 @@ async def test_delete_cafeteria_not_found(
     access_token = await get_access_token(client)
 
     response = await client.delete(
-        "/api/cafeteria/100",
+        "/api/cafeteria/cafeteria/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -373,7 +373,7 @@ async def test_get_cafeteria_menu(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/cafeteria/1/menu",
+        "/api/cafeteria/cafeteria/1/menu",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -398,7 +398,7 @@ async def test_get_cafeteria_menu_date_filter(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/cafeteria/1/menu?date=2023-12-01",
+        "/api/cafeteria/cafeteria/1/menu?date=2023-12-01",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -423,7 +423,7 @@ async def test_get_cafeteria_menu_not_found(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/cafeteria/100/menu",
+        "/api/cafeteria/cafeteria/100/menu",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -441,7 +441,7 @@ async def test_get_cafeteria_menu_item(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/cafeteria/1/menu/2023-12-01/조식/test_menu",
+        "/api/cafeteria/cafeteria/1/menu/2023-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -463,7 +463,7 @@ async def test_get_cafeteria_menu_item_not_found(
     access_token = await get_access_token(client)
 
     response = await client.get(
-        "/api/cafeteria/1/menu/2099-12-01/조식/test_menu",
+        "/api/cafeteria/cafeteria/1/menu/2099-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -481,7 +481,7 @@ async def test_create_cafeteria_menu(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/cafeteria/1/menu",
+        "/api/cafeteria/cafeteria/1/menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "date": "2021-01-01",
@@ -526,7 +526,7 @@ async def test_create_cafeteria_menu_internal_server_error(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/cafeteria/1/menu",
+        "/api/cafeteria/cafeteria/1/menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "date": "2021-01-01",
@@ -549,7 +549,7 @@ async def test_create_cafeteria_menu_invalid_cafeteria_id(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/cafeteria/100/menu",
+        "/api/cafeteria/cafeteria/100/menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "date": "2021-01-01",
@@ -574,7 +574,7 @@ async def test_create_cafeteria_menu_duplicate(
     access_token = await get_access_token(client)
 
     response = await client.post(
-        "/api/cafeteria/1/menu",
+        "/api/cafeteria/cafeteria/1/menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "date": "2023-12-01",
@@ -598,7 +598,7 @@ async def test_update_cafeteria_menu(
     access_token = await get_access_token(client)
 
     response = await client.put(
-        "/api/cafeteria/1/menu/2023-12-01/조식/test_menu",
+        "/api/cafeteria/cafeteria/1/menu/2023-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "price": "1000",
@@ -631,7 +631,7 @@ async def test_update_cafeteria_menu_internal_server_error(
     access_token = await get_access_token(client)
 
     response = await client.put(
-        "/api/cafeteria/1/menu/2023-12-01/조식/test_menu",
+        "/api/cafeteria/cafeteria/1/menu/2023-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "price": "1000",
@@ -651,7 +651,7 @@ async def test_update_cafeteria_menu_not_found(
     access_token = await get_access_token(client)
 
     response = await client.put(
-        "/api/cafeteria/1/menu/2099-12-01/조식/test_menu",
+        "/api/cafeteria/cafeteria/1/menu/2099-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
             "price": "1000",
@@ -672,7 +672,7 @@ async def test_delete_cafeteria_menu(
     access_token = await get_access_token(client)
 
     response = await client.delete(
-        "/api/cafeteria/1/menu/2023-12-01/조식/test_menu",
+        "/api/cafeteria/cafeteria/1/menu/2023-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 204
@@ -688,7 +688,7 @@ async def test_delete_cafeteria_menu_not_found(
     access_token = await get_access_token(client)
 
     response = await client.delete(
-        "/api/cafeteria/1/menu/2099-12-01/조식/test_menu",
+        "/api/cafeteria/cafeteria/1/menu/2099-12-01/조식/test_menu",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404

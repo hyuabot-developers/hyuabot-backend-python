@@ -16,7 +16,7 @@ async def test_get_contact_category_list(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact",
+        "/api/contact/category",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -37,7 +37,7 @@ async def test_get_contact_category_list_filter(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact?name=test_category",
+        "/api/contact/category?name=test_category",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -57,7 +57,7 @@ async def test_create_contact_category(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/contact",
+        "/api/contact/category",
         json={"name": "test_category"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -83,7 +83,7 @@ async def test_create_contact_category_duplicated_name(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/contact",
+        "/api/contact/category",
         json={"name": "test_category100"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -110,7 +110,7 @@ async def test_create_contact_category_internal_server_error(
 
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/contact",
+        "/api/contact/category",
         json={"name": "test_category"},
         headers={"Authorization": f"Bearer {access_token}"},
     )

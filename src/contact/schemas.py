@@ -45,7 +45,7 @@ class UpdateContactRequest(BaseModel):
 
 
 class ContactCategoryDetailResponse(BaseModel):
-    id_: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=0)]
     name: Annotated[str, Field(max_length=20, alias="name")]
 
 
@@ -54,7 +54,7 @@ class ContactCategoryListResponse(BaseModel):
 
 
 class ContactDetailResponse(BaseModel):
-    id_: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=0)]
     name: Annotated[str, Field(max_length=30, alias="name")]
     phone: Annotated[str, Field(max_length=30, alias="phone")]
     campus_id: Annotated[int, Field(ge=1, alias="campusID")]
@@ -65,7 +65,7 @@ class ContactListResponse(BaseModel):
 
 
 class ContactDetailWithCategoryResponse(BaseModel):
-    id_: Annotated[int, Field(alias="id", ge=1)]
+    id_: Annotated[int, Field(alias="id", ge=0)]
     name: Annotated[str, Field(max_length=30, alias="name")]
     phone: Annotated[str, Field(max_length=30, alias="phone")]
     category_id: Annotated[int, Field(alias="categoryID", ge=0)]

@@ -183,3 +183,13 @@ async def update_contact(
         PhoneBook.id_ == contact_id,
     )
     return await fetch_one(select_query)
+
+
+async def list_contact() -> list[PhoneBook]:
+    select_query = select(PhoneBook)
+    return await fetch_all(select_query)
+
+
+async def list_contact_filter(campus_id: int) -> list[PhoneBook]:
+    select_query = select(PhoneBook).where(PhoneBook.campus_id == campus_id)
+    return await fetch_all(select_query)

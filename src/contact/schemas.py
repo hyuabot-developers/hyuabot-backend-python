@@ -62,3 +62,15 @@ class ContactDetailResponse(BaseModel):
 
 class ContactListResponse(BaseModel):
     data: Annotated[list[ContactDetailResponse], Field(alias="data")]
+
+
+class ContactDetailWithCategoryResponse(BaseModel):
+    id_: Annotated[int, Field(alias="id", ge=1)]
+    name: Annotated[str, Field(max_length=30, alias="name")]
+    phone: Annotated[str, Field(max_length=30, alias="phone")]
+    category_id: Annotated[int, Field(alias="categoryID", ge=0)]
+    campus_id: Annotated[int, Field(ge=1, alias="campusID")]
+
+
+class ContactListWithCategoryResponse(BaseModel):
+    data: Annotated[list[ContactDetailWithCategoryResponse], Field(alias="data")]

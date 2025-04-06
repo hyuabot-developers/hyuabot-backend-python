@@ -216,7 +216,7 @@ async def test_get_calendar_list(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/calendar/100/category/event",
+        "/api/calendar/category/100/event",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -476,3 +476,28 @@ async def test_update_calendar_internal_server_error(
     )
     assert response.status_code == 500
     assert response.json() == {"detail": "INTERNAL_SERVER_ERROR"}
+
+
+@pytest.mark.asyncio
+async def test_get_entire_calendar(
+    client: TestClient,
+    clean_db,
+    create_test_user,
+    create_test_calendar_category,
+    create_test_calendar,
+) -> None:
+    access_token = await get_access_token(client)
+    response = await client.get(
+        "/api/calendar/event",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json.get("data") is not None
+    assert len(response_json["data"]) > 0
+    for calendar in response_json["data"]:
+        assert calendar.get("id") is not None
+        assert calendar.get("title") is not None
+        assert calendar.get("description") is not None
+        assert calendar.get("start") is not None
+        assert calendar.get("end") is not None

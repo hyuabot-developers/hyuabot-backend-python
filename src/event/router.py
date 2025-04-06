@@ -209,3 +209,19 @@ async def delete_calendar(
     _: str = Depends(parse_jwt_user_data),
 ):
     await service.delete_calendar(calendar_category_id, calendar_id)
+
+
+@router.get(
+    "/event",
+    response_model=CalendarListResponse,
+)
+async def get_calendar_list_all(_: str = Depends(parse_jwt_user_data),):
+    data = await service.get_entire_calendar()
+    mapping_func: Callable[[Calendar], dict[str, int | str | date]] = lambda x: {
+        "id": x.id_,
+        "title": x.title,
+        "description": x.description,
+        "start": x.start_date,
+        "end": x.end_date,
+    }
+    return {"data": map(mapping_func, data)}

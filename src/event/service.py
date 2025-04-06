@@ -208,3 +208,8 @@ async def update_calendar(
         Calendar.id_ == calendar_id,
     )
     return await fetch_one(select_query)
+
+
+async def get_entire_calendar() -> list[Calendar]:
+    select_query = select(Calendar)
+    return await fetch_all(select_query)

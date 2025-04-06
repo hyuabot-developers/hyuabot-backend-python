@@ -119,6 +119,7 @@ async def get_calendar_list(
     data = await service.get_calendar_list(calendar_category_id)
     mapping_func: Callable[[Calendar], dict[str, int | str | date]] = lambda x: {
         "id": x.id_,
+        "categoryID": x.category_id,
         "title": x.title,
         "description": x.description,
         "start": x.start_date,
@@ -141,6 +142,7 @@ async def get_calendar(
         raise CalendarNotFound()
     return {
         "id": data.id_,
+        "categoryID": data.category_id,
         "title": data.title,
         "description": data.description,
         "start": data.start_date,
@@ -166,6 +168,7 @@ async def create_calendar(
         raise DetailedHTTPException()
     return {
         "id": data.id_,
+        "categoryID": data.category_id,
         "title": data.title,
         "description": data.description,
         "start": data.start_date,
@@ -192,6 +195,7 @@ async def update_calendar(
         raise DetailedHTTPException()
     return {
         "id": data.id_,
+        "categoryID": data.category_id,
         "title": data.title,
         "description": data.description,
         "start": data.start_date,
@@ -219,6 +223,7 @@ async def get_calendar_list_all(_: str = Depends(parse_jwt_user_data),):
     data = await service.get_entire_calendar()
     mapping_func: Callable[[Calendar], dict[str, int | str | date]] = lambda x: {
         "id": x.id_,
+        "categoryID": x.category_id,
         "title": x.title,
         "description": x.description,
         "start": x.start_date,

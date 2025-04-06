@@ -225,6 +225,7 @@ async def test_get_calendar_list(
     assert len(response_json["data"]) > 0
     for calendar in response_json["data"]:
         assert calendar.get("id") is not None
+        assert calendar.get("categoryID") is not None
         assert calendar.get("title") is not None
         assert calendar.get("description") is not None
         assert calendar.get("start") is not None
@@ -264,6 +265,7 @@ async def test_get_calendar(
     assert response.status_code == 200
     response_json = response.json()
     assert response_json.get("id") == 9999
+    assert response_json.get("categoryID") == 100
     assert response_json.get("title") == "test_title9999"
     assert response_json.get("description") == "test_description"
     assert response_json.get("start") is not None
@@ -308,6 +310,7 @@ async def test_create_calendar(
     assert response.status_code == 201
     response_json = response.json()
     assert response_json.get("id") is not None
+    assert response_json.get("categoryID") is not None
     assert response_json.get("title") == "test_title"
     assert response_json.get("description") == "test_description"
     assert response_json.get("start") is not None
@@ -410,6 +413,7 @@ async def test_update_calendar(
     assert response.status_code == 200
     response_json = response.json()
     assert response_json.get("id") is not None
+    assert response_json.get("categoryID") == 100
     assert response_json.get("title") == "test_title"
     assert response_json.get("description") == "test_description"
     assert response_json.get("start") is not None
@@ -497,6 +501,7 @@ async def test_get_entire_calendar(
     assert len(response_json["data"]) > 0
     for calendar in response_json["data"]:
         assert calendar.get("id") is not None
+        assert calendar.get("categoryID") is not None
         assert calendar.get("title") is not None
         assert calendar.get("description") is not None
         assert calendar.get("start") is not None

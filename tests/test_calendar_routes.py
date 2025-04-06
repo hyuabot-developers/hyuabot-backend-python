@@ -16,7 +16,7 @@ async def test_get_calendar_category_list(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/calendar",
+        "/api/calendar/category",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -37,7 +37,7 @@ async def test_get_calendar_category_list_filter(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/calendar?name=test_category",
+        "/api/calendar/category?name=test_category",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -57,7 +57,7 @@ async def test_create_calendar_category(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/calendar",
+        "/api/calendar/category",
         json={"name": "test_category"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -83,7 +83,7 @@ async def test_create_calendar_category_duplicated_name(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/calendar",
+        "/api/calendar/category",
         json={"name": "test_category100"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -108,7 +108,7 @@ async def test_create_calendar_category_internal_server_error(
 
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/calendar",
+        "/api/calendar/category",
         json={"name": "test_category"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -125,7 +125,7 @@ async def test_get_calendar_category(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/calendar/100",
+        "/api/calendar/category/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -143,7 +143,7 @@ async def test_get_calendar_category_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/calendar/1000",
+        "/api/calendar/category/1000",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -159,7 +159,7 @@ async def test_delete_calendar_category(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.delete(
-        "/api/calendar/100",
+        "/api/calendar/category/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 204
@@ -174,7 +174,7 @@ async def test_delete_calendar_category_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.delete(
-        "/api/calendar/1000",
+        "/api/calendar/category/1000",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -191,7 +191,7 @@ async def test_get_calendar_list(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/calendar/100/calendars",
+        "/api/calendar/100/category/event",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -216,7 +216,7 @@ async def test_get_calendar_list_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/calendar/1000/calendars",
+        "/api/calendar/category/1000/event",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -233,7 +233,7 @@ async def test_get_calendar(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/calendar/100/calendars/9999",
+        "/api/calendar/category/100/event/9999",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -255,7 +255,7 @@ async def test_get_calendar_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/calendar/100/calendars/100",
+        "/api/calendar/category/100/event/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -271,7 +271,7 @@ async def test_create_calendar(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/calendar/100/calendars",
+        "/api/calendar/category/100/event",
         json={
             "title": "test_title",
             "description": "test_description",
@@ -304,7 +304,7 @@ async def test_create_calendar_category_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/calendar/1000/calendars",
+        "/api/calendar/category/1000/event",
         json={
             "title": "test_title",
             "description": "test_description",
@@ -334,7 +334,7 @@ async def test_create_calendar_internal_server_error(
 
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/calendar/100/calendars",
+        "/api/calendar/category/100/event",
         json={
             "title": "test_title",
             "description": "test_description",
@@ -357,7 +357,7 @@ async def test_delete_calendar(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.delete(
-        "/api/calendar/100/calendars/100",
+        "/api/calendar/category/100/event/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 204
@@ -373,7 +373,7 @@ async def test_update_calendar(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.put(
-        "/api/calendar/100/calendars/9999",
+        "/api/calendar/category/100/event/9999",
         json={
             "title": "test_title",
             "description": "test_description",
@@ -401,7 +401,7 @@ async def test_update_calendar_category_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.put(
-        "/api/calendar/1000/calendars/100",
+        "/api/calendar/category/1000/event/100",
         json={"title": "test_title", "start": "2021-07-31", "end": "2021-07-31"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -419,7 +419,7 @@ async def test_update_calendar_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.put(
-        "/api/calendar/100/calendars/1000",
+        "/api/calendar/category/100/event/1000",
         json={"title": "test_title", "start": "2021-07-31", "end": "2021-07-31"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -445,7 +445,7 @@ async def test_update_calendar_internal_server_error(
 
     access_token = await get_access_token(client)
     response = await client.put(
-        "/api/calendar/100/calendars/9999",
+        "/api/calendar/category/100/event/9999",
         json={"title": "test_title", "start": "2021-07-31", "end": "2021-07-31"},
         headers={"Authorization": f"Bearer {access_token}"},
     )

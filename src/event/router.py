@@ -31,7 +31,7 @@ from user.jwt import parse_jwt_user_data
 router = APIRouter()
 
 
-@router.get("", response_model=CalendarCategoryListResponse)
+@router.get("/category", response_model=CalendarCategoryListResponse)
 async def get_calendar_category_list(
     _: str = Depends(parse_jwt_user_data),
     name: str | None = None,
@@ -48,7 +48,7 @@ async def get_calendar_category_list(
 
 
 @router.post(
-    "",
+    "/category",
     status_code=status.HTTP_201_CREATED,
     response_model=CalendarCategoryDetailResponse,
 )
@@ -65,7 +65,7 @@ async def create_calendar_category(
     }
 
 
-@router.get("/{calendar_category_id}", response_model=CalendarCategoryDetailResponse)
+@router.get("/category/{calendar_category_id}", response_model=CalendarCategoryDetailResponse)
 async def get_calendar_category(
     calendar_category_id: int,
     _: str = Depends(parse_jwt_user_data),
@@ -80,7 +80,7 @@ async def get_calendar_category(
 
 
 @router.delete(
-    "/{calendar_category_id}",
+    "/category/{calendar_category_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_calendar_category(
@@ -90,7 +90,7 @@ async def delete_calendar_category(
     await service.delete_calendar_category(calendar_category_id)
 
 
-@router.get("/{calendar_category_id}/calendars", response_model=CalendarListResponse)
+@router.get("/category/{calendar_category_id}/event", response_model=CalendarListResponse)
 async def get_calendar_list(
     calendar_category_id: int = Depends(get_valid_category),
     _: str = Depends(parse_jwt_user_data),
@@ -107,7 +107,7 @@ async def get_calendar_list(
 
 
 @router.get(
-    "/{calendar_category_id}/calendars/{calendar_id}",
+    "/category/{calendar_category_id}/event/{calendar_id}",
     response_model=CalendarDetailResponse,
 )
 async def get_calendar(
@@ -128,7 +128,7 @@ async def get_calendar(
 
 
 @router.post(
-    "/{calendar_category_id}/calendars",
+    "/category/{calendar_category_id}/event",
     status_code=status.HTTP_201_CREATED,
     response_model=CalendarDetailResponse,
 )
@@ -153,7 +153,7 @@ async def create_calendar(
 
 
 @router.put(
-    "/{calendar_category_id}/calendars/{calendar_id}",
+    "/category/{calendar_category_id}/event/{calendar_id}",
     response_model=CalendarDetailResponse,
 )
 async def update_calendar(
@@ -179,7 +179,7 @@ async def update_calendar(
 
 
 @router.delete(
-    "/{calendar_category_id}/calendars/{calendar_id}",
+    "/category/{calendar_category_id}/event/{calendar_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_calendar(

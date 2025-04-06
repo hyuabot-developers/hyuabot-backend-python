@@ -79,6 +79,27 @@ async def get_calendar_category(
     }
 
 
+@router.put(
+    "/category/{calendar_category_id}",
+    response_model=CalendarCategoryDetailResponse,
+)
+async def update_calendar_category(
+    new_category: CreateCalendarCategoryRequest,
+    calendar_category_id: int = Depends(get_valid_category),
+    _: str = Depends(parse_jwt_user_data),
+):
+    data = await service.update_calendar_category(
+        calendar_category_id,
+        new_category,
+    )
+    if data is None:
+        raise DetailedHTTPException()
+    return {
+        "id": data.id_,
+        "name": data.name,
+    }
+
+
 @router.delete(
     "/category/{calendar_category_id}",
     status_code=status.HTTP_204_NO_CONTENT,

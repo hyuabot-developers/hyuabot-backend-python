@@ -40,6 +40,26 @@ async def create_calendar_category(
     return await fetch_one(select_query)
 
 
+async def update_calendar_category(
+    calendar_category_id: int,
+    new_calendar_category: CreateCalendarCategoryRequest,
+) -> CalendarCategory | None:
+    update_query = (
+        update(CalendarCategory)
+        .where(CalendarCategory.id_ == calendar_category_id)
+        .values(
+            {
+                "name": new_calendar_category.name,
+            },
+        )
+    )
+    await execute_query(update_query)
+    select_query = select(CalendarCategory).where(
+        CalendarCategory.id_ == calendar_category_id,
+    )
+    return await fetch_one(select_query)
+
+
 async def get_calendar_category(calendar_category_id: int) -> CalendarCategory | None:
     select_query = select(CalendarCategory).where(
         CalendarCategory.id_ == calendar_category_id,

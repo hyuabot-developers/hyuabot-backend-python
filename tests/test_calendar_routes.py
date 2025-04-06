@@ -117,6 +117,31 @@ async def test_create_calendar_category_internal_server_error(
 
 
 @pytest.mark.asyncio
+async def test_update_calendar_category(
+    client: TestClient,
+    clean_db,
+    create_test_user,
+    create_test_calendar_category,
+) -> None:
+    access_token = await get_access_token(client)
+    response = await client.put(
+        "/api/calendar/category/100",
+        json={"name": "test_category"},
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json.get("id") == 100
+    assert response_json.get("name") == "test_category"
+    check_statement = select(CalendarCategory).where(
+        CalendarCategory.name == "test_category",
+    )
+    query_result = await fetch_one(check_statement)
+    assert query_result is not None
+    assert query_result.name == "test_category"
+
+
+@pytest.mark.asyncio
 async def test_get_calendar_category(
     client: TestClient,
     clean_db,

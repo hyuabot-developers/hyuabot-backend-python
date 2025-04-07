@@ -698,7 +698,7 @@ async def test_update_shuttle_route_item(
     create_test_shuttle_route,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/route/test_route1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -727,7 +727,7 @@ async def test_update_shuttle_route_item_not_found(
     create_test_shuttle_route,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/route/test_route10",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -759,7 +759,7 @@ async def test_update_shuttle_route_item_internal_server_error(
     monkeypatch.setattr(service, "update_route", mock_update_route)
 
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/route/test_route1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -972,7 +972,7 @@ async def test_update_shuttle_stop_item(
     create_test_shuttle_stop,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/stop/test_stop1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -995,7 +995,7 @@ async def test_update_shuttle_stop_item_not_found(
     create_test_shuttle_stop,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/stop/test_stop10",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -1024,7 +1024,7 @@ async def test_update_shuttle_stop_item_internal_server_error(
     monkeypatch.setattr(service, "update_stop", mock_update_stop)
 
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/stop/test_stop1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -1271,7 +1271,7 @@ async def test_update_shuttle_route_stop_item(
     create_test_shuttle_route_stop,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/route/test_route1/stop/test_stop1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -1295,7 +1295,7 @@ async def test_update_shuttle_route_stop_item_not_found(
     create_test_shuttle_route_stop,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/route/test_route1/stop/test_stop9",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -1324,7 +1324,7 @@ async def test_update_shuttle_route_stop_item_internal_server_error(
     monkeypatch.setattr(service, "update_route_stop", mock_update_route_stop)
 
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/route/test_route1/stop/test_stop1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -1679,7 +1679,7 @@ async def test_update_shuttle_timetable_item(
     create_test_shuttle_timetable,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/timetable/1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -1706,7 +1706,7 @@ async def test_update_shuttle_timetable_item_false(
     create_test_shuttle_timetable,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/timetable/1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -1733,7 +1733,7 @@ async def test_update_shuttle_timetable_item_not_found(
     create_test_shuttle_timetable,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/timetable/1000",
         headers={"Authorization": f"Bearer {access_token}"},
         json={
@@ -1764,7 +1764,7 @@ async def test_update_shuttle_timetable_item_internal_server_error(
     monkeypatch.setattr(service, "update_timetable", mock_update_timetable)
 
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/shuttle/timetable/1",
         headers={"Authorization": f"Bearer {access_token}"},
         json={

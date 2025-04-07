@@ -79,7 +79,7 @@ async def create_campus(
     }
 
 
-@router.patch(
+@router.put(
     "/{campus_id}",
     response_model=CampusDetailResponse,
 )

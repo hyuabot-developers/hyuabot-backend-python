@@ -343,7 +343,7 @@ async def test_update_bus_route(
         "companyTelephone": "010-1234-5678",
         "district": 1,
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/route/1",
         json=update_route,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -391,7 +391,7 @@ async def test_update_bus_route_not_found(
         "companyTelephone": "010-1234-5678",
         "district": 1,
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/route/20",
         json=update_route,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -430,7 +430,7 @@ async def test_update_bus_route_internal_server_error(
         "companyTelephone": "010-1234-5678",
         "district": 1,
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/route/1",
         json=update_route,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -671,7 +671,7 @@ async def test_update_bus_stop(
         "mobileNumber": "01090",
         "regionName": "test",
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/stop/1",
         json=update_stop,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -703,7 +703,7 @@ async def test_update_bus_stop_not_found(
         "mobileNumber": "01090",
         "regionName": "test",
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/stop/20",
         json=update_stop,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -735,7 +735,7 @@ async def test_update_bus_stop_internal_server_error(
         "mobileNumber": "01090",
         "regionName": "test",
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/stop/1",
         json=update_stop,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -1051,7 +1051,7 @@ async def test_update_bus_route_stop(
         "start": 1,
         "minuteFromStart": 1,
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/route/1/stop/1",
         json=update_route_stop,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -1076,7 +1076,7 @@ async def test_update_bus_route_stop_not_found_route(
         "start": 1,
         "minuteFromStart": 1,
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/route/20/stop/1",
         json=update_route_stop,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -1098,7 +1098,7 @@ async def test_update_bus_route_stop_not_found_stop(
         "start": 1,
         "minuteFromStart": 1,
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/route/1/stop/20",
         json=update_route_stop,
         headers={"Authorization": f"Bearer {access_token}"},
@@ -1120,7 +1120,7 @@ async def test_update_bus_route_stop_not_found_route_stop(
         "start": 1,
         "minuteFromStart": 1,
     }
-    response = await client.patch(
+    response = await client.put(
         "/api/bus/route/1/stop/9",
         json=update_route_stop,
         headers={"Authorization": f"Bearer {access_token}"},

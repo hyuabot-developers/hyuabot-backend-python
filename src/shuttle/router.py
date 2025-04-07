@@ -292,7 +292,7 @@ async def get_route(
     }
 
 
-@router.patch(
+@router.put(
     "/route/{route_name}",
     response_model=ShuttleRouteDetailResponse,
 )
@@ -373,7 +373,7 @@ async def get_stop(
     }
 
 
-@router.patch(
+@router.put(
     "/stop/{stop_name}",
     response_model=ShuttleStopItemResponse,
 )
@@ -471,7 +471,7 @@ async def get_route_stop(
     }
 
 
-@router.patch(
+@router.put(
     "/route/{route_name}/stop/{stop_name}",
     response_model=ShuttleRouteStopItemResponse,
 )
@@ -577,7 +577,7 @@ async def get_timetable(
     }
 
 
-@router.patch(
+@router.put(
     "/timetable/{seq}",
     response_model=ShuttleTimetableItemResponse,
 )

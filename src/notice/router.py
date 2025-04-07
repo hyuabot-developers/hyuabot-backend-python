@@ -156,7 +156,7 @@ async def create_notice(
     }
 
 
-@router.patch(
+@router.put(
     "/{notice_category_id}/notices/{notice_id}",
     response_model=NoticeDetailResponse,
 )

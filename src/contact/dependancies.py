@@ -1,6 +1,6 @@
 from contact import service
 from contact.exceptions import DuplicateCategoryName, CategoryNotFound, ContactNotFound
-from contact.schemas import CreateContactCategoryRequest, CreateContactReqeust
+from contact.schemas import CreateContactCategoryRequest, CreateContactRequest
 
 
 async def create_valid_category(
@@ -19,8 +19,8 @@ async def get_valid_category(contact_category_id: int) -> int:
 
 async def create_valid_contact(
     contact_category_id: int,
-    new_contact: CreateContactReqeust,
-) -> CreateContactReqeust:
+    new_contact: CreateContactRequest,
+) -> CreateContactRequest:
     if await service.get_contact_category(contact_category_id) is None:
         raise CategoryNotFound()
     return new_contact

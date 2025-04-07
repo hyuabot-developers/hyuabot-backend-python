@@ -23,6 +23,7 @@ from cafeteria.schemas import (
     CafeteriaMenuListResponse,
     CafeteriaMenuResponse,
     UpdateCafeteriaRequest,
+    MenuListResponse,
 )
 from exceptions import DetailedHTTPException
 from model.cafeteria import Cafeteria, Menu
@@ -31,7 +32,7 @@ from user.jwt import parse_jwt_user_data
 router = APIRouter()
 
 
-@router.get("", response_model=CafeteriaListResponse)
+@router.get("/cafeteria", response_model=CafeteriaListResponse)
 async def get_cafeteria_list(
     _: str = Depends(parse_jwt_user_data),
     campus: int | None = None,
@@ -55,7 +56,7 @@ async def get_cafeteria_list(
     return {"data": map(mapping_func, data)}
 
 
-@router.get("/{cafeteria_id}", response_model=CafeteriaDetailResponse)
+@router.get("/cafeteria/{cafeteria_id}", response_model=CafeteriaDetailResponse)
 async def get_cafeteria(
     cafeteria_id: int,
     _: str = Depends(parse_jwt_user_data),
@@ -78,7 +79,7 @@ async def get_cafeteria(
 
 
 @router.post(
-    "",
+    "/cafeteria",
     response_model=CafeteriaDetailResponse,
     status_code=status.HTTP_201_CREATED,
 )
@@ -104,7 +105,7 @@ async def create_cafeteria(
     }
 
 
-@router.patch("/{cafeteria_id}", response_model=CafeteriaDetailResponse)
+@router.put("/cafeteria/{cafeteria_id}", response_model=CafeteriaDetailResponse)
 async def update_cafeteria(
     new_cafeteria: UpdateCafeteriaRequest,
     cafeteria_id: int = Depends(get_valid_cafeteria),
@@ -127,7 +128,7 @@ async def update_cafeteria(
     }
 
 
-@router.delete("/{cafeteria_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/cafeteria/{cafeteria_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_cafeteria(
     cafeteria_id: int = Depends(get_valid_cafeteria),
     _: str = Depends(parse_jwt_user_data),
@@ -137,7 +138,7 @@ async def delete_cafeteria(
 
 
 @router.get(
-    "/{cafeteria_id}/menu",
+    "/cafeteria/{cafeteria_id}/menu",
     response_model=CafeteriaMenuListResponse,
 )
 async def get_cafeteria_menu(
@@ -162,7 +163,7 @@ async def get_cafeteria_menu(
 
 
 @router.post(
-    "/{cafeteria_id}/menu",
+    "/cafeteria/{cafeteria_id}/menu",
     response_model=CafeteriaMenuResponse,
     status_code=status.HTTP_201_CREATED,
 )
@@ -184,7 +185,7 @@ async def create_cafeteria_menu(
 
 
 @router.get(
-    "/{cafeteria_id}/menu/{feed_date}/{time_type}/{menu_food}",
+    "/cafeteria/{cafeteria_id}/menu/{feed_date}/{time_type}/{menu_food}",
     response_model=CafeteriaMenuResponse,
 )
 async def get_cafeteria_menu_item(
@@ -210,8 +211,8 @@ async def get_cafeteria_menu_item(
     }
 
 
-@router.patch(
-    "/{cafeteria_id}/menu/{feed_date}/{time_type}/{menu_food}",
+@router.put(
+    "/cafeteria/{cafeteria_id}/menu/{feed_date}/{time_type}/{menu_food}",
     response_model=CafeteriaMenuResponse,
 )
 async def update_cafeteria_menu(
@@ -248,7 +249,7 @@ async def update_cafeteria_menu(
 
 
 @router.delete(
-    "/{cafeteria_id}/menu/{feed_date}/{time_type}/{menu_food}",
+    "/cafeteria/{cafeteria_id}/menu/{feed_date}/{time_type}/{menu_food}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_cafeteria_menu(
@@ -273,3 +274,16 @@ async def delete_cafeteria_menu(
         menu_food,
     )
     return None
+
+
+@router.get("/menu", response_model=MenuListResponse)
+async def get_cafeteria_menu_all(_: str = Depends(parse_jwt_user_data)):
+    data = await service.get_list_menu()
+    mapping_func: Callable[[Menu], dict[str, int | str | datetime.date]] = lambda x: {
+        "cafeteriaID": x.restaurant_id,
+        "date": x.feed_date,
+        "time": x.time_type,
+        "menu": x.menu,
+        "price": x.price,
+    }
+    return {"data": map(mapping_func, data)}

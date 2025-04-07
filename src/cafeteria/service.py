@@ -84,6 +84,11 @@ async def delete_cafeteria(cafeteria_id: int) -> None:
     await execute_query(delete_query)
 
 
+async def get_list_menu() -> list[Menu]:
+    select_query = select(Menu)
+    return await fetch_all(select_query)
+
+
 async def get_list_menu_by_cafeteria_id(cafeteria_id: int) -> list[Menu]:
     select_query = select(Menu).where(Menu.restaurant_id == cafeteria_id)
     return await fetch_all(select_query)

@@ -192,23 +192,36 @@ async def resolve_shuttle_timetable(
     elif weekdays is None and timestamp:
         lunar_calendar.setSolarDate(timestamp.year, timestamp.month, timestamp.day)
         lunar_date = lunar_calendar.LunarIsoFormat()
-
-        select_holiday_query = (
-            select(ShuttleHoliday)
-            .options(load_only(ShuttleHoliday.type_))
-            .where(
-                or_(
+        try:
+            formatted_lunar_date = datetime.date.fromisoformat(lunar_date)
+            select_holiday_query = (
+                select(ShuttleHoliday)
+                .options(load_only(ShuttleHoliday.type_))
+                .where(
+                    or_(
+                        and_(
+                            ShuttleHoliday.date == timestamp.date(),
+                            ShuttleHoliday.calendar == "solar",
+                        ),
+                        and_(
+                            ShuttleHoliday.date == formatted_lunar_date,
+                            ShuttleHoliday.calendar == "lunar",
+                        ),
+                    ),
+                )
+            )
+        except ValueError:
+            select_holiday_query = (
+                select(ShuttleHoliday)
+                .options(load_only(ShuttleHoliday.type_))
+                .where(
                     and_(
                         ShuttleHoliday.date == timestamp.date(),
                         ShuttleHoliday.calendar == "solar",
                     ),
-                    and_(
-                        ShuttleHoliday.date == datetime.date.fromisoformat(lunar_date),
-                        ShuttleHoliday.calendar == "lunar",
-                    ),
-                ),
+                )
             )
-        )
+
         holiday = await fetch_one(select_holiday_query)
         if holiday is not None:
             if holiday.type_ == "weekends":

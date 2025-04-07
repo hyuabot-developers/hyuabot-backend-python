@@ -153,7 +153,7 @@ async def get_route(
     return {"name": route.name, "id": route.id_}
 
 
-@router.patch(
+@router.put(
     "/route/{route_id}",
     status_code=status.HTTP_200_OK,
 )
@@ -249,7 +249,7 @@ async def create_route_station(
     }
 
 
-@router.patch(
+@router.put(
     "/station/{station_id}",
     status_code=status.HTTP_200_OK,
 )

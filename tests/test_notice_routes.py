@@ -371,7 +371,7 @@ async def test_update_notice(
     create_test_notice,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/notice/100/notices/9999",
         json={
             "title": "test_title",
@@ -400,7 +400,7 @@ async def test_update_notice_category_not_found(
     create_test_notice,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/notice/1000/notices/100",
         json={"title": "test_title", "url": "test_url"},
         headers={"Authorization": f"Bearer {access_token}"},
@@ -418,7 +418,7 @@ async def test_update_notice_not_found(
     create_test_notice,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/notice/100/notices/1000",
         json={"title": "test_title", "url": "test_url"},
         headers={"Authorization": f"Bearer {access_token}"},
@@ -444,7 +444,7 @@ async def test_update_notice_internal_server_error(
     monkeypatch.setattr(service, "update_notice", mock_update_notice)
 
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/notice/100/notices/9999",
         json={"title": "test_title", "url": "test_url"},
         headers={"Authorization": f"Bearer {access_token}"},

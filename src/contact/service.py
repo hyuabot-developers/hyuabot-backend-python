@@ -7,7 +7,7 @@ from database import fetch_all, fetch_one, execute_query
 from model.contact import PhoneBookCategory, PhoneBook, PhoneBookVersion
 from contact.schemas import (
     CreateContactCategoryRequest,
-    CreateContactReqeust,
+    CreateContactRequest,
     UpdateContactRequest,
 )
 
@@ -82,7 +82,7 @@ async def get_contact_by_id(contact_id: int) -> PhoneBook | None:
 
 async def create_contact(
     category_id: int,
-    new_contact: CreateContactReqeust,
+    new_contact: CreateContactRequest,
 ) -> PhoneBook | None:
     insert_query = (
         insert(PhoneBook)
@@ -183,3 +183,13 @@ async def update_contact(
         PhoneBook.id_ == contact_id,
     )
     return await fetch_one(select_query)
+
+
+async def list_contact() -> list[PhoneBook]:
+    select_query = select(PhoneBook)
+    return await fetch_all(select_query)
+
+
+async def list_contact_filter(campus_id: int) -> list[PhoneBook]:
+    select_query = select(PhoneBook).where(PhoneBook.campus_id == campus_id)
+    return await fetch_all(select_query)

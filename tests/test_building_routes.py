@@ -238,7 +238,7 @@ async def test_patch_building(
     create_test_building,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/building/test_building1",
         json={
             "id": "Y204",
@@ -265,7 +265,7 @@ async def test_patch_building_not_found(
     create_test_user,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/building/test_building1",
         json={
             "id": "Y204",
@@ -295,7 +295,7 @@ async def test_patch_building_internal_server_error(
 
     monkeypatch.setattr(service, "update_building", mock_update_building)
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/building/test_building1",
         json={
             "id": "Y204",
@@ -585,7 +585,7 @@ async def test_patch_room_in_a_building(
     create_test_room,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/building/test_building1/room/101",
         json={
             "name": "test_name",
@@ -608,7 +608,7 @@ async def test_patch_room_in_a_building_not_found(
     create_test_building,
 ):
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/building/test_building1/room/101",
         json={
             "name": "test_name",
@@ -636,7 +636,7 @@ async def test_patch_room_in_a_building_internal_server_error(
 
     monkeypatch.setattr(service, "update_room", mock_update_room)
     access_token = await get_access_token(client)
-    response = await client.patch(
+    response = await client.put(
         "/api/building/test_building1/room/101",
         json={
             "name": "test_name",

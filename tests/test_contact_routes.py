@@ -16,7 +16,7 @@ async def test_get_contact_category_list(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact",
+        "/api/contact/category",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -37,7 +37,7 @@ async def test_get_contact_category_list_filter(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact?name=test_category",
+        "/api/contact/category?name=test_category",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -57,7 +57,7 @@ async def test_create_contact_category(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/contact",
+        "/api/contact/category",
         json={"name": "test_category"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -83,7 +83,7 @@ async def test_create_contact_category_duplicated_name(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/contact",
+        "/api/contact/category",
         json={"name": "test_category100"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -110,7 +110,7 @@ async def test_create_contact_category_internal_server_error(
 
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/contact",
+        "/api/contact/category",
         json={"name": "test_category"},
         headers={"Authorization": f"Bearer {access_token}"},
     )
@@ -127,7 +127,7 @@ async def test_get_contact_category(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact/100",
+        "/api/contact/category/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -145,7 +145,7 @@ async def test_get_contact_category_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact/1000",
+        "/api/contact/category/1000",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -161,7 +161,7 @@ async def test_delete_contact_category(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.delete(
-        "/api/contact/100",
+        "/api/contact/category/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 204
@@ -176,7 +176,7 @@ async def test_delete_contact_category_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.delete(
-        "/api/contact/1000",
+        "/api/contact/category/1000",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -193,7 +193,7 @@ async def test_get_contact_list(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact/100/contacts",
+        "/api/contact/category/100/contacts",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -217,7 +217,7 @@ async def test_get_contact_list_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact/1000/contacts",
+        "/api/contact/category/1000/contacts",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -234,7 +234,7 @@ async def test_get_contact(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact/100/contacts/9999",
+        "/api/contact/category/100/contacts/9999",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
@@ -255,7 +255,7 @@ async def test_get_contact_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.get(
-        "/api/contact/100/contacts/100",
+        "/api/contact/category/100/contacts/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 404
@@ -271,7 +271,7 @@ async def test_create_contact(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/contact/100/contacts",
+        "/api/contact/category/100/contacts",
         json={
             "name": "test_name",
             "phone": "test_phone",
@@ -300,7 +300,7 @@ async def test_create_contact_category_not_found(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/contact/1000/contacts",
+        "/api/contact/category/1000/contacts",
         json={
             "name": "test_name",
             "phone": "test_phone",
@@ -329,7 +329,7 @@ async def test_create_contact_internal_server_error(
 
     access_token = await get_access_token(client)
     response = await client.post(
-        "/api/contact/100/contacts",
+        "/api/contact/category/100/contacts",
         json={
             "name": "test_name",
             "phone": "test_phone",
@@ -351,7 +351,7 @@ async def test_delete_contact(
 ) -> None:
     access_token = await get_access_token(client)
     response = await client.delete(
-        "/api/contact/100/contacts/100",
+        "/api/contact/category/100/contacts/100",
         headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 204
@@ -366,8 +366,8 @@ async def test_update_contact(
     create_test_contact,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
-        "/api/contact/100/contacts/9999",
+    response = await client.put(
+        "/api/contact/category/100/contacts/9999",
         json={
             "name": "test_name",
             "phone": "test_phone",
@@ -392,8 +392,8 @@ async def test_update_contact_category_not_found(
     create_test_contact,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
-        "/api/contact/1000/contacts/100",
+    response = await client.put(
+        "/api/contact/category/1000/contacts/100",
         json={
             "name": "test_name",
             "phone": "test_phone",
@@ -414,8 +414,8 @@ async def test_update_contact_not_found(
     create_test_contact,
 ) -> None:
     access_token = await get_access_token(client)
-    response = await client.patch(
-        "/api/contact/100/contacts/1000",
+    response = await client.put(
+        "/api/contact/category/100/contacts/1000",
         json={
             "name": "test_name",
             "phone": "test_phone",
@@ -444,8 +444,8 @@ async def test_update_contact_internal_server_error(
     monkeypatch.setattr(service, "update_contact", mock_update_contact)
 
     access_token = await get_access_token(client)
-    response = await client.patch(
-        "/api/contact/100/contacts/9999",
+    response = await client.put(
+        "/api/contact/category/100/contacts/9999",
         json={
             "name": "test_name",
             "phone": "test_phone",
@@ -455,3 +455,53 @@ async def test_update_contact_internal_server_error(
     )
     assert response.status_code == 500
     assert response.json() == {"detail": "INTERNAL_SERVER_ERROR"}
+
+
+@pytest.mark.asyncio
+async def test_get_contact_list_all(
+    client: TestClient,
+    clean_db,
+    create_test_user,
+    create_test_contact_category,
+    create_test_contact,
+) -> None:
+    access_token = await get_access_token(client)
+    response = await client.get(
+        "/api/contact/contacts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json.get("data") is not None
+    assert len(response_json["data"]) > 0
+    for contact in response_json["data"]:
+        assert contact.get("id") is not None
+        assert contact.get("campusID") is not None
+        assert contact.get("categoryID") is not None
+        assert contact.get("name") is not None
+        assert contact.get("phone") is not None
+
+
+@pytest.mark.asyncio
+async def test_get_contact_list_all_filter(
+    client: TestClient,
+    clean_db,
+    create_test_user,
+    create_test_contact_category,
+    create_test_contact,
+) -> None:
+    access_token = await get_access_token(client)
+    response = await client.get(
+        "/api/contact/contacts?campusID=1",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json.get("data") is not None
+    assert len(response_json["data"]) > 0
+    for contact in response_json["data"]:
+        assert contact.get("id") is not None
+        assert contact.get("campusID") == 1
+        assert contact.get("categoryID") is not None
+        assert contact.get("name") is not None
+        assert contact.get("phone") is not None

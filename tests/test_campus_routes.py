@@ -179,7 +179,7 @@ async def test_update_campus(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/campus/1",
         json={
             "name": "test_campus1_updated",
@@ -203,7 +203,7 @@ async def test_update_campus_not_found(
 ) -> None:
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/campus/100",
         json={
             "name": "test_campus100_updated",
@@ -231,7 +231,7 @@ async def test_update_campus_internal_server_error(
 
     access_token = await get_access_token(client)
 
-    response = await client.patch(
+    response = await client.put(
         "/api/campus/1",
         json={
             "name": "test_campus1",

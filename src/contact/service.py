@@ -7,7 +7,7 @@ from database import fetch_all, fetch_one, execute_query
 from model.contact import PhoneBookCategory, PhoneBook, PhoneBookVersion
 from contact.schemas import (
     CreateContactCategoryRequest,
-    CreateContactReqeust,
+    CreateContactRequest,
     UpdateContactRequest,
 )
 
@@ -82,7 +82,7 @@ async def get_contact_by_id(contact_id: int) -> PhoneBook | None:
 
 async def create_contact(
     category_id: int,
-    new_contact: CreateContactReqeust,
+    new_contact: CreateContactRequest,
 ) -> PhoneBook | None:
     insert_query = (
         insert(PhoneBook)

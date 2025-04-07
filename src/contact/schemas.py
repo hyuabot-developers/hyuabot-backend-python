@@ -14,7 +14,7 @@ class CreateContactCategoryRequest(BaseModel):
         }
 
 
-class CreateContactReqeust(BaseModel):
+class CreateContactRequest(BaseModel):
     name: Annotated[str, Field(alias="name")]
     phone: Annotated[str, Field(max_length=30, alias="phone")]
     campus_id: Annotated[int, Field(ge=1, alias="campusID")]

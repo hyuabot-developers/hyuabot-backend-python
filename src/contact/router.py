@@ -18,7 +18,7 @@ from contact.schemas import (
     ContactListResponse,
     ContactDetailResponse,
     CreateContactCategoryRequest,
-    CreateContactReqeust,
+    CreateContactRequest,
     UpdateContactRequest,
     ContactCategoryListResponse,
     ContactCategoryDetailResponse, ContactListWithCategoryResponse,
@@ -130,7 +130,7 @@ async def get_contact(
     response_model=ContactDetailResponse,
 )
 async def create_contact(
-    new_contact: CreateContactReqeust = Depends(create_valid_contact),
+    new_contact: CreateContactRequest = Depends(create_valid_contact),
     contact_category_id: int = Depends(get_valid_category),
     _: str = Depends(parse_jwt_user_data),
 ):

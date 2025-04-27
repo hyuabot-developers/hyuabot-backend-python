@@ -237,3 +237,39 @@ class ShuttleTimetableView(Base):
         remote_side=[id_],
         viewonly=True,
     )
+
+
+class ShuttleTimetableGroupedView(Base):
+    __tablename__ = "shuttle_timetable_grouped_view"
+    __table_args__ = (
+        PrimaryKeyConstraint(
+            "seq",
+            "stop_name",
+            "destination_group",
+            name="pk_shuttle_timetable_grouped_view",
+        ),
+        ForeignKeyConstraint(
+            ["seq"],
+            ["shuttle_timetable_view.seq"],
+            name="fk_shuttle_timetable_grouped_view_timetable",
+        ),
+        {"info": dict(is_view=True)},
+    )
+
+    id_: Mapped[int] = mapped_column("seq", Integer)
+    period: Mapped[str] = mapped_column("period_type", String(20))
+    is_weekdays: Mapped[bool] = mapped_column("weekday", Boolean)
+    route_name: Mapped[str] = mapped_column("route_name", String(15))
+    route_tag: Mapped[str] = mapped_column("route_tag", String(10))
+    stop_name: Mapped[str] = mapped_column("stop_name", String(15))
+    destination_group: Mapped[str] = mapped_column("destination_group", String(15))
+    departure_time: Mapped[datetime.time] = mapped_column(
+        "departure_time",
+        Time(timezone=True),
+    )
+    via: Mapped[list["ShuttleTimetableView"]] = relationship(
+        "ShuttleTimetableView",
+        primaryjoin="ShuttleTimetableGroupedView.id_ == ShuttleTimetableView.id_",
+        uselist=True,
+        viewonly=True,
+    )

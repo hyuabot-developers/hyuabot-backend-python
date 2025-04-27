@@ -5,8 +5,8 @@ import pytz
 import strawberry
 from korean_lunar_calendar import KoreanLunarCalendar
 from pytz import timezone
-from sqlalchemy import select, and_, true, false, or_, ColumnElement
-from sqlalchemy.orm import load_only, selectinload, joinedload
+from sqlalchemy import select, and_, true, false, or_, ColumnElement, func
+from sqlalchemy.orm import load_only, selectinload, joinedload, aliased
 
 from database import fetch_one, fetch_all
 from model.shuttle import (
@@ -15,7 +15,7 @@ from model.shuttle import (
     ShuttleHoliday,
     ShuttleStop,
     ShuttleRouteStop,
-    ShuttleRoute,
+    ShuttleRoute, ShuttleTimetableGroupedView,
 )
 from shuttle.exceptions import PeriodNotFound
 from utils import KST
@@ -44,6 +44,20 @@ class ShuttleTimetableQuery:
     departure_hour: int = strawberry.field(name="hour")
     departure_minute: int = strawberry.field(name="minute")
     via: list[ShuttleViaQuery] = strawberry.field(name="via")
+
+
+@strawberry.type
+class ShuttleTimetableGroupedQuery:
+    id_: int = strawberry.field(name="id")
+    period: str = strawberry.field(name="period")
+    is_weekdays: bool = strawberry.field(name="weekdays")
+    route_name: str = strawberry.field(name="route")
+    route_tag: str = strawberry.field(name="tag")
+    stop_name: str = strawberry.field(name="stop")
+    destination_group: str = strawberry.field(name="destination")
+    departure_time: str = strawberry.field(name="time")
+    departure_hour: int = strawberry.field(name="hour")
+    departure_minute: int = strawberry.field(name="minute")
 
 
 @strawberry.type
@@ -102,6 +116,7 @@ class ShuttleQuery:
     stop: list[ShuttleStopQuery] = strawberry.field(name="stop")
     route: list[ShuttleRouteQuery] = strawberry.field(name="route")
     timetable: list[ShuttleTimetableQuery] = strawberry.field(name="timetable")
+    grouped_timetable: list[ShuttleTimetableGroupedQuery] = strawberry.field(name="groupedTimetable")
 
 
 async def resolve_shuttle(
@@ -120,6 +135,8 @@ async def resolve_shuttle(
     period_current: bool | None = None,
     period_start: datetime.date | None = None,
     period_end: datetime.date | None = None,
+    count: int = 3,
+    group: str = "destination",
 ) -> ShuttleQuery:
     return ShuttleQuery(
         period=(
@@ -151,6 +168,20 @@ async def resolve_shuttle(
                 end=end,
             )
         ),
+        grouped_timetable=(
+            await resolve_shuttle_grouped_timetable(
+                timestamp=timestamp,
+                count=count,
+                group=group,
+                period=period,
+                weekdays=weekdays,
+                route_name=route_name,
+                route_tag=route_tag,
+                stop_name=stop_name,
+                start=start,
+                end=end,
+            )
+        )
     )
 
 
@@ -299,6 +330,181 @@ async def resolve_shuttle_timetable(
                 )
                 for via in sorted(timetable.via, key=lambda x: x.departure_time)
             ],
+        )
+        for timetable in timetable_list
+    ]
+
+
+async def resolve_shuttle_grouped_timetable(
+    timestamp: datetime.datetime | None = datetime.datetime.now(tz=pytz.timezone("Asia/Seoul")),
+    count: int = 3,
+    group: str = "destination",
+    period: list[str] | None = None,
+    weekdays: list[bool] | None = None,
+    route_name: list[str] | None = None,
+    route_tag: list[str] | None = None,
+    stop_name: list[str] | None = None,
+    start: datetime.time | None = None,
+    end: datetime.time | None = None,
+) -> list[ShuttleTimetableGroupedQuery]:
+    timetable_condition: list[ColumnElement[bool] | ColumnElement[bool]] = []
+    if period:
+        timetable_condition.append(ShuttleTimetableGroupedView.period.in_(period))
+    elif timestamp:
+        select_period_query = (
+            select(ShuttlePeriod)
+            .options(load_only(ShuttlePeriod.type_id))
+            .where(
+                and_(
+                    ShuttlePeriod.start <= timestamp,
+                    ShuttlePeriod.end >= timestamp,
+                ),
+            )
+            .order_by(ShuttlePeriod.type_id.desc())
+        )
+        current_period = await fetch_one(select_period_query)
+        if current_period is None:
+            raise PeriodNotFound()
+        timetable_condition.append(
+            ShuttleTimetableGroupedView.period == current_period.type_id,
+        )
+    if weekdays == [True]:
+        timetable_condition.append(ShuttleTimetableGroupedView.is_weekdays.is_(true()))
+    elif weekdays == [False]:
+        timetable_condition.append(ShuttleTimetableGroupedView.is_weekdays.is_(false()))
+    elif weekdays is None and timestamp:
+        lunar_calendar.setSolarDate(timestamp.year, timestamp.month, timestamp.day)
+        lunar_date = lunar_calendar.LunarIsoFormat()
+        try:
+            formatted_lunar_date = datetime.date.fromisoformat(lunar_date)
+            select_holiday_query = (
+                select(ShuttleHoliday)
+                .options(load_only(ShuttleHoliday.type_))
+                .where(
+                    or_(
+                        and_(
+                            ShuttleHoliday.date == timestamp.date(),
+                            ShuttleHoliday.calendar == "solar",
+                        ),
+                        and_(
+                            ShuttleHoliday.date == formatted_lunar_date,
+                            ShuttleHoliday.calendar == "lunar",
+                        ),
+                    ),
+                )
+            )
+        except ValueError:
+            select_holiday_query = (
+                select(ShuttleHoliday)
+                .options(load_only(ShuttleHoliday.type_))
+                .where(
+                    and_(
+                        ShuttleHoliday.date == timestamp.date(),
+                        ShuttleHoliday.calendar == "solar",
+                    ),
+                )
+            )
+
+        holiday = await fetch_one(select_holiday_query)
+        if holiday is not None:
+            if holiday.type_ == "weekends":
+                timetable_condition.append(
+                    ShuttleTimetableGroupedView.is_weekdays.is_(false()),
+                )
+            elif holiday.type_ == "halt":
+                return []
+        else:
+            if timestamp.isoformat() in kr_holidays:
+                timetable_condition.append(
+                    ShuttleTimetableGroupedView.is_weekdays.is_(false()))
+            elif timestamp.weekday() >= 5:
+                timetable_condition.append(ShuttleTimetableGroupedView.is_weekdays.is_(false()))
+            else:
+                timetable_condition.append(ShuttleTimetableGroupedView.is_weekdays.is_(true()))
+    if route_name:
+        timetable_condition.append(ShuttleTimetableGroupedView.route_name.in_(route_name))
+    if route_tag:
+        timetable_condition.append(ShuttleTimetableGroupedView.route_tag.in_(route_tag))
+    if stop_name:
+        timetable_condition.append(ShuttleTimetableGroupedView.stop_name.in_(stop_name))
+    if start:
+        timetable_condition.append(
+            ShuttleTimetableGroupedView.departure_time >= start.replace(
+                tzinfo=KST,
+            ),
+        )
+    if end:
+        timetable_condition.append(
+            ShuttleTimetableGroupedView.departure_time <= end.replace(
+                tzinfo=KST,
+            ),
+        )
+    timetable_list: list[ShuttleTimetableGroupedView] = []
+    if group == "destination":
+        timetable_subquery = (
+            select(
+                ShuttleTimetableGroupedView,
+                func.row_number().over(
+                    partition_by=(
+                        ShuttleTimetableGroupedView.stop_name,
+                        ShuttleTimetableGroupedView.destination_group
+                    ),
+                    order_by=ShuttleTimetableGroupedView.departure_time.asc()
+                ).label("rn")
+            )
+            .where(and_(*timetable_condition))
+            .subquery()
+        )
+        aliased_subquery = aliased(ShuttleTimetableGroupedView, timetable_subquery)
+        # 메인 쿼리: rn <= 1 조건 필터링 및 정렬
+        ranked_shuttles_query = (
+            select(aliased_subquery)
+            .select_from(aliased_subquery)
+            .where(timetable_subquery.c.rn <= count)
+            .order_by(
+                timetable_subquery.c.stop_name,
+                timetable_subquery.c.destination_group,
+                timetable_subquery.c.departure_time
+            )
+        )
+        timetable_list = await fetch_all(ranked_shuttles_query)
+    else:
+        timetable_subquery = (
+            select(
+                ShuttleTimetableGroupedView,
+                func.row_number().over(
+                    partition_by=(ShuttleTimetableGroupedView.stop_name),
+                    order_by=ShuttleTimetableGroupedView.departure_time.asc()
+                ).label("rn")
+            )
+            .where(and_(*timetable_condition))
+            .subquery()
+        )
+        aliased_subquery = aliased(ShuttleTimetableGroupedView, timetable_subquery)
+        # 메인 쿼리: rn <= 1 조건 필터링 및 정렬
+        ranked_shuttles_query = (
+            select(aliased_subquery)
+            .select_from(aliased_subquery)
+            .where(timetable_subquery.c.rn <= count)
+            .order_by(
+                timetable_subquery.c.stop_name,
+                timetable_subquery.c.destination_group,
+                timetable_subquery.c.departure_time
+            )
+        )
+        timetable_list = await fetch_all(ranked_shuttles_query)
+    return [
+        ShuttleTimetableGroupedQuery(
+            id_=timetable.id_,
+            period=timetable.period,
+            is_weekdays=timetable.is_weekdays,
+            route_name=timetable.route_name,
+            route_tag=timetable.route_tag,
+            stop_name=timetable.stop_name,
+            departure_time=timetable.departure_time.strftime("%H:%M:%S"),
+            departure_hour=timetable.departure_time.hour,
+            departure_minute=timetable.departure_time.minute,
+            destination_group=timetable.destination_group,
         )
         for timetable in timetable_list
     ]

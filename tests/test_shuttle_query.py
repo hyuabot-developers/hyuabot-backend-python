@@ -700,3 +700,37 @@ async def test_get_shuttle_timetable_end_filter(
         assert "stop" in item
         assert item["time"] <= "05:00:00"
         assert "via" in item
+
+
+@pytest.mark.asyncio
+async def test_get_shuttle_grouped_timetable(
+    client: TestClient,
+    clean_db,
+    create_test_shuttle_period,
+    create_test_shuttle_route_stop,
+    create_test_shuttle_timetable,
+) -> None:
+    query = """
+        query {
+            shuttle {
+                groupedTimetable {
+                    id, period, weekdays, route, tag, stop, time, destination
+                }
+            }
+        }
+    """
+    response = await graphql_schema.execute(query)
+    assert response.errors is None
+    assert response.data is not None
+    assert isinstance(response.data["shuttle"], dict)
+    timetable = response.data["shuttle"]["groupedTimetable"]
+    assert isinstance(timetable, list)
+    for item in timetable:
+        assert "id" in item
+        assert "period" in item
+        assert item["weekdays"] is False
+        assert "route" in item
+        assert "tag" in item
+        assert "stop" in item
+        assert "time" in item
+        assert "destination" in item

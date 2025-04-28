@@ -135,6 +135,9 @@ async def resolve_shuttle(
     period_current: bool | None = None,
     period_start: datetime.date | None = None,
     period_end: datetime.date | None = None,
+    timestamp_str: str | None = None,
+    start_str: str | None = None,
+    end_str: str | None = None,
     count: int = 3,
     group: str = "destination",
 ) -> ShuttleQuery:
@@ -180,6 +183,9 @@ async def resolve_shuttle(
                 stop_name=stop_name,
                 start=start,
                 end=end,
+                timestamp_str=timestamp_str,
+                start_str=start_str,
+                end_str=end_str,
             )
         )
     )
@@ -346,10 +352,32 @@ async def resolve_shuttle_grouped_timetable(
     stop_name: list[str] | None = None,
     start: datetime.time | None = None,
     end: datetime.time | None = None,
+    timestamp_str: str | None = None,
+    start_str: str | None = None,
+    end_str: str | None = None,
 ) -> list[ShuttleTimetableGroupedQuery]:
     timetable_condition: list[ColumnElement[bool] | ColumnElement[bool]] = []
     if period:
         timetable_condition.append(ShuttleTimetableGroupedView.period.in_(period))
+    elif timestamp_str:
+        timestamp_value = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+        select_period_query = (
+            select(ShuttlePeriod)
+            .options(load_only(ShuttlePeriod.type_id))
+            .where(
+                and_(
+                    ShuttlePeriod.start <= timestamp_value,
+                    ShuttlePeriod.end >= timestamp_value,
+                ),
+            )
+            .order_by(ShuttlePeriod.type_id.desc())
+        )
+        current_period = await fetch_one(select_period_query)
+        if current_period is None:
+            raise PeriodNotFound()
+        timetable_condition.append(
+            ShuttleTimetableGroupedView.period == current_period.type_id,
+        )
     elif timestamp:
         select_period_query = (
             select(ShuttlePeriod)
@@ -433,9 +461,23 @@ async def resolve_shuttle_grouped_timetable(
                 tzinfo=KST,
             ),
         )
+    elif start_str:
+        start_time = datetime.datetime.strptime(start_str, "%H:%M:%S").time()
+        timetable_condition.append(
+            ShuttleTimetableGroupedView.departure_time >= start_time.replace(
+                tzinfo=KST,
+            ),
+        )
     if end:
         timetable_condition.append(
             ShuttleTimetableGroupedView.departure_time <= end.replace(
+                tzinfo=KST,
+            ),
+        )
+    elif end_str:
+        end_time = datetime.datetime.strptime(end_str, "%H:%M:%S").time()
+        timetable_condition.append(
+            ShuttleTimetableGroupedView.departure_time <= end_time.replace(
                 tzinfo=KST,
             ),
         )
@@ -468,7 +510,7 @@ async def resolve_shuttle_grouped_timetable(
             )
         )
         timetable_list = await fetch_all(ranked_shuttles_query)
-    else:
+    elif group == "time":
         timetable_subquery = (
             select(
                 ShuttleTimetableGroupedView,

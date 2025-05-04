@@ -126,7 +126,9 @@ async def resolve_bus(
     weekdays: list[str] | None = None,
     log_date: list[datetime.date] | None = None,
     start: datetime.time | None = None,
+    start_str: str | None = None,
     end: datetime.time | None = None,
+    end_str: str | None = None,
 ) -> list[StopQuery]:
     stop_conditions = []
     if id_:
@@ -211,21 +213,33 @@ async def resolve_bus(
             weekdays = ["saturday"]
         else:
             weekdays = ["weekdays"]
+    if isinstance(start_str, str):
+        start_value = datetime.datetime.strptime(start_str, "%H:%M:%S").time().replace(tzinfo=KST)
+    elif isinstance(start, datetime.time):
+        start_value = start.replace(tzinfo=KST)
+    else:
+        start_value = None
+    if isinstance(end_str, str):
+        end_value = datetime.datetime.strptime(end_str, "%H:%M:%S").time().replace(tzinfo=KST)
+    elif isinstance(end, datetime.time):
+        end_value = end.replace(tzinfo=KST)
+    else:
+        end_value = None
     timetable_filter: Callable[[BusTimetable], bool] = lambda x: (
         x.weekday in weekdays
         and (
-            start is None
+            start_value is None
             or (
-                x.departure_time.replace(tzinfo=KST) >= start.replace(tzinfo=KST) or
+                x.departure_time.replace(tzinfo=KST) >= start_value or
                 x.departure_time.replace(tzinfo=KST) < datetime.time(4, 0, 0).replace(tzinfo=KST)
             )
-            if start is not None
+            if start_value is not None
             else True
         )
         and (
-            end is None
-            or (x.departure_time.replace(tzinfo=KST) <= end.replace(tzinfo=KST))
-            if end is not None
+            end_value is None
+            or (x.departure_time.replace(tzinfo=KST) <= end_value.replace(tzinfo=KST))
+            if end_value is not None
             else True
         )
     )

@@ -80,7 +80,9 @@ async def resolve_subway(
     name: str | None = None,
     weekdays: bool | None = None,
     start: datetime.time | None = None,
+    start_str: str | None = None,
     end: datetime.time | None = None,
+    end_str: str | None = None,
 ) -> list[StationQuery]:
     station_conditions = []
     if id_:
@@ -134,18 +136,30 @@ async def resolve_subway(
     stations = await fetch_all(station_query)
     result: list[StationQuery] = []
     now = datetime.datetime.now(tz=KST)
+    if start is not None:
+        start_value = start.replace(tzinfo=KST)
+    elif start_str is not None:
+        start_value = datetime.datetime.strptime(start_str, "%H:%M").time().replace(tzinfo=KST)
+    else:
+        start_value = None
+    if end is not None:
+        end_value = end.replace(tzinfo=KST)
+    elif end_str is not None:
+        end_value = datetime.datetime.strptime(end_str, "%H:%M").time().replace(tzinfo=KST)
+    else:
+        end_value = None
     timetable_filter: Callable[[SubwayTimetable], bool] = lambda x: (
         ((x.is_weekdays == "weekdays") == weekdays if weekdays is not None else True)
         and (
-            start is None
-            or (x.departure_time.replace(tzinfo=KST) >= start.replace(tzinfo=KST))
-            if start is not None
+            start_value is None
+            or (x.departure_time.replace(tzinfo=KST) >= start_value)
+            if start_value is not None
             else True
         )
         and (
-            end is None
-            or (x.departure_time.replace(tzinfo=KST) <= end.replace(tzinfo=KST))
-            if end is not None
+            end_value is None
+            or (x.departure_time.replace(tzinfo=KST) <= end_value)
+            if end_value is not None
             else True
         )
     )

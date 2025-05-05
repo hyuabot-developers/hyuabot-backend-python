@@ -51,6 +51,7 @@ async def resolve_menu(
     id_: Optional[int] = None,
     name: Optional[str] = None,
     date: Optional[datetime.date] = None,
+    date_str: Optional[str] = None,
     type_: Optional[list[str]] = None,
 ) -> list[CafeteriaQuery]:
     cafeteria_conditions = []
@@ -68,6 +69,8 @@ async def resolve_menu(
     ]
     if date is not None:
         menu_conditions.append(Menu.feed_date.in_([date]))
+    elif date_str is not None:
+        menu_conditions.append(Menu.feed_date.in_([datetime.datetime.strptime(date_str, "%Y-%m-%d").date()]))
     if type_ is not None:
         menu_conditions.append(Menu.time_type.in_(type_))
     menu_select_query = (

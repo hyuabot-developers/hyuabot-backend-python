@@ -357,10 +357,15 @@ async def resolve_shuttle_grouped_timetable(
     end_str: str | None = None,
 ) -> list[ShuttleTimetableGroupedQuery]:
     timetable_condition: list[ColumnElement[bool] | ColumnElement[bool]] = []
+    if timestamp is not None:
+        timestamp_value = timestamp
+    elif timestamp_str is not None:
+        timestamp_value = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+    else:
+        timestamp_value = None
     if period:
         timetable_condition.append(ShuttleTimetableGroupedView.period.in_(period))
-    elif timestamp_str:
-        timestamp_value = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+    elif timestamp_value:
         select_period_query = (
             select(ShuttlePeriod)
             .options(load_only(ShuttlePeriod.type_id))
@@ -378,30 +383,12 @@ async def resolve_shuttle_grouped_timetable(
         timetable_condition.append(
             ShuttleTimetableGroupedView.period == current_period.type_id,
         )
-    elif timestamp:
-        select_period_query = (
-            select(ShuttlePeriod)
-            .options(load_only(ShuttlePeriod.type_id))
-            .where(
-                and_(
-                    ShuttlePeriod.start <= timestamp,
-                    ShuttlePeriod.end >= timestamp,
-                ),
-            )
-            .order_by(ShuttlePeriod.type_id.desc())
-        )
-        current_period = await fetch_one(select_period_query)
-        if current_period is None:
-            raise PeriodNotFound()
-        timetable_condition.append(
-            ShuttleTimetableGroupedView.period == current_period.type_id,
-        )
     if weekdays == [True]:
         timetable_condition.append(ShuttleTimetableGroupedView.is_weekdays.is_(true()))
     elif weekdays == [False]:
         timetable_condition.append(ShuttleTimetableGroupedView.is_weekdays.is_(false()))
-    elif weekdays is None and timestamp:
-        lunar_calendar.setSolarDate(timestamp.year, timestamp.month, timestamp.day)
+    elif weekdays is None and timestamp_value:
+        lunar_calendar.setSolarDate(timestamp_value.year, timestamp_value.month, timestamp_value.day)
         lunar_date = lunar_calendar.LunarIsoFormat()
         try:
             formatted_lunar_date = datetime.date.fromisoformat(lunar_date)
@@ -411,7 +398,7 @@ async def resolve_shuttle_grouped_timetable(
                 .where(
                     or_(
                         and_(
-                            ShuttleHoliday.date == timestamp.date(),
+                            ShuttleHoliday.date == timestamp_value.date(),
                             ShuttleHoliday.calendar == "solar",
                         ),
                         and_(
@@ -427,7 +414,7 @@ async def resolve_shuttle_grouped_timetable(
                 .options(load_only(ShuttleHoliday.type_))
                 .where(
                     and_(
-                        ShuttleHoliday.date == timestamp.date(),
+                        ShuttleHoliday.date == timestamp_value.date(),
                         ShuttleHoliday.calendar == "solar",
                     ),
                 )
@@ -442,10 +429,10 @@ async def resolve_shuttle_grouped_timetable(
             elif holiday.type_ == "halt":
                 return []
         else:
-            if timestamp.isoformat() in kr_holidays:
+            if timestamp_value.isoformat() in kr_holidays:
                 timetable_condition.append(
                     ShuttleTimetableGroupedView.is_weekdays.is_(false()))
-            elif timestamp.weekday() >= 5:
+            elif timestamp_value.weekday() >= 5:
                 timetable_condition.append(ShuttleTimetableGroupedView.is_weekdays.is_(false()))
             else:
                 timetable_condition.append(ShuttleTimetableGroupedView.is_weekdays.is_(true()))

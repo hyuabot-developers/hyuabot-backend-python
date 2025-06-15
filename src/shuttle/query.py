@@ -120,9 +120,7 @@ class ShuttleQuery:
 
 
 async def resolve_shuttle(
-    timestamp: datetime.datetime | None = datetime.datetime.now().astimezone(
-        tz=timezone("Asia/Seoul"),
-    ),
+    timestamp: datetime.datetime | None = None,
     period: list[str] | None = None,
     weekdays: list[bool] | None = None,
     route_name: list[str] | None = None,
@@ -342,9 +340,9 @@ async def resolve_shuttle_timetable(
 
 
 async def resolve_shuttle_grouped_timetable(
-    timestamp: datetime.datetime | None = datetime.datetime.now(tz=pytz.timezone("Asia/Seoul")),
     count: int = 3,
     group: str = "destination",
+    timestamp: datetime.datetime | None = None,
     period: list[str] | None = None,
     weekdays: list[bool] | None = None,
     route_name: list[str] | None = None,

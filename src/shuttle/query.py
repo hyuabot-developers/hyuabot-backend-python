@@ -311,7 +311,7 @@ async def resolve_shuttle_timetable(
             ),
         )
         .where(and_(*timetable_condition))
-        .order_by(ShuttleTimetableView.id_)
+        .order_by(ShuttleTimetableView.departure_time)
     )
     timetable_list = await fetch_all(select_query)
     return [
